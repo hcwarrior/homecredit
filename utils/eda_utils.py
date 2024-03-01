@@ -1,5 +1,5 @@
 from typing import Union
-from pandas.api.types import is_string_dtype
+from pandas.api.types import is_numeric_dtype
 import os
 import numpy as np
 import pandas as pd
@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 
 BASE_PATH = os.getcwd()
-DATA_PATH = os.path.join(BASE_PATH, "data")
+DATA_PATH = os.path.join(BASE_PATH, "data/home-credit-credit-risk-model-stability")
 PARQUET_DIR_PATH = os.path.join(DATA_PATH, "parquet_files")
 
 description_df = pd.read_csv(f"{DATA_PATH}/feature_definitions.csv")
@@ -127,7 +127,7 @@ def finebinning(
     else:
         is_sv = pd.Series([False] * len(df_))
 
-    if not is_string_dtype(df_[col]):
+    if is_numeric_dtype(df_[col]):
         if pre_splits is not None:
             sorted_splits = pre_splits
         else:
@@ -143,6 +143,12 @@ def finebinning(
         sorted_splits = []
 
     df_rslt = agg_basic_stats(df_.loc[~is_sv], col, tgt_yn_str)
+
+    if is_numeric_dtype(df_[col]):
+        df_rslt = df_rslt.sort_index(key=lambda x: x.map(lambda x: extract_first_number(x, special_codes)))
+    else:
+        df_rslt = df_rslt.sort_index()
+    
     result_list = [df_rslt]
 
     if special_codes is not None:
@@ -175,8 +181,13 @@ def finebinning(
     )
 
     if plot:
-        final_df.plot(kind="bar", y="Count (%)")
-        plt.plot(final_df.index, final_df["Event rate"], "ro-")
+        x_axis_str = final_df.index.map(str)
+        x_axis_str = list(map(str, final_df.index.to_numpy()))
+        fig, ax1 = plt.subplots()
+        ax1.bar(x_axis_str, final_df["Count (%)"].to_numpy())
+        ax2 = ax1.twinx()
+        ax2.plot(x_axis_str, final_df["Event rate"].to_numpy(), "ro-")
+        fig.tight_layout()
         plt.show()
 
-    return final_df.sort_index(key=lambda x: x.map(lambda x: extract_first_number(x, special_codes))), sorted_splits
+    return final_df, sorted_splits
