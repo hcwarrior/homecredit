@@ -13,6 +13,7 @@ def get_config():
     parser = ArgumentParser()
     parser.add_argument("--base_path", type=str, default=base_path)
     parser.add_argument("--data_path", type=str, default=data_path)
+    parser.add_argument("--raw_format", type=str, default="parquet")
 
     return parser.parse_args()
 
@@ -21,8 +22,6 @@ def prepare_data(conf: Namespace, type_: str = "train"):
     infos = RawInfo(conf)
     base_df = infos.read_raw("base", type_=type_)
     static_df = infos.read_raw("static", depth=0, type_=type_)
-
-
 
     return static_df.join(base_df[["case_id", "MONTH", "target"]], on="case_id", how="left", rsuffix="_base")
 

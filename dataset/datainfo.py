@@ -125,14 +125,15 @@ class RawInfo:
     VALID_TYPES = ["", "train", "test"]
     VALID_DEPTHS = ["", "0", "1", "2"]
 
-    def __init__(self, config: dict = None, format_: str = "parquet") -> None:
+    def __init__(self, config: dict = None) -> None:
         self.config = config
         if self.config is None:
             self.config = Namespace(**{
                 "data_path": DATA_PATH,
+                "raw_format": "parquet",
             })
 
-        self.format = format_
+        self.format = self.config.raw_format
         self.data_dir_path = Path(self.config.data_path)
         self.file_dir_path = self.data_dir_path / f"{self.format}_files"
 
