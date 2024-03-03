@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 from argparse import Namespace
 from dataclasses import dataclass
+from fastparquet import ParquetFile
 
 
 BASE_PATH = Path(os.getcwd())
@@ -33,7 +34,7 @@ class RawFile:
             raise ValueError(f"file_name should be a non-empty string. Not {file_name}.")
 
     def __repr__(self) -> str:
-        return f"RawFile({self.file_name})"
+        return f"{self.file_name}"
 
     def __str__(self) -> str:
         return self.file_name
@@ -91,7 +92,7 @@ class ColInfo:
     name: str
 
     def __repr__(self) -> str:
-        return f"Column({self.name})"
+        return self.name
 
     def __str__(self) -> str:
         return self.name
@@ -138,12 +139,7 @@ class RawInfo:
         if not self.file_dir_path.exists():
             raise FileNotFoundError(f"{self.file_dir_path} does not exist.")
         
-        if format_ == "parquet":
-            self.reader = pd.read_parquet
-        elif format_ == "csv":
-            self.reader = pd.read_csv
-        else:
-            raise ValueError(f"format_ should be either 'parquet' or 'csv'. Not {format_}.")
+        self.reader = RawReader(self.format)
 
     def show_files(self, type_: str = "train") -> list[RawFile]:
         return sorted([RawFile(f) for f in os.listdir(self.file_dir_path / type_)])
@@ -178,6 +174,35 @@ class RawInfo:
         return raw_df
 
 
+class RawReader:
+    def __init__(self, format_: str = "parquet") -> None:
+        self.format = format_
+        
+        if format_ == "parquet":
+            self.reader = pd.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format_ == "csv":
+            self.reader = pd.read_csv
+            self.column_getter = self._get_csv_columns
+        else:
+            raise ValueError(f"format_ should be either 'parquet' or 'csv'. Not {format_}.")
+
+    def read(self, file_path: Path) -> pd.DataFrame:
+        return self.reader(file_path)
+
+    def columns(self, file_path: Path) -> list[ColInfo]:
+        return [ColInfo(c) for c in self.column_getter(file_path)]
+
+    def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
+        return [c for c in self.reader(file_path, nrows=0).columns]
+
+    def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
+        return [c for c in ParquetFile(file_path).columns]
+
+    def __call__(self, file_path) -> pd.DataFrame:
+        return self.read(file_path)
+
+
 if __name__ == "__main__":
     raw_info = RawInfo(
         Namespace(
@@ -192,3 +217,8 @@ if __name__ == "__main__":
     print(raw_info.get_files("applprev", 1))
     print(raw_info.get_files("applprev", 2))
     print(raw_info.read_raw("static", 0).head())
+
+    test_reader = RawReader("parquet")
+    column_infos = test_reader.columns(raw_info.get_files("static")[0].get_path())
+    print(column_infos)
+    print(column_infos[1].desc)
