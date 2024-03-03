@@ -144,7 +144,7 @@ class RawInfo:
     def show_files(self, type_: str = "train") -> list[RawFile]:
         return sorted([RawFile(f) for f in os.listdir(self.file_dir_path / type_)])
 
-    def get_files(self, filename: str, depth: int = None, type_: str = "train") -> list[RawFile]:
+    def get_files(self, filename: str, *, depth: int = None, type_: str = "train") -> list[RawFile]:
         if depth is None:
             return sorted([
                 f for f in self.show_files(type_) if f.name == filename])
@@ -152,8 +152,9 @@ class RawInfo:
             return sorted([
                 f for f in self.show_files(type_)
                 if f.name == filename and f.depth == str(depth)])
-        
-        
+
+    def get_depths_by_name(self, file_name: str, type_: str = "train") -> list[int]:
+        return sorted(list(set([int(f.depth) for f in self.get_files(file_name, type_=type_)])))
 
     def get_files_by_depth(self, depth: int, type_: str = "train") -> list[RawFile]:
         return [f for f in self.show_files(type_) if f.depth == str(depth)]
@@ -161,10 +162,11 @@ class RawInfo:
     def read_raw(
         self,
         file_name: str,
-        depth: int,
+        *,
+        depth: int = None,
         type_: str = "train",
     ) -> pd.DataFrame:
-        raw_files = self.get_files(file_name, depth, type_)
+        raw_files = self.get_files(file_name, depth=depth, type_=type_)
 
         if len(raw_files) > 0:
             raw_df = pd.concat([self.reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
@@ -216,7 +218,7 @@ if __name__ == "__main__":
     print(raw_info.get_files("applprev"))
     print(raw_info.get_files("applprev", 1))
     print(raw_info.get_files("applprev", 2))
-    print(raw_info.read_raw("static", 0).head())
+    print(raw_info.read_raw("static", depth=0).head())
 
     test_reader = RawReader("parquet")
     column_infos = test_reader.columns(raw_info.get_files("static")[0].get_path())
