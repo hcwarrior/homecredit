@@ -4,6 +4,7 @@ import os
 # import pandas as pd
 from dataset.datainfo import RawInfo
 from argparse import ArgumentParser, Namespace
+import pandas as pd
 
 
 def get_config():
@@ -18,19 +19,25 @@ def get_config():
     return parser.parse_args()
 
 
-def prepare_data(conf: Namespace, type_: str = "train"):
+def prepare_base_data(conf: Namespace = None, type_: str = "train"):
+    print("prepare_base_data ...")
     infos = RawInfo(conf)
     base_df = infos.read_raw("base", type_=type_)
     static_df = infos.read_raw("static", depth=0, type_=type_)
+    static_cb_df = infos.read_raw("static_cb", depth=0, type_=type_)
 
-    return static_df.join(base_df[["case_id", "MONTH", "target"]], on="case_id", how="left", rsuffix="_base")
+    joined_df = pd.merge(base_df, static_df, on="case_id", how="left", suffixes=("_base", "_static"))
+    joined_df = pd.merge(joined_df, static_cb_df, on="case_id", how="left", suffixes=("", "_static_cb"))
+    print(f"base shape: {base_df.shape} & static shape: {static_df.shape} & static_cb shape: {static_cb_df.shape} & joined shape: {joined_df.shape}")
+
+    return joined_df
 
 if __name__ == "__main__":
     conf = get_config()
 
     # prepare data
-    train_base_static = prepare_data(conf)
-    print(train_base_static.head())
+    # train_base_static = prepare_data(conf)
+    train_base_static = prepare_base_data()
 
     # feature selection
 
@@ -39,5 +46,4 @@ if __name__ == "__main__":
     # model evaluation
 
     # model prediction
-
 
