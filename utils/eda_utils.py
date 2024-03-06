@@ -4,18 +4,22 @@ import os
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import glob
+import decimal
+from joblib import Parallel, delayed
+from tqdm import tqdm
+from pathlib import Path
+from IPython.display import display
 
 
-BASE_PATH = os.getcwd()
-DATA_PATH = os.path.join(BASE_PATH, "data/home-credit-credit-risk-model-stability")
-PARQUET_DIR_PATH = os.path.join(DATA_PATH, "parquet_files")
+BASE_PATH = Path(os.getcwd())
+DATA_PATH = BASE_PATH / "data" / "home-credit-credit-risk-model-stability"
+PARQUET_DIR_PATH = DATA_PATH / "parquet_files"
+DESCRIPTION_DF = pd.read_csv(DATA_PATH / "feature_definitions.csv")
 
-description_df = pd.read_csv(f"{DATA_PATH}/feature_definitions.csv")
-
-
-def describe(col: str, description_df: pd.DataFrame = description_df):
+def describe(col: str, description_df: pd.DataFrame = DESCRIPTION_DF):
     if col in description_df["Variable"].values:
-        result = description_df.loc[description_df["Variable"] == col, "Description"].values[0]
+        result = description_df.loc[description_df["Variable"] == col, "Description_kor"].values[0]
     else:
         result = col
     
@@ -28,11 +32,14 @@ def describe(col: str, description_df: pd.DataFrame = description_df):
         "L": "Unspecified Transform",
     }
 
-    if col[-1] in postfix_dict:
-        return f"{col}: {result} ({postfix_dict[col[-1]]})"
-    else:
-        return f"{col}: result"
+    return f"{col}: {result} (postfix type : {postfix_dict.get(col[-1], '-')})"
 
+def describe_data(data: pd.DataFrame):
+    data.info()
+    display(data.head())
+    for i, c in enumerate(data.columns):
+        print(i, describe(c), data[c].dropna().iloc[0])
+    return data.describe().astype(int)
 
 def read_data(
     file_name: str,
@@ -43,34 +50,19 @@ def read_data(
     format_: str = "parquet",
 ):
     file_dir = os.path.join(dir_path, gubun)
-    file_name_format = "{file_name}_{depth}{postfix}.{format_}"
-    
+    file_name_format = f"{file_name}_{depth}*.{format_}"
+
     if file_name in ["train_base", "test_base"]:
         file_path = os.path.join(file_dir, f"{file_name}.{format_}")
         return pd.read_parquet(file_path)
 
-    if num_files > 1:
-        df_ = pd.concat([
-            pd.read_parquet(
-                os.path.join(
-                    file_dir,
-                    file_name_format.format(
-                        file_name=file_name,
-                        depth=depth,
-                        postfix=f"_{i}",
-                        format_=format_))
-            )
-            for i in range(num_files)
-        ])
-    elif num_files == 1:
-        file_path = os.path.join(
-            file_dir,
-            file_name_format.format(file_name=file_name, depth=depth, postfix="", format_=format_))
-        df_ = pd.read_parquet(file_path)
-    else:
-        raise ValueError(f"num_files should be greater than 0. Not {num_files}.")
+    files = [f for f in glob.glob(os.path.join(file_dir, file_name_format))]
+    if len(files) == 0:
+        raise FileNotFoundError(
+            f"No file found with the name '{file_name_format}' in '{file_dir}'"
+        )
 
-    return df_
+    return pd.read_parquet(files)
 
 
 def extract_first_number(x: str, special_codes: dict = None, large_number=9.9999e10) -> int:
@@ -191,3 +183,133 @@ def finebinning(
         plt.show()
 
     return final_df, sorted_splits
+
+
+def is_number(s):
+    try:
+        decimal.Decimal(s)
+        return True
+    except decimal.InvalidOperation:
+        return False
+    except TypeError:
+        return False
+
+
+def classing_each(col, data, y, val_gb, ignore_sv):
+
+    if data.dtype in ("object", "O") and data.apply(is_number).all():
+        data = data.astype("double")
+    sv_list = [-99999999, np.NaN, "Missing", "Special", np.inf, -np.inf]
+
+    if ignore_sv:
+        for each in (y, val_gb, data):
+            each = each[~data.isin(sv_list)]
+
+    if len(data) == 0:
+        return
+
+    if data.dtype in ("object", "O", "category") or data.nunique() <= 5:
+        binned = data
+        report = (
+            pd.DataFrame({"col": col, "bin": binned, "label": y, "val_gb": val_gb})
+            .value_counts()
+            .reset_index()
+        )
+        report["order"] = report["bin"]
+    else:
+        binned = pd.qcut(data, 10, duplicates="drop")
+        if binned.nunique() <= 1:
+            binned = pd.qcut(data, 200, duplicates="drop")
+        report = (
+            pd.DataFrame({"col": col, "bin": binned, "label": y, "val_gb": val_gb})
+            .value_counts()
+            .reset_index()
+        )
+        report["order"] = report["bin"].cat.codes
+    report = report.sort_values(["order", "label"])
+    report = report.drop(columns=["order"]).set_index(["col", "bin"])
+
+    return report
+
+
+def fineclassing(data, use_columns, label="label", val_gb_colname=None, ignore_sv=False)-> pd.DataFrame:
+    '''Get reports for each column in the data.
+    Args:
+        data: DataFrame
+        use_columns: list of str
+        label: str
+        val_gb_colname: str
+        ignore_sv: bool
+    Returns:
+        DataFrame
+        '''
+    y = data[label]
+    val_gb = data[val_gb_colname] if val_gb_colname else 0
+
+    with Parallel(n_jobs=-1) as parallel:
+        reports = parallel(
+            delayed(classing_each)(col, data[col], y, val_gb, ignore_sv)
+            for col in tqdm(use_columns)
+        )
+    print(reports)
+
+    reports = pd.concat(reports)
+    reports = pd.concat(
+        [
+            reports[(reports["label"] == 0) & (reports["val_gb"] == 0)].iloc[:, 2],
+            reports[(reports["label"] == 1) & (reports["val_gb"] == 0)].iloc[:, 2],
+            reports[(reports["label"] == 0) & (reports["val_gb"] == 1)].iloc[:, 2],
+            reports[(reports["label"] == 1) & (reports["val_gb"] == 1)].iloc[:, 2],
+        ],
+        axis=1,
+    )
+    reports.columns = ["dev_good", "dev_bad", "val_good", "val_bad"]
+    reports = reports.fillna(0)
+    # calc bad_rate
+    reports["dev_all"] = reports["dev_good"] + reports["dev_bad"]
+    reports["dev_bad_rate"] = reports["dev_bad"] / reports["dev_all"]
+    reports["val_all"] = reports["val_good"] + reports["val_bad"]
+    reports["val_bad_rate"] = reports["val_bad"] / reports["val_all"]
+    # calc total
+    reports.reset_index().set_index(["col"])
+    reports = reports.join(
+        reports.groupby(level=0).sum()[
+            ["dev_all", "dev_good", "dev_bad", "val_all", "val_good", "val_bad"]
+        ],
+        rsuffix="_total",
+    )
+    # calc IV
+    reports["dev_bad_proportion"] = reports["dev_bad"] / reports["dev_bad_total"]
+    reports["dev_good_proportion"] = reports["dev_good"] / reports["dev_good_total"]
+    reports["dev_all_proportion"] = reports["dev_all"] / reports["dev_all_total"]
+    reports["dev_IV"] = np.where(
+        (reports["dev_good_proportion"] == 0) | (reports["dev_bad_proportion"] == 0),
+        0,
+        (reports["dev_good_proportion"] - reports["dev_bad_proportion"])
+        * np.log(reports["dev_good_proportion"] / reports["dev_bad_proportion"]),
+    )
+    reports["val_bad_proportion"] = reports["val_bad"] / reports["val_bad_total"]
+    reports["val_good_proportion"] = reports["val_good"] / reports["val_good_total"]
+    reports["val_all_proportion"] = reports["val_all"] / reports["val_all_total"]
+    reports["val_IV"] = np.where(
+        (reports["val_good_proportion"] == 0) | (reports["val_bad_proportion"] == 0),
+        0,
+        (reports["val_good_proportion"] - reports["val_bad_proportion"])
+        * np.log(reports["val_good_proportion"] / reports["val_bad_proportion"]),
+    )
+    reports = reports.replace([np.inf, -np.inf], np.nan)
+    reports = reports.join(
+        reports.groupby(level=0).sum()[["dev_IV", "val_IV"]], rsuffix="_total"
+    )
+    # calc PSI
+    reports["PSI"] = (
+        reports["val_all_proportion"] - reports["dev_all_proportion"]
+    ) * np.log(reports["val_all_proportion"] / reports["dev_all_proportion"])
+    reports = reports.join(reports.groupby(level=0).sum()[["PSI"]], rsuffix="_total")
+    # summary
+    reports.reset_index().set_index(["col", "bin"])
+
+    if val_gb_colname is None:
+        reports = reports[[c for c in reports.columns if "dev" in c]]
+
+    return reports
