@@ -19,6 +19,8 @@ class SparkDataLoader:
 
             if field_type == "string":
                 cast_map[field] = f"max({field}) as {field}"
+                cast_map[f"{field}_uv"] = f"count(distinct {field}) as {field}_uv"
+                cast_map[f"{field}_cnt"] = f"count(*) as {field}_cnt"
             elif field_type in ("integer", "long", "short", "double"):
                 cast_map[field] = f"avg({field}) as {field}"
             elif field_type == "boolean":
