@@ -1,0 +1,22 @@
+# both f and g uses raw data without transformation
+features: [a, b, c, d, e, f, g]
+# one of [embedding, onehot, binning, standardization]
+transformations:
+  a:
+    type: embedding
+    properties:
+      vocab_size: 10
+      embedding_size: 3
+  b:
+    type: onehot
+    properties:
+      vocab_size: 5
+  c:
+    type: binning
+    properties:
+      boundaries: [0.5, 1, 1.5, 2.0, 3.0]
+  d:
+    type: standardization
+    properties:
+      mean: 0.5
+      stddev: 0.2
