@@ -1,9 +1,19 @@
-# both f and g uses raw data without transformation
+# feature g uses raw data without transformation
 features: [a, b, c, d, e, f, g]
 # one of [embedding, onehot, binning, standardization]
 transformations:
+  # required fields when type is defined: [type, properties]
+
+  # required properties
+  ## embedding: [vocab_size, embedding_size]
+  ## onehot: [vocab_size]
+  ## binning: [boundaries]
+  ## standardization: [mean, stddev]
+
   a:
     type: embedding
+    # if "num_hashing_bins" is not defined, no hashing is applied
+    num_hashing_bins: 5
     properties:
       vocab_size: 10
       embedding_size: 3
@@ -20,3 +30,5 @@ transformations:
     properties:
       mean: 0.5
       stddev: 0.2
+  f:
+    num_hashing_bins: 5
