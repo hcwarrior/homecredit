@@ -2,11 +2,11 @@ from typing import List, Dict, Set
 
 import yaml
 
-from transformation.embedding import Embedding
-from transformation.onehot import OneHot
-from transformation.binning import HistogramBinning
-from transformation.standardization import Standardization
-from transformation.base_transformation import BaseTransformation
+from layers.transformation.embedding import Embedding
+from layers.transformation.onehot import OneHot
+from layers.transformation.binning import HistogramBinning
+from layers.transformation.standardization import Standardization
+from layers.transformation.base_transformation import BaseTransformation
 from transformation_type import FeatureTransformation
 
 
