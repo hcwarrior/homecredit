@@ -45,7 +45,7 @@ def read_data(
     file_name: str,
     depth: int,
     gubun: str = "train",
-    num_files: int = 1,
+    num_files: int = 1000,
     dir_path: str = PARQUET_DIR_PATH,
     format_: str = "parquet",
 ):
@@ -61,8 +61,9 @@ def read_data(
         raise FileNotFoundError(
             f"No file found with the name '{file_name_format}' in '{file_dir}'"
         )
-
-    return pd.read_parquet(files)
+    len_files = min(len(files), num_files)
+    print(len_files, "files will be read")
+    return pd.read_parquet(files[:len_files])
 
 
 def extract_first_number(x: str, special_codes: dict = None, large_number=9.9999e10) -> int:
@@ -208,24 +209,27 @@ def classing_each(col, data, y, val_gb, ignore_sv):
     if len(data) == 0:
         return
 
-    if data.dtype in ("object", "O", "category") or data.nunique() <= 5:
-        binned = data
-        report = (
-            pd.DataFrame({"col": col, "bin": binned, "label": y, "val_gb": val_gb})
-            .value_counts()
-            .reset_index()
-        )
-        report["order"] = report["bin"]
+    if data.dtype in ("object", "O", "string"):
+        binned = data.fillna("Missing").str[:7]
+    elif data.nunique() <= 5:
+        binned = data.astype('str').fillna(-99999999)
     else:
+        data = data.fillna(-99999999)
         binned = pd.qcut(data, 10, duplicates="drop")
         if binned.nunique() <= 1:
             binned = pd.qcut(data, 200, duplicates="drop")
-        report = (
-            pd.DataFrame({"col": col, "bin": binned, "label": y, "val_gb": val_gb})
-            .value_counts()
-            .reset_index()
-        )
+
+    report = (
+        pd.DataFrame({"col": col, "bin": binned, "label": y, "val_gb": val_gb})
+        .value_counts()
+        .reset_index()
+    )
+
+    if data.dtype in ("object", "O", "string") or data.nunique() <= 5:
+        report["order"] = report["bin"]
+    else:
         report["order"] = report["bin"].cat.codes
+
     report = report.sort_values(["order", "label"])
     report = report.drop(columns=["order"]).set_index(["col", "bin"])
 
@@ -251,7 +255,6 @@ def fineclassing(data, use_columns, label="label", val_gb_colname=None, ignore_s
             delayed(classing_each)(col, data[col], y, val_gb, ignore_sv)
             for col in tqdm(use_columns)
         )
-    print(reports)
 
     reports = pd.concat(reports)
     reports = pd.concat(
