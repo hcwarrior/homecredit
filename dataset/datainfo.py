@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 from argparse import Namespace
 from dataclasses import dataclass
-from fastparquet import ParquetFile
+from pyarrow.parquet import ParquetFile
 
 
 BASE_PATH = Path(os.getcwd())
