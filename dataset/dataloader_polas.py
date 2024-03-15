@@ -31,26 +31,20 @@ class ParquetDataLoader:
             schema.update(file_schema)
         return schema
     
-    def load_with_merge_schema(self, first_order_columns=["case_id"]) -> pl.LazyFrame:
-        # union schema
-        schema = self.get_merged_schema()
-
-        lfs = []
+    def load_with_schema(self,file_path, schema :dict, first_order_columns=["case_id"]) -> pl.LazyFrame:
         all_columns_sorted = first_order_columns + list(set(schema.keys()) - set(first_order_columns))
 
-        for f in self.files:
-            lf = pl.scan_parquet(f)
-            missing_columns = set(all_columns_sorted) - set(lf.columns)
+        lf = pl.scan_parquet(file_path)
+        missing_columns = set(all_columns_sorted) - set(lf.columns)
 
-            # missin columns to null
-            for c in missing_columns:
-                lf = lf.with_columns(pl.lit(None).alias(c).cast(schema[c]))
+        # missin columns to null
+        for c in missing_columns:
+            lf = lf.with_columns(pl.lit(None).alias(c).cast(schema[c]))
 
-            # ordring
-            lf = lf.select(all_columns_sorted)
-            lfs.append(lf)
-
-        return pl.concat(lfs)
+        # ordring
+        lf = lf.select(all_columns_sorted)
+        
+        return lf
 
     def get_agg_data(self, lf: pl.LazyFrame ) -> pl.LazyFrame:
         temp_table_name = "tmp"
@@ -65,13 +59,23 @@ class ParquetDataLoader:
 
         lf_agg = pl.SQLContext(frames={temp_table_name: lf}).execute(group_by_sql)
         return lf_agg
-
-    def write_agg_data(self, lf:  pl.LazyFrame, path: str):
-        df_agg = self.get_agg_data(lf)
-        df_agg.write_parquet(path, compression="gzip")
+    
+    def write_schema_merged_parquet(self, write_path:str):
+        schema = self.get_merged_schema()
+        for i, f in enumerate(self.files):
+            write_file = f"{write_path}/polars_merged_{i}.parquet"
+            print(f"processing {f} -> {write_file}")
+            lf = self.load_with_schema(f, schema)
+            lf.sink_parquet(f"/{write_path}/polars_merged_{i}.parquet")
+        
+    def write_agg_data(self, schema_merged_data_path: str, write_path: str):
+        lf = pl.scan_parquet(f"{schema_merged_data_path}/*.parquet")
+        lf_agg = self.get_agg_data(lf)
+        lf_agg.sink_parquet(write_path)
 
 
 loader = ParquetDataLoader("/home/w1/work/data/parquet_files/train")
-df = loader.load_with_merge_schema()
-df.sink_parquet("/home/w1/work/polars_merged.parquet",row_group_size=1000000)
+loader.write_schema_merged_parquet("/home/w1/work/merged")
+
+df.sink_parquet("/home/w1/work/polars_merged.parquet",row_group_size=10000,)
 df.collect(streaming=True).write_parquet("/home/w1/work/polars_merged.parquet")
