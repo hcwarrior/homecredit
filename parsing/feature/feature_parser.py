@@ -66,7 +66,7 @@ class FeatureParser:
                 transformation_type = FeatureTransformation(props['type'])
                 required_fields = self._get_required_fields_by_type(transformation_type)
 
-                feature_props = props['properties']
+                feature_props = {} if 'properties' not in props else props['properties']
                 if not required_fields.issubset(feature_props.keys()):
                     raise Exception(f'Required fields for {feature}: {required_fields}')
 
