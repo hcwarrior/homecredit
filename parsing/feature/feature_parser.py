@@ -2,7 +2,8 @@ from typing import List, Dict, Set
 
 import yaml
 
-from layers.transformation.embedding import Embedding
+from layers.transformation.character_embedding import CharacterEmbedding
+from layers.transformation.numerical_embedding import NumericalEmbedding
 from layers.transformation.onehot import OneHot
 from layers.transformation.binning import HistogramBinning
 from layers.transformation.raw import Raw
@@ -21,7 +22,9 @@ class FeatureParser:
             self.conf = self._parse(conf)
 
     def _get_required_fields_by_type(self, transformation_type: FeatureTransformation) -> Set[str]:
-        if transformation_type == FeatureTransformation.EMBEDDING:
+        if transformation_type == FeatureTransformation.NUMERICAL_EMBEDDING:
+            return {'vocab_size', 'embedding_size'}
+        elif transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
             return {'vocab_size', 'embedding_size'}
         elif transformation_type == FeatureTransformation.ONEHOT:
             return {'vocab_size'}
@@ -39,8 +42,10 @@ class FeatureParser:
                               transformation_type: FeatureTransformation,
                               feature_props: Dict[str, object],
                               num_hashing_bins: int) -> BaseTransformation:
-        if transformation_type == FeatureTransformation.EMBEDDING:
-            return Embedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
+        if transformation_type == FeatureTransformation.NUMERICAL_EMBEDDING:
+            return NumericalEmbedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
+        if transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
+            return CharacterEmbedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
         elif transformation_type == FeatureTransformation.ONEHOT:
             return OneHot(feature_props['vocab_size'], num_hashing_bins)
         elif transformation_type == FeatureTransformation.BINNING:

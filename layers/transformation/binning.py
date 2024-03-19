@@ -10,7 +10,7 @@ class HistogramBinning(BaseTransformation):
         super().__init__(num_hashing_bins)
         self.layer = tf_keras.layers.Discretization(bin_boundaries=bin_boundaries)
 
-    def forward(self, input_tensor: tf_keras.Input):
+    def call(self, inputs: tf_keras.Input):
         if self.hashing_layer is not None:
-            input_tensor = self.hashing_layer(input_tensor)
-        return self.layer(input_tensor)
+            inputs = self.hashing_layer(inputs)
+        return self.layer(inputs)

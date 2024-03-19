@@ -5,16 +5,17 @@ transformations:
   # required fields when type is defined: [type, properties]
 
   # required properties
-  ## embedding: [vocab_size, embedding_size]
+  ## numerical_embedding: [vocab_size, embedding_size]
+  ## character_embedding: [vocab_size, embedding_size]
   ## onehot: [vocab_size]
   ## binning: [boundaries]
   ## standardization: [mean, stddev]
   ## raw: []
 
   a:
-    type: embedding
+    type: numerical_embedding
     # if "num_hashing_bins" is not defined, no hashing is applied
-    num_hashing_bins: 5
+    num_hashing_bins: 15
     properties:
       vocab_size: 10
       embedding_size: 3
@@ -31,6 +32,11 @@ transformations:
     properties:
       mean: 0.5
       stddev: 0.2
+  e:
+    type: character_embedding
+    properties:
+      vocab_size: 10
+      embedding_size: 3
   f:
     type: raw
     num_hashing_bins: 5
