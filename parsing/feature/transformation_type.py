@@ -6,4 +6,5 @@ class FeatureTransformation(Enum):
     ONEHOT = 'onehot'
     BINNING = 'binning'
     STANDARDIZATION = 'standardization'
+    RAW = 'raw'
 
