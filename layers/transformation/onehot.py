@@ -5,7 +5,7 @@ from layers.transformation.base_transformation import BaseTransformation
 
 class OneHot(BaseTransformation):
     def __init__(self, vocab_size: int, num_hashing_bins: int):
-        super(num_hashing_bins)
+        super().__init__(num_hashing_bins)
         self.layer = tf_keras.layers.CategoryEncoding(num_tokens=vocab_size, output_mode='one_hot')
 
     def forward(self, input_tensor: tf_keras.Input):

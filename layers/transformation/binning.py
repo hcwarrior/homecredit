@@ -7,7 +7,7 @@ from layers.transformation.base_transformation import BaseTransformation
 
 class HistogramBinning(BaseTransformation):
     def __init__(self, bin_boundaries: List[float], num_hashing_bins: int):
-        super(num_hashing_bins)
+        super().__init__(num_hashing_bins)
         self.layer = tf_keras.layers.Discretization(bin_boundaries=bin_boundaries)
 
     def forward(self, input_tensor: tf_keras.Input):

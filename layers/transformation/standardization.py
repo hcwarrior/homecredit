@@ -5,7 +5,7 @@ from layers.transformation.base_transformation import BaseTransformation
 
 class Standardization(BaseTransformation):
     def __init__(self, mean: float, stddev: float, num_hashing_bins: int):
-        super(num_hashing_bins)
+        super().__init__(num_hashing_bins)
         self.layer = tf_keras.layers.Normalization(mean=mean, variance=stddev)
 
     def forward(self, input_tensor: tf_keras.Input):
