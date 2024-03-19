@@ -34,5 +34,4 @@ class DeepCrossNetwork(tf_keras.Model):
 
 
     def call(self, inputs: tf_keras.Input):
-        x = self.dense1(inputs)
-        return self.dense2(x)
+        return self.model(inputs)
