@@ -91,6 +91,8 @@ data.num_group1.value_counts()
 # max          99.000000
 # Name: num_group1, dtype: float64
 
+data[data["case_id"] == 2701515]
+
 data.groupby("case_id")["recorddate_4527225D"].nunique().value_counts()
 # 한 CASE는 하나의 recorddate_4527225D만 가짐
 
@@ -335,6 +337,7 @@ df.drop(columns=DROP_COLUMNS).to_csv(Path("data") / "eda" / f"{FILE_NAME}_{DEPTH
 FILE_NAME = "train_applprev"
 DEPTH = 1
 data = read_data(FILE_NAME, DEPTH)
+appl_1 = data.copy()
 describe_data(data)
 # 0 case_id: case_id (postfix type : -) 2
 # 31 num_group1: num_group1 (postfix type : -) 0
@@ -382,6 +385,9 @@ describe_data(data)
 # 38 revolvingaccount_394A: 신청자의 이전 신청에서 존재한 리볼빙 계정. (postfix type : Transform Amount) 760645950.0
 # 40 tenor_203L: 이전 신청서의 할부 개수. (postfix type : Unspecified Transform) 24.0
 
+data.groupby("case_id")["num_group1"].count().describe().astype(int)
+data["num_group1"].value_counts()
+
 data.approvaldate_319D.str[:7].value_counts().sort_index()
 # 승인날짜로 승인여부 확인 가능
 data[
@@ -394,29 +400,166 @@ data[
         "dtlastpmtallstes_3545839D",
     ]
 ].iloc[-50:, :]
-# case_id와 num_group1을 key로 해서 label을 붙여서 평가해보면 어떨까?햐
+# case_id와 num_group1을 key로 해서 label을 붙여서 평가해보면 어떨까?
+
+# 범주형 변수
+# a55475b1를 공통으로 가장 많이 가지고 있는데, null같은 것으로 취급해도 될까?
+# Yes! null로 취급해도 될 것 같음. 왜냐하면 null 이 아예 없음
+# district_544M
+data['district_544M'].value_counts()
+data['district_544M'].isna().sum()
+기간세분화
+
+# cancelreason_3545846M
+data['cancelreason_3545846M'].value_counts()
+# rejectreason_755M
+data['rejectreason_755M'].value_counts()
+# rejectreasonclient_4145042M
+data['rejectreasonclient_4145042M'].value_counts()
+# cancelreason_3545846M 과 rejectreason_755M 는 P94_109_143라는 코드를 공유함.
+
+# education_1138M
+# postype_4733339M
+# profession_152M
+
+
+# 각자의 코드를 사용하는 범주형 변수
+# credacc_status_367L
+data['credacc_status_367L'].value_counts()
+# inittransactioncode_279L
+data['inittransactioncode_279L'].value_counts()
+# status_219L
+data['status_219L'].value_counts()
+# credtype_587L
+data['credtype_587L'].value_counts()
+# familystate_726L
+data['familystate_726L'].value_counts()
+
 
 # 예상
-# NUM_GROUP1 이전 신청서의 신청서 제출 SEQ
+# NUM_GROUP1 이전 신청서의 신청서 제출 SEQ수
+
+# feature 제안
+# num_group==0 인 신청서의 정보
+# num_group==1 인 신청서의 정보
+# 신청일자 기준 최근 n개월의 정보 agg
+# num_group 기준 최근 n건의 정보 agg
+#     범주형 변수 구분자별 agg (단 빈도가 너무 적은 것은 제외)
+# case_id와 num_group1을 key로 해서 label을 붙여서 평가해보면 어떨까?
+# 시계열적 정보를 반영하기 위해 nn을 사용해보면 어떨까?
+
 
 ################################################################################
-data = read_data("train_applprev", 2)
+FILE_NAME = "train_applprev"
+DEPTH = 2
+data = read_data(FILE_NAME, DEPTH)
+appl_2 = data.copy()
 describe_data(data)
+
+# 0 case_id: case_id (postfix type : -) 2
+# 1 cacccardblochreas_147M: 카드 블로킹 이유. (postfix type : Masking Categories) a55475b1
+# 2 conts_type_509L: 이전 신청서의 개인 연락 유형. (postfix type : Unspecified Transform) PRIMARY_MOBILE
+# 3 credacc_cards_status_52L: 이전 신청서의 신용 카드 상태. (postfix type : Unspecified Transform) CANCELLED
+# 4 num_group1: num_group1 (postfix type : -) 0
+# 5 num_group2: num_group2 (postfix type : -) 0
+
+data["num_group1"].value_counts()
+# appl_prev 와 같은 num_group을 공유하는지?
+appl_1["case_id"].nunique()
+# 1221522
+appl_2["case_id"].nunique()
+# 1221522
+
+appl_1[["case_id", "num_group1"]].drop_duplicates().shape[0]
+# 6525979
+appl_2[["case_id", "num_group1"]].drop_duplicates().shape[0]
+# 6525978
+
+# 빠진걸 찾아보자
+appl_1_unique = [
+    tuple(row)
+    for row in appl_1[["case_id", "num_group1"]].drop_duplicates().values.tolist()
+]
+appl_2_unique = [
+    tuple(row)
+    for row in appl_2[["case_id", "num_group1"]].drop_duplicates().values.tolist()
+]
+missing_value = set(appl_1_unique) - set(appl_2_unique)
+print(missing_value)
+appl_1[(appl_1['case_id'] == 1682638) & (appl_1['num_group1'] == 3)]
+appl_2[(appl_2['case_id'] == 1682638) & (appl_2['num_group1'] == 3)]
+# 하나면 case_id 째로 빼도 상관 없을 듯
+
+temp_joined = appl_1.merge(appl_2, on=["case_id", "num_group1"], how="inner")
+appl_2.shape[0]
+# 14075487
+temp_joined.shape[0]
+# 14075487
+# num_group1은 공유하는 것으로 보임
 
 # 예상
 # NUM_GROUP1 이전 신청서의 신청서 제출 SEQ
-# NUM_GROUP2 이전 신청서의 신청인 SEQ
+# NUM_GROUP2 이전 신청서의 ... 연락처 SEQ인지, 카드 SEQ인지..
 
+data.groupby("case_id")["num_group2"].count().describe().astype(int)
+data["num_group2"].value_counts()
+# 1~3개의 정보가 있는 것으로 보임
+
+data['cacccardblochreas_147M'].value_counts()
+data["credacc_cards_status_52L"].value_counts(dropna=False)
+data["conts_type_509L"].value_counts()
+data[
+    ["cacccardblochreas_147M", "credacc_cards_status_52L"]
+].isna().value_counts().sort_index()
+data[
+    ["cacccardblochreas_147M", "credacc_cards_status_52L", "conts_type_509L"]
+].isna().value_counts().sort_index()
+data[~(data["cacccardblochreas_147M"].isna())&~(data["credacc_cards_status_52L"].isna())]
+data[
+    [
+        'case_id',
+        'num_group1',
+        'cacccardblochreas_147M',
+        'conts_type_509L',
+        'credacc_cards_status_52L',
+    ]
+].drop_duplicates().shape[0]
+
+# feature 제안
+# num_group1에 정보를 붙여...
+# 해석하기 어려워서, 컬럼으로 뽑아. 순서정보도 없는것같고...
 
 ################################################################################
 ################################################################################
 # 개인정보
-data = read_data("train_person", 1)
+FILE_NAME = "train_person"
+DEPTH = 1
+data = read_data(FILE_NAME, DEPTH)
 describe_data(data)
+
+data["num_group1"].value_counts()
+data[data["num_group1"] == 1]
+data[data["num_group1"] == 0]
+
+# 컬럼이 참 많다
+# None이 참 많다.
+# num_group1==1인 경우 None은 더 많다
+data[data["num_group1"] == 1].isna().sum() / data[data["num_group1"] == 1].shape[0]
+# 의미있는 컬럼은 아래정도...
+# personindex_1023L
+# persontype_792L
+# relationshiptoclient_415T
+# relationshiptoclient_642T
+# remitter_829L
+
+data[data["num_group1"] == 0].isna().sum() / data[data["num_group1"] == 0].shape[0]
+
 
 # NUM_GROUP1 신청인 SEQ
 
 ################################################################################
+FILE_NAME = "train_person"
+DEPTH = 2
 data = read_data("train_person", 2)
 describe_data(data)
 
@@ -430,6 +573,8 @@ describe_data(data)
 ################################################################################
 ################################################################################
 # 직불카드정보
+FILE_NAME = "train_debitcard"
+DEPTH = 1
 data = read_data("train_debitcard", 1)
 describe_data(data)
 
@@ -438,6 +583,8 @@ describe_data(data)
 ################################################################################
 ################################################################################
 # 예금정보
+FILE_NAME = "train_deposit"
+DEPTH = 1
 data = read_data("train_deposit", 1)
 describe_data(data)
 
@@ -446,6 +593,8 @@ describe_data(data)
 ################################################################################
 ################################################################################
 # 기타정보
+FILE_NAME = "train_other"
+DEPTH = 1
 data = read_data("train_other", 1)
 describe_data(data)
 
