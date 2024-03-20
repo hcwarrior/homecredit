@@ -5,3 +5,4 @@ pyyaml==6.0.1
 xgboost==2.0.3
 ipython==8.18.1
 simple-parsing==0.1.5
+pyarrow==9.0.0
