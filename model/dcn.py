@@ -1,9 +1,8 @@
 from typing import Dict
 
-import tensorflow as tf
 import tensorflow.keras as tf_keras
-from keras import Model
-from keras.layers import Dense
+from tensorflow.keras import Model
+from tensorflow.keras.layers import Dense
 
 from layers.model.cross import Cross
 from layers.transformation.base_transformation import BaseTransformation
@@ -18,20 +17,20 @@ class DeepCrossNetwork(tf_keras.Model):
 
 
     def _build_layers(self):
-        features = []
+        input_by_feature_name = {}
         for feature, transformation in self.transformations_by_feature.items():
-            inputs_placeholder = tf_keras.Input((None, ),
-                           name=feature,
-                           dtype=tf.float32)
+            inputs_placeholder = tf_keras.Input((1, ), name=feature)
 
             transformed = transformation(inputs_placeholder)
-            features.append(transformed)
-        x0 = tf.concat(features, axis=-1)
-        x1 = Cross(x0, x0)
-        x2 = Cross(x0, x1)
+            input_by_feature_name[feature] = transformed
+
+        # TODO: Please add parameters
+        x0 = tf_keras.layers.Concatenate(axis=-1)(list(input_by_feature_name.values()))
+        x1 = Cross()(x0, x0)
+        x2 = Cross()(x0, x1)
         logits = Dense(units=2)(x2)
-        self.model = Model(features, logits)
+        self.model = Model(input_by_feature_name, logits)
 
 
-    def call(self, inputs: tf_keras.Input):
+    def call(self, inputs):
         return self.model(inputs)
