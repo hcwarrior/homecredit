@@ -11,7 +11,7 @@ transformations:
   ## standardization: [mean, stddev]
   ## raw: []
 
-  incometype_1044t:
+  incometype_1044T:
     type: character_embedding
     properties:
       vocab_size: 9
