@@ -1,5 +1,4 @@
-# feature g uses raw data without transformation
-features: [a, b, c, d, e, f, g]
+features: [incometype_1044T, sex_738L, annuity_780A, credamount_770A, credtype_322L, disbursedcredamount_1113A]
 # one of [embedding, onehot, binning, standardization, raw]
 transformations:
   # required fields when type is defined: [type, properties]
@@ -12,31 +11,28 @@ transformations:
   ## standardization: [mean, stddev]
   ## raw: []
 
-  a:
-    type: numerical_embedding
-    # if "num_hashing_bins" is not defined, no hashing is applied
-    num_hashing_bins: 15
-    properties:
-      vocab_size: 10
-      embedding_size: 3
-  b:
-    type: onehot
-    properties:
-      vocab_size: 5
-  c:
-    type: binning
-    properties:
-      boundaries: [0.5, 1, 1.5, 2.0, 3.0]
-  d:
-    type: standardization
-    properties:
-      mean: 0.5
-      stddev: 0.2
-  e:
+  incometype_1044t:
     type: character_embedding
     properties:
-      vocab_size: 10
+      vocab_size: 9
       embedding_size: 3
-  f:
-    type: raw
-    num_hashing_bins: 5
+  sex_738L:
+    type: onehot
+    properties:
+      vocab_size: 2
+  annuity_780A:
+    type: binning
+    properties:
+      boundaries: [1116.820005, 1353.4600000000003, 1574.4, 1776.6, 1963.0, 2167.2, 2399.8, 2602.8, 2874.4001, 3150.4001, 3477.9100000000008, 3827.160060000001, 4220.8003, 4700.680209999999, 5193.700225000001, 5954.440060000003, 6666.6, 7801.320000000003, 9866.59095]
+  credamount_770A:
+    type: binning
+    properties:
+      boundaries: [10198.1, 12692.600000000002, 14998.0, 17596.4, 19998.0, 21980.0, 24500.0, 27998.0, 30906.0, 35421.5, 40000.0, 43676.40000000001, 50000.0, 57000.0, 62889.45000000008, 75653.12000000018, 92717.00000000004, 101500.0, 140000.0]
+  credtype_322L:
+    type: onehot
+    properties:
+      vocab_size: 3
+  disbursedcredamount_1113A:
+    type: binning
+    properties:
+      boundaries: [8201.050000000003, 11452.800000000003, 13798.27, 16000.0, 18598.0, 20240.0, 23299.61, 25976.0, 29000.0, 31979.201, 36000.0, 40000.0, 45000.0, 51264.89999999998, 60000.0, 68481.32100000008, 80392.14000000003, 100000.0, 132000.0]
