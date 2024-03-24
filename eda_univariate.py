@@ -535,36 +535,185 @@ data[
 FILE_NAME = "train_person"
 DEPTH = 1
 data = read_data(FILE_NAME, DEPTH)
+person_1 = data.copy()
 describe_data(data)
 
 data["num_group1"].value_counts()
+# 0    1526659
+# 1     757320
+# 2     484214
+# 3     181768
+# 4      22453
+# 5       1466
+# 6         99
+# 7          8
+# 8          2
+# 9          2
 data[data["num_group1"] == 1]
 data[data["num_group1"] == 0]
 
 # 컬럼이 참 많다
 # None이 참 많다.
-# num_group1==1인 경우 None은 더 많다
-data[data["num_group1"] == 1].isna().sum() / data[data["num_group1"] == 1].shape[0]
-# 의미있는 컬럼은 아래정도...
-# personindex_1023L
-# persontype_792L
-# relationshiptoclient_415T
-# relationshiptoclient_642T
-# remitter_829L
-
 data[data["num_group1"] == 0].isna().sum() / data[data["num_group1"] == 0].shape[0]
+
+# num_group1!=0인 경우 None은 더 많다
+data[data["num_group1"] != 0].isna().sum() / data[data["num_group1"] != 0].shape[0]
+# 의미있는 컬럼은 아래정도...     na 비율
+# personindex_1023L         0.443770 *
+# persontype_1072L          0.004226
+# persontype_792L           0.443770 *
+# relationshiptoclient_415T 0.443770 *
+# relationshiptoclient_642T 0.443153
+# remitter_829L             0.443770 *
+data[data["num_group1"] == 0].personindex_1023L.value_counts(dropna=False)
+data[data["num_group1"] != 0].personindex_1023L.value_counts(dropna=False)
+# data[data["num_group1"] == 0].persontype_1072L.value_counts(dropna=False)
+# data[data["num_group1"] != 0].persontype_1072L.value_counts(dropna=False)
+data[data["num_group1"] == 0].persontype_792L.value_counts(dropna=False)
+data[data["num_group1"] != 0].persontype_792L.value_counts(dropna=False)
+data[data["num_group1"] == 0].relationshiptoclient_415T.value_counts(dropna=False)
+data[data["num_group1"] != 0].relationshiptoclient_415T.value_counts(dropna=False)
+# data[data["num_group1"] == 0].relationshiptoclient_642T.value_counts(dropna=False)
+# data[data["num_group1"] != 0].relationshiptoclient_642T.value_counts(dropna=False)
+data[data["num_group1"] == 0].remitter_829L.value_counts(dropna=False)
+data[data["num_group1"] != 0].remitter_829L.value_counts(dropna=False)
+data[data["num_group1"] == 1].remitter_829L.value_counts(dropna=False)
+data[data["num_group1"] >= 2].remitter_829L.value_counts(dropna=False)
+describe('remitter_829L')
+# korean(remit) == korean(transfer) 한국어로는 송금으로 동일
+# remiter는 송금인이라는 뜻
+na_ratio = (
+    data[data["num_group1"] != 0].isna().sum() / data[data["num_group1"] != 0].shape[0]
+)
+non_na_cols = na_ratio[na_ratio==0].index
+data[data["num_group1"] != 0][non_na_cols]
 
 
 # NUM_GROUP1 신청인 SEQ
+
+# feature 제안
+# num_group1==0인 경우의 정보
+# num_group1==1인 경우, 새로운 컬럼을 생성해서 붙이기
+# 그 외 agg...
+
 
 ################################################################################
 FILE_NAME = "train_person"
 DEPTH = 2
-data = read_data("train_person", 2)
+data = read_data(FILE_NAME, DEPTH)
+person_2 = data.copy()
 describe_data(data)
 
+data["num_group1"].value_counts()
+# 0    1463928
+# 1     175805
+# 2       3529
+# 3        145
+# 4          3
+# 대부분 num_group1==0인 경우가 많다
+data[data["num_group1"] == 0].num_group2.value_counts()
+# 본인인 경우(["num_group1"] == 0), num_group2==0 인 것의 비중 98%정도
+# 2%만 num_group2가 여러개 달려있음
+data[data["num_group1"] != 0].num_group2.value_counts()
+# 본인이 아닌 경우, num_group2가 여러개 달려있는 경우가 더 많아짐 (10% 이상)
+
+# appl_prev 와 같은 num_group을 공유하는지?
+person_1["case_id"].nunique()
+# 1526659
+person_2["case_id"].nunique()
+# 1435105
+
+person_1[["case_id", "num_group1"]].drop_duplicates().shape[0]
+# 2973991
+person_2[["case_id", "num_group1"]].drop_duplicates().shape[0]
+# 1561280
+
+temp_joined = person_1.merge(person_2, on=["case_id", "num_group1"], how="inner")
+person_2.shape[0]
+# 1643410
+temp_joined.shape[0]
+# 1643410
+# num_group1은 공유하는 것으로 보임
+# person_2에는 person_1의 모든 case가 있는 것음 아님.
+# 그러나 person_1과 person_2가 공유하는 case_id에 대해서는 동일한 갯수의 num_group1을 가지고 있음
+
+
+data[data["num_group1"] == 0].addres_district_368M.value_counts()
+data[data["num_group1"] != 0].addres_district_368M.value_counts()
+
+data[data["num_group1"] == 0].addres_role_871L.value_counts(dropna=False)
+data[data["num_group1"] != 0].addres_role_871L.value_counts(dropna=False)
+
+data[data["num_group1"] == 0].conts_role_79M.value_counts(dropna=False)
+data[data["num_group1"] != 0].conts_role_79M.value_counts(dropna=False)
+
+
+data[data["num_group1"] == 0].relatedpersons_role_762T.value_counts(dropna=False)
+data[data["num_group1"] != 0].relatedpersons_role_762T.value_counts(dropna=False)
+
+
+# 1 addres_district_368M: 개인 주소의 지역. (postfix type : Masking Categories) a55475b1 **
+# 2 addres_role_871L: 개인 주소의 역할. (postfix type : Unspecified Transform) CONTACT **
+# 3 addres_zip_823M: 주소의 우편번호. (postfix type : Masking Categories) a55475b1 **
+# 4 conts_role_79M: 개인의 연락 역할 유형. (postfix type : Masking Categories) a55475b1
+# 5 empls_economicalst_849M: 개인의 경제적 상태 (num_group1 - 개인, num_group2 - 고용). (postfix type : Masking Categories) a55475b1
+# 6 empls_employedfrom_796D: 고용 시작 (num_group1 - 개인, num_group2 - 고용). (postfix type : Transform Date) 2018-06-15
+# 7 empls_employer_name_740M: 고용주의 이름 (num_group1 - 개인, num_group2 - 고용). (postfix type : Masking Categories) a55475b1
+# 8 num_group1: num_group1 (postfix type : -) 0
+# 9 num_group2: num_group2 (postfix type : -) 0
+# 10 relatedpersons_role_762T: 고객의 관련된 사람의 관계 유형(num_group1 - 사람, num_group2 - 관련된 사람). (postfix type : Unspecified Transform)
+
+
+data
+data[data["case_id"] == 6]
+data[data["case_id"] == 22]
+# num_group1, num_group2
+# 0, 0 본인거주지
+# 0, 1 본인회사
+# 1, 0 관련인거주지
+# 1, 1 관련인회사
+data[data["case_id"] == 2702502]
+
+
+narole = data[
+    (data["num_group1"] == 0)
+    & (data["num_group2"] != 0)
+    & (data["addres_role_871L"].isna())
+]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+data[data["case_id"] == 578] # 회사와 관련된 seq 증가?
+
+
+narole = data[data['addres_role_871L'].isna()]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+
+narole = data[data['addres_role_871L'].isna()&(data['conts_role_79M']=='a55475b1')]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+
+narole = data[data['addres_role_871L'].isna() & (data['conts_role_79M'] != 'a55475b1')]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+
+narole = data[~data['addres_role_871L'].isna() & (data['conts_role_79M'] == 'a55475b1')]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+
+narole = data[~data['addres_role_871L'].isna() & (data['conts_role_79M'] != 'a55475b1')]
+for col in narole.columns:
+    print(col, narole[col].nunique())
+
+
 # NUM_GROUP1 신청인 SEQ
-# NUM_GROUP1 관련인 SEQ
+# NUM_GROUP2 ?
+# 하나의 table 안에서 num_group2 의미가 달라질 수 있음
+# 예를들어 addres_role_871L 가 있는 경우/없는 경우
+# (num_group1 - 개인, num_group2 - 고용) 설명이 붙어있는경우와 그렇지 않은 경우, 컬럼에서 쓰는 num_group2의 의미가 다를 수 있음
+# 각각 seq를 매기고 cartesian product를 만든 것 같음. 진짜 개짱남.
+# 컬럼은 서로 연관되어 있을수도 있고 아닐수도 있음... 이게 무슨일이야
+
 #  In case num_group1 or num_group2 stands for person index (this is clear with predictor definitions)
 #  the zero index has special meaning.
 #  When num_groupN=0 it is the applicant (the person who applied for a loan)
@@ -606,9 +755,44 @@ describe_data(data)
 # CB정보 A
 data = read_data("train_credit_bureau_a", 1)
 describe_data(data)
+data['case_id'].nunique()
+data['num_group1'].value_counts()
+# num_group1 의 의미 : 보유 계좌정보 SEQ, 이 계좌는 현재 유효할 수도, 그렇지 않을수도 있음
+# 활성 / 종료된 으로 컬럼이 나누어져 있는데, 하나의 컬럼으로 합치고 valid_yn 같은 컬럼으로 구분하는게 좋을듯
+
+
+# 0 case_id: case_id (postfix type : -) 29427
+# 1 collater_typofvalofguarant_298M: 활성 계약의 담보 평가 유형. (postfix type : Masking Categories) 9a0c095e
+# 2 collater_typofvalofguarant_407M: 종료된 계약의 담보 평가 유형. (postfix type : Masking Categories) a55475b1
+# 3 collater_valueofguarantee_1124L: 활성 계약의 담보 가치. (postfix type : Unspecified Transform) 0.0
+# 4 collater_valueofguarantee_876L: 종료된 계약의 담보 가치. (postfix type : Unspecified Transform) 0.0
+# 5 collaterals_typeofguarante_359M: 종료된 계약을 위한 담보로 사용된 담보 유형. (postfix type : Masking Categories) a55475b1
+# 6 collaterals_typeofguarante_669M: 활성 계약의 담보 유형. (postfix type : Masking Categories) c7a5ad39
+# 7 num_group1: num_group1 (postfix type : -) 0
+# 8 num_group2: num_group2 (postfix type : -) 0
+# 9 pmts_dpd_1073P: 활성 계약의 연체 지불 일 수(num_group1 - 기존 계약, num_group2 - 지불). (postfix type : Transform DPD (Days Past Due)) 0.0
+# 10 pmts_dpd_303P: 신용 레포트에 따른 종료된 계약의 연체 지불 일 수(num_group1 - 종료된 계약, num_group2 - 지불). (postfix type : Transform DPD (Days Past Due)) 0.0
+# 11 pmts_month_158T: 폐쇄된 계약의 지불 월(num_group1 - 기존 계약, num_group2 - 지불). (postfix type : Unspecified Transform) 2.0
+# 12 pmts_month_706T: 활성 계약의 지불 월(num_group1 - 종료된 계약, num_group2 - 지불). (postfix type : Unspecified Transform) 2.0
+# 13 pmts_overdue_1140A: 활성 계약의 연체 지불(num_group1 - 기존 계약, num_group2 - 지불). (postfix type : Transform Amount) 0.0
+# 14 pmts_overdue_1152A: 폐쇄된 계약의 연체 지불(num_group1 - 종료된 계약, num_group2 - 지불). (postfix type : Transform Amount) 0.0
+# 15 pmts_year_1139T: 활성 계약의 지불 연도(num_group1 - 기존 계약, num_group2 - 지불). (postfix type : Unspecified Transform) 2019.0
+# 16 pmts_year_507T: 폐쇄된 신용 계약의 지불 연도(num_group1 - 종료된 계약, num_group2 - 지불). (postfix type : Unspecified Transform) 2007.0
+# 17 subjectroles_name_541M: 종료된 신용 계약의 주제 역할 이름 (num_group1 - 해지된 계약, num_group2 - 주제 역할). (postfix type : Masking Categories) a55475b1
+# 18 subjectroles_name_838M: 활성 신용 계약의 주제 역할 이름 (num_group1 - 기존 계약, num_group2 - 주제 역할).
 
 data = read_data("train_credit_bureau_a", 2, num_files=2)
+data = read_data("train_credit_bureau_a", 2)
 describe_data(data)
+# num_group1 의 의미 : 보유 계좌정보 SEQ, 이 계좌는 현재 유효할 수도, 그렇지 않을수도 있음
+# num_group2 의 의미
+    # -- 보유 계좌의 담보 유형의 종류
+    # -- 보유 계좌의 지불 seq
+    # -- 보유 계좌의 subjectrole... 이 뭘까?
+# 활성 / 종료된 으로 컬럼이 나누어져 있는데, 하나의 컬럼으로 합치고 valid_yn 같은 컬럼으로 구분하는게 좋을듯
+data[data["case_id"] == 29427]
+data[data["case_id"] == 2688744]
+
 
 ################################################################################
 # CB정보 B
@@ -618,3 +802,8 @@ describe_data(data)
 # CB정보 B
 data = read_data("train_credit_bureau_b", 2)
 describe_data(data)
+
+# 이 나라에는 CB사가 2개가 있고,
+# CB사 A는 연체, 지불, 담보 등 다양한 정보를 가지고 있고
+# CB사 B는 연체 정보만 보유함
+# 정보 가공 방식은 거의 유사함
