@@ -59,9 +59,6 @@ class FeatureParser:
 
 
     def _parse(self, conf: Dict[str, object]) -> Dict[str, BaseTransformation]:
-        if 'features' not in conf:
-            raise Exception('Please define "features".')
-
         transformation_by_feature = {}
         if 'transformations' in conf:
             for feature, props in conf['transformations'].items():
