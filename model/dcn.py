@@ -26,15 +26,14 @@ class DeepCrossNetwork(tf_keras.Model):
             input_by_feature_name[feature] = inputs_placeholder
             transformed_by_feature_name[feature] = transformed
 
-        concatenated_input = tf_keras.layers.Concatenate(axis=-1)(input_by_feature_name)
-        cross_layer_output = self._build_cross_layers(inputs=concatenated_input)
+        concatenated_input = tf_keras.layers.Concatenate(axis=-1)(list(input_by_feature_name.values()))
+        cross_layer_output = self._build_cross_layers(concatenated_input)
         logits = self._build_dense_layers(inputs=cross_layer_output)
 
         self.model = Model(input_by_feature_name, logits)
 
-    def _build_cross_layers(self, inputs):
+    def _build_cross_layers(self, x0):
         # TODO: Please add parameters
-        x0 = tf_keras.layers.Concatenate(axis=-1)(inputs)
         x1 = Cross()(x0, x0)
         x2 = Cross()(x0, x1)
 

@@ -1,3 +1,4 @@
+import tensorflow as tf
 import tensorflow.keras as tf_keras
 
 from layers.transformation.base_transformation import BaseTransformation
@@ -12,5 +13,5 @@ class CharacterEmbedding(BaseTransformation):
     def call(self, inputs: tf_keras.Input):
         if self.hashing_layer is not None:
             inputs = self.hashing_layer(inputs)
-        inputs = self.labeling_layer(inputs)
+        inputs = self.labeling_layer(tf.cast(inputs, tf.string))
         return self.layer(inputs)

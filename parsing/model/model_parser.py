@@ -33,7 +33,7 @@ class ModelParser:
         model_conf = self._parse_model_conf()
         self.feature_conf = {col: transformation for col, transformation in self.feature_conf.items()
                              if col in model_conf.features + [model_conf.target]}
-        return DeepCrossNetwork(self.feature_conf)
+        return Model(model=DeepCrossNetwork(self.feature_conf), conf=model_conf)
 
     def _parse_model_conf(self) -> ModelConf:
         with open(self.model_yaml_path) as f:
