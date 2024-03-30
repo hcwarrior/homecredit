@@ -1,4 +1,5 @@
 import glob
+import itertools
 from typing import Dict
 
 import numpy as np
@@ -6,9 +7,11 @@ import pandas as pd
 
 
 class DatasetGenerator:
+    _SUPPORTED_EXTENSIONS = ['parquet', 'csv']
     def __init__(self, root_dir: str):
         self.root_dir = root_dir
-        self.files = glob.glob(f'{root_dir}/*')
+        self.files = list(itertools.chain.from_iterable(
+            [glob.glob(f'{root_dir}/*.{ext}') for ext in DatasetGenerator._SUPPORTED_EXTENSIONS]))
 
     # returns numpy array dict
     def parse(self):
