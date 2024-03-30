@@ -42,4 +42,7 @@ class ModelParser:
             if 'features' not in conf:
                 raise Exception('Please define "features".')
 
-            return ModelConf(conf['features'], conf['target'])
+            if 'label' not in conf:
+                raise Exception('Please define "label" (y).')
+
+            return ModelConf(conf['features'], conf['label'])
