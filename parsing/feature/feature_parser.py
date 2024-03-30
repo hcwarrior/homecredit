@@ -27,7 +27,7 @@ class FeatureParser:
         elif transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
             return {'vocab_size', 'embedding_size'}
         elif transformation_type == FeatureTransformation.ONEHOT:
-            return {'vocab_size'}
+            return {'vocab'}
         elif transformation_type == FeatureTransformation.BINNING:
             return {'boundaries'}
         elif transformation_type == FeatureTransformation.STANDARDIZATION:
@@ -47,7 +47,7 @@ class FeatureParser:
         if transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
             return CharacterEmbedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
         elif transformation_type == FeatureTransformation.ONEHOT:
-            return OneHot(feature_props['vocab_size'], num_hashing_bins)
+            return OneHot(feature_props['vocab'], num_hashing_bins)
         elif transformation_type == FeatureTransformation.BINNING:
             return HistogramBinning(feature_props['boundaries'], num_hashing_bins)
         elif transformation_type == FeatureTransformation.STANDARDIZATION:

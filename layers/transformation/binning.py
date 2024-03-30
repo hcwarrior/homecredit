@@ -1,5 +1,6 @@
 from typing import List
 
+import tensorflow as tf
 import tensorflow.keras as tf_keras
 
 from layers.transformation.base_transformation import BaseTransformation
@@ -13,4 +14,5 @@ class HistogramBinning(BaseTransformation):
     def call(self, inputs: tf_keras.Input):
         if self.hashing_layer is not None:
             inputs = self.hashing_layer(inputs)
-        return self.layer(inputs)
+        transformed = self.layer(inputs)
+        return tf.cast(transformed, tf.float32)

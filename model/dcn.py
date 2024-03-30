@@ -21,12 +21,14 @@ class DeepCrossNetwork(tf_keras.Model):
         input_by_feature_name, transformed_by_feature_name = {}, {}
         for feature, transformation in self.transformations_by_feature.items():
             inputs_placeholder = tf_keras.Input((1, ), name=feature)
-            transformed = tf.cast(transformation(inputs_placeholder), tf.float32)
+            print(inputs_placeholder)
+            transformed = transformation(inputs_placeholder)
+            print(transformed)
 
             input_by_feature_name[feature] = inputs_placeholder
             transformed_by_feature_name[feature] = transformed
 
-        concatenated_input = tf_keras.layers.Concatenate(axis=-1)(list(input_by_feature_name.values()))
+        concatenated_input = tf_keras.layers.Concatenate(axis=-1)(list(transformed_by_feature_name.values()))
         cross_layer_output = self._build_cross_layers(concatenated_input)
         logits = self._build_dense_layers(inputs=cross_layer_output)
 
@@ -48,7 +50,6 @@ class DeepCrossNetwork(tf_keras.Model):
         logits = Dense(units=1, activation=tf_keras.activations.sigmoid)(output)
 
         return logits
-
 
     def call(self, inputs):
         return self.model(inputs)

@@ -14,4 +14,4 @@ class CharacterEmbedding(BaseTransformation):
         if self.hashing_layer is not None:
             inputs = self.hashing_layer(inputs)
         inputs = self.labeling_layer(tf.cast(inputs, tf.string))
-        return self.layer(inputs)
+        return tf.squeeze(self.layer(inputs), axis=1)

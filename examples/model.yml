@@ -1,2 +1,2 @@
-features: [incometype_1044T, sex_738L, annuity_780A, credamount_770A, credtype_322L, disbursedcredamount_1113A]
+features: [annuity_780A, credamount_770A]
 label: target

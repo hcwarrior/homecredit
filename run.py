@@ -1,4 +1,4 @@
-from typing import Dict, Iterator
+from typing import Dict, Iterator, List
 
 import numpy as np
 import tensorflow.keras as tf_keras
@@ -31,11 +31,12 @@ def _parse_model(model_yaml_path: str, feature_conf: Dict[str, BaseTransformatio
     return model_parser.parse()
 
 
-def _generate_datasets(data_root_dir: str) -> Iterator[Dict[str, np.ndarray]]:
+def _generate_datasets(
+        data_root_dir: str, input_cols: List[str], target: str) -> Iterator[Dict[str, np.ndarray]]:
     data_parser = DatasetGenerator(data_root_dir)
 
     for array_dict in data_parser.parse():
-        yield array_dict
+        yield {col: array_dict[col] for col in input_cols}, array_dict[target]
 
 
 if __name__ == '__main__':
@@ -49,8 +50,9 @@ if __name__ == '__main__':
     model = _parse_model(options.model_yaml_path, feature_conf)
     keras_model, model_conf = model.model, model.conf
 
-    print('Fitting a model...')
-    for data in _generate_datasets(options.data_root_dir):
-        keras_model.fit({col: data[col] for col in model_conf.features}, data[model_conf.target])
+    # TODO: Please add optimizer as a parameter
+    keras_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    print(keras_model.summary())
+    print('Fitting a model...')
+    data_generator = _generate_datasets(options.data_root_dir, model_conf.features, model_conf.target)
+    keras_model.fit(data_generator)
