@@ -7,6 +7,8 @@ from layers.transformation.base_transformation import BaseTransformation
 class CharacterEmbedding(BaseTransformation):
     def __init__(self, vocab_size: int, embedding_size: int, num_hashing_bins: int):
         super().__init__(num_hashing_bins)
+        # this is added to handle null values (NA)
+        vocab_size = vocab_size + 1
         self.labeling_layer = tf_keras.layers.Hashing(vocab_size)
         self.layer = tf_keras.layers.Embedding(vocab_size, embedding_size)
 

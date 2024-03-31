@@ -33,9 +33,10 @@ def _parse_model(model_yaml_path: str, feature_conf: Dict[str, BaseTransformatio
 
 def _generate_datasets(
         data_root_dir: str, input_cols: List[str], target: str) -> Iterator[Dict[str, np.ndarray]]:
-    data_parser = DatasetGenerator(data_root_dir)
+    data_parser = DatasetGenerator(data_root_dir, input_cols, target)
 
-    for array_dict in data_parser.parse():
+    for file_path, array_dict in data_parser.parse():
+        print(f'\nParsing {file_path}...')
         yield {col: array_dict[col] for col in input_cols}, array_dict[target]
 
 

@@ -9,6 +9,8 @@ from layers.transformation.base_transformation import BaseTransformation
 class OneHot(BaseTransformation):
     def __init__(self, vocab: List[str], num_hashing_bins: int):
         super().__init__(num_hashing_bins)
+        # to handle null values
+        vocab = vocab + ['NA']
         self.layer = tf_keras.layers.StringLookup(vocabulary=vocab, output_mode='one_hot')
 
     def call(self, inputs: tf_keras.Input):

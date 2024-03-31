@@ -10,6 +10,11 @@ transformations:
   ## standardization: [mean, stddev]
   ## raw: []
 
+  ## [NOTE] For character_embedding and onehot transformations,
+  ## the value 'NA' should be added to vocab to handle null values
+  ## character_embedding: final vocab_size = vocab_size + 1
+  ## onehot: vocab = vocab + [NA]
+
   incometype_1044T:
     type: character_embedding
     properties:
