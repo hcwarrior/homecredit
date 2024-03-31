@@ -4,9 +4,15 @@ import tensorflow as tf
 import tensorflow.keras as tf_keras
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense
+from tensorflow.python.framework.dtypes import DType
 
 from layers.model.cross import Cross
 from layers.transformation.base_transformation import BaseTransformation
+from layers.transformation.binning import HistogramBinning
+from layers.transformation.character_embedding import CharacterEmbedding
+from layers.transformation.numerical_embedding import NumericalEmbedding
+from layers.transformation.onehot import OneHot
+from layers.transformation.standardization import Standardization
 
 
 class DeepCrossNetwork(tf_keras.Model):
@@ -20,10 +26,10 @@ class DeepCrossNetwork(tf_keras.Model):
     def _build_layers(self):
         input_by_feature_name, transformed_by_feature_name = {}, {}
         for feature, transformation in self.transformations_by_feature.items():
-            inputs_placeholder = tf_keras.Input((1, ), name=feature)
-            print(inputs_placeholder)
+            inputs_placeholder = tf_keras.Input((1, ),
+                                                dtype=self._get_dtype_by_transformation(transformation),
+                                                name=feature)
             transformed = transformation(inputs_placeholder)
-            print(transformed)
 
             input_by_feature_name[feature] = inputs_placeholder
             transformed_by_feature_name[feature] = transformed
@@ -33,6 +39,12 @@ class DeepCrossNetwork(tf_keras.Model):
         logits = self._build_dense_layers(inputs=cross_layer_output)
 
         self.model = Model(input_by_feature_name, logits)
+
+    def _get_dtype_by_transformation(self, transformation: BaseTransformation) -> DType:
+        if isinstance(transformation, CharacterEmbedding)\
+                or isinstance(transformation, OneHot):
+            return tf.string
+        return tf.float32
 
     def _build_cross_layers(self, x0):
         # TODO: Please add parameters
