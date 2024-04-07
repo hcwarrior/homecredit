@@ -1,3 +1,4 @@
+from pathlib import Path
 import os
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import SelectFromModel
@@ -12,7 +13,14 @@ import optuna
 import lightgbm as lgb
 import matplotlib.pyplot as plt
 
+import polars as pl
+from pyarrow.dataset import dataset
+
+from utils.encoder import BinNormEncoder
+
+from scikitlearn.neural_network import MLPClassifier
 warnings.filterwarnings("ignore")
+BASE_PATH = Path(os.getcwd())
 
 
 def get_config():
@@ -53,7 +61,7 @@ def devval(df):
 def get_tree_selector(
         df: pd.DataFrame,
         target: str,
-        n_estimators: int = 5,
+        n_estimators: int = 10,
         max_features: int = None,
 ) -> SelectFromModel:
     print("select_features ...")
@@ -115,9 +123,23 @@ def inference(selector, model, X):
     auroc = sklearn.metrics.roc_auc_score(X["target"], pred)
     return auroc
 
+def load_prepared_data():
+    prepared_data_path = BASE_PATH / "data" / "t2"
+    pyarrow_dataset = dataset(
+        source = prepared_data_path,
+        format = 'parquet',
+    )
+    pldf = pl.scan_pyarrow_dataset(pyarrow_dataset)
+    return pldf.collect().to_pandas()
+
+def submit():
+    # kaggle competitions download -c home-credit-credit-risk-model-stability
+    # kaggle competitions submit -c [COMPETITION] -f [FILE] -m [MESSAGE]
+    pass
 
 
 if __name__ == "__main__":
+    submission_path = "kaggle/working/submission.csv"
     # conf = get_config()
 
     # prepare data
@@ -134,13 +156,16 @@ if __name__ == "__main__":
 
     # test codes
     train_base_static = prepare_base_data()
+    test_base_static = prepare_base_data(type_="test")
+
     devval(train_base_static)
-    dev = train_base_static[train_base_static["devval"] == 0]
-    val = train_base_static[train_base_static["devval"] == 1]
-    test = train_base_static[train_base_static["devval"] == 2]
+    dev = train_base_static[train_base_static["devval"] == 0].drop("devval", axis=1)
+    val = train_base_static[train_base_static["devval"] == 1].drop("devval", axis=1)
+    test = train_base_static[train_base_static["devval"] == 2].drop("devval", axis=1)
 
     selector = get_tree_selector(
         exclude_object_columns(dev).fillna(-99999999), "target")
+    pre_selector_columns = exclude_object_columns(dev).drop("target", axis=1).columns
 
     dev_t = selector.transform(
         exclude_object_columns(dev)
@@ -156,6 +181,30 @@ if __name__ == "__main__":
         .drop("target", axis=1))    
     print(dev_t.shape, val_t.shape, test_t.shape)
 
+    eval_t = selector.transform(
+        test_base_static[pre_selector_columns]
+        .fillna(-99999999))
+    print(eval_t.shape)
+
+    mask = selector.get_support()
+    selected_columns = exclude_object_columns(dev).drop("target", axis=1).columns[mask].to_list()
+
+    dev_df = pd.DataFrame(dev_t, columns=selected_columns)
+    val_df = pd.DataFrame(val_t, columns=selected_columns)
+    test_df = pd.DataFrame(test_t, columns=selected_columns)
+    eval_df = pd.DataFrame(eval_t, columns=selected_columns)
+
+    encoder_path = "/kaggle/working/encoder.pkl"
+    bne = BinNormEncoder(encoder_path)
+
+    bne.fit(dev_df, dev["target"])
+    bne.transform(dev_df)
+    bne.transform(val_df)
+    bne.transform(test_df)
+    bne.transform(eval_df)
+
+
+
     study = optuna.create_study(direction="maximize")
     study.optimize(
         lambda trial: objective(trial, dev_t, dev["target"]),
@@ -167,8 +216,18 @@ if __name__ == "__main__":
 
     # retrain model with best params
     best_params = trial.params
+    basic_params = {
+        "objective": "binary",
+        "metric": "binary_logloss",
+        "verbosity": -1,
+        "boosting_type": "gbdt",
+    }
+    basic_params.update(best_params)
+
     dtrain = lgb.Dataset(dev_t, label=dev["target"])
-    best_model = lgb.train(best_params, dtrain)
+    best_model = lgb.train(basic_params, dtrain)
+
+    eval_t.shape
 
     # inference
     dev_auroc = inference(selector, best_model, dev)
@@ -179,6 +238,13 @@ if __name__ == "__main__":
 
     test_auroc = inference(selector, best_model, test)
     print(f"test auroc: {test_auroc}")
+
+
+    eval_pred = best_model.predict(eval_t)
+    eval_df = test_base_static[["case_id"]].copy()
+    eval_df["target"] = eval_pred
+    eval_df.to_csv(submission_path, index=False)
+
 
     # inference monthly
     months = train_base_static["MONTH"].unique()
