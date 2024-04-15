@@ -14,6 +14,7 @@ from model.dcn import DeepCrossNetwork
 class ModelConf:
     features: List[str]
     target: str
+    id: str
 
 
 @dataclass
@@ -45,4 +46,7 @@ class ModelParser:
             if 'label' not in conf:
                 raise Exception('Please define "label" (y).')
 
-            return ModelConf(conf['features'], conf['label'])
+            if 'id' not in conf:
+                raise Exception('Please define "id".')
+
+            return ModelConf(conf['features'], conf['label'], conf['id'])

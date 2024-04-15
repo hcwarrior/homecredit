@@ -37,8 +37,8 @@ def _parse_model(model_yaml_path: str, feature_conf: Dict[str, BaseTransformatio
 
 
 def _generate_datasets(
-        data_root_dir: str, input_cols: List[str], target: str) -> Iterator[Dict[str, np.ndarray]]:
-    data_parser = DatasetGenerator(data_root_dir, input_cols, target)
+        data_root_dir: str, input_cols: List[str], target: str, id: str) -> Iterator[Dict[str, np.ndarray]]:
+    data_parser = DatasetGenerator(data_root_dir, input_cols, target, id)
 
     for file_path, array_dict in data_parser.parse():
         print(f'\nParsing {file_path}...')
@@ -60,14 +60,15 @@ if __name__ == '__main__':
     keras_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', tf_keras.metrics.AUC()])
 
     print('Fitting a model...')
-    train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target)
-    validation_data_generator = _generate_datasets(options.val_data_root_dir, model_conf.features, model_conf.target)
+    train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+    validation_data_generator = _generate_datasets(options.val_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     keras_model.fit(train_data_generator, validation_data=validation_data_generator)
 
-    test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target)
+    test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     preds = []
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
     for test_data in test_data_generator:
+        print(test_data)
         eval_df = pd.concat([eval_df,
                              {'case_id': test_data['case_id'], 'target': test_data['target'], 'score': test_data['score']}],
                             ignore_index=True)
