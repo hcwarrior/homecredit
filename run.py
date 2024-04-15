@@ -70,10 +70,11 @@ if __name__ == '__main__':
     for test_data_dict, target, case_id in test_data_generator:
         preds = keras_model.predict(test_data_dict).reshape((-1,))
         eval_df = pd.concat([eval_df,
-                             pd.DataFrame({'case_id': case_id.astype(int), 'target': target.astype(int), 'score': preds})],
+                             pd.DataFrame({'case_id': case_id, 'target': target, 'score': preds})],
                             axis=0,
                             ignore_index=True)
 
+    eval_df[['case_id', 'target']] = eval_df[['case_id', 'target']].astype(int)
     log_loss = sklearn.metrics.log_loss(eval_df['target'], eval_df['score'])
     auroc = sklearn.metrics.roc_auc_score(eval_df['target'], eval_df['score'])
     print(f'Log-loss / AUROC from test data set: {log_loss} / {auroc}')
