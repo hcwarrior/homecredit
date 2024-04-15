@@ -70,7 +70,7 @@ if __name__ == '__main__':
     for test_data_dict, target, case_id in test_data_generator:
         preds = keras_model.predict(test_data_dict).reshape((-1,))
         eval_df = pd.concat([eval_df,
-                             pd.DataFrame({'case_id': case_id, 'target': target, 'score': preds})],
+                             pd.DataFrame({'case_id': case_id.astype(int), 'target': target.astype(int), 'score': preds})],
                             axis=0,
                             ignore_index=True)
 
