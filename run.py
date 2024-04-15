@@ -2,7 +2,7 @@ from typing import Dict, Iterator, List
 
 import numpy as np
 import pandas as pd
-import sklearn
+import sklearn.metrics
 import tensorflow.keras as tf_keras
 from dataclasses import dataclass
 from simple_parsing import ArgumentParser
@@ -42,7 +42,8 @@ def _generate_datasets(
 
     for file_path, array_dict in data_parser.parse():
         print(f'\nParsing {file_path}...')
-        yield {col: array_dict[col] for col in input_cols}, array_dict[target]
+        # dict, target, id
+        yield {col: array_dict[col] for col in input_cols}, array_dict[target], array_dict[id]
 
 
 if __name__ == '__main__':
@@ -65,12 +66,12 @@ if __name__ == '__main__':
     keras_model.fit(train_data_generator, validation_data=validation_data_generator)
 
     test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
-    preds = []
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
-    for test_data in test_data_generator:
-        print(test_data)
+    for test_data_dict, target, case_id in test_data_generator:
+        preds = keras_model.predict(test_data_dict).reshape((-1,))
         eval_df = pd.concat([eval_df,
-                             {'case_id': test_data['case_id'], 'target': test_data['target'], 'score': test_data['score']}],
+                             pd.DataFrame({'case_id': case_id, 'target': target, 'score': preds})],
+                            axis=0,
                             ignore_index=True)
 
     log_loss = sklearn.metrics.log_loss(eval_df['target'], eval_df['score'])
