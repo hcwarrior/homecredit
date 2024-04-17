@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import polars as pl
 from pathlib import Path
 from argparse import Namespace
 from dataclasses import dataclass
@@ -178,14 +179,21 @@ class RawInfo:
 
 
 class RawReader:
-    def __init__(self, format_: str = "parquet") -> None:
+    def __init__(self, format_: str = "parquet", return_type_: str = 'pandas') -> None:
         self.format = format_
-        
-        if format_ == "parquet":
+        self.return_type = return_type_
+
+        if format_ == "parquet" and return_type_ == 'pandas':
             self.reader = pd.read_parquet
             self.column_getter = self._get_parquet_columns
-        elif format_ == "csv":
+        elif format_ == "csv" and return_type_ == 'pandas':
             self.reader = pd.read_csv
+            self.column_getter = self._get_csv_columns
+        elif format_ == "parquet" and return_type_ == 'polars':
+            self.reader = pl.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format_ == "csv" and return_type_ == 'polars':
+            self.reader = pl.read_csv
             self.column_getter = self._get_csv_columns
         else:
             raise ValueError(f"format_ should be either 'parquet' or 'csv'. Not {format_}.")
@@ -197,7 +205,10 @@ class RawReader:
         return [ColInfo(c) for c in self.column_getter(file_path)]
 
     def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
-        return [c for c in self.reader(file_path, nrows=0).columns]
+        if self.return_type == 'pandas':
+            return [c for c in pd.read_csv(file_path, nrows=0).columns]
+        elif self.return_type == 'polars':
+            return [c for c in pl.read_csv(file_path, n_rows=0).columns]
 
     def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
         return [c for c in ParquetFile(file_path).columns]

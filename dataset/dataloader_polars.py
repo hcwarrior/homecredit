@@ -1,29 +1,10 @@
 import os
 import glob
 import polars as pl
+
 pl.Config.set_streaming_chunk_size(1000)
 
 class ParquetDataLoader:
-    DATA_KEYS = ["case_id"]
-    TOPICS = [
-        "applprev_1",
-        "applprev_2",
-        "credit_bureau_a_1",
-        "credit_bureau_a_2",
-        "credit_bureau_b_1",
-        "credit_bureau_b_2",
-        "debitcard_1",
-        "deposit_1",
-        "other_1",
-        "person_1",
-        "person_2",
-        "static_0",
-        "static_cb",
-        "tax_registry_a",
-        "tax_registry_b",
-        "tax_registry_c",
-    ]
-
     def __init__(self, work_path="/home/w1/work", data_path: str = "/home/w1/work/data/parquet_files/train"):
         self.data_path = data_path
         self.base_files =  self.get_files_with_glob_pattern(f"{self.data_path}/*_base.parquet")
