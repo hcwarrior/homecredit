@@ -5,6 +5,7 @@ import pandas as pd
 import sklearn.metrics
 import tensorflow.keras as tf_keras
 from dataclasses import dataclass
+
 from simple_parsing import ArgumentParser
 
 from layers.transformation.base_transformation import BaseTransformation
@@ -20,7 +21,8 @@ class Options:
     train_data_root_dir: str  # A root directory that training data files exist
     val_data_root_dir: str  # A root directory that validation data files exist
     test_data_root_dir: str  # A root directory that test data files exist
-    submission_csv_file_path: str # A submission CSV output file path
+    submission_csv_file_path: str  # A submission CSV output file path
+    best_model_output_path: str  # A path for the best model
 
 
 def _parse_features(feature_yaml_path: str) -> Dict[str, BaseTransformation]:
@@ -63,7 +65,16 @@ if __name__ == '__main__':
     print('Fitting a model...')
     train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     validation_data_generator = _generate_datasets(options.val_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
-    keras_model.fit(train_data_generator, validation_data=validation_data_generator)
+    model_checkpoint_callback = tf_keras.callbacks.ModelCheckpoint(
+        filepath=options.best_model_output_path,
+        save_weights_only=False,
+        monitor='val_accuracy',
+        mode='max',
+        save_best_only=True)
+    keras_model.fit(train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback])
+
+    # load the best model
+    keras_model = tf_keras.models.load_model(options.best_model_output_path)
 
     test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
@@ -81,3 +92,4 @@ if __name__ == '__main__':
 
     print('Saving results to the submission CSV file...')
     eval_df.drop(columns=['target']).to_csv(options.submission_csv_file_path, index=False)
+
