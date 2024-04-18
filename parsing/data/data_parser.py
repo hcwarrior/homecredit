@@ -4,6 +4,7 @@ from typing import Dict, Iterator, Tuple, List
 
 import numpy as np
 import pandas as pd
+import tensorflow as tf
 from pandas.core.dtypes.common import is_string_dtype
 
 
@@ -17,7 +18,7 @@ class DatasetGenerator:
         self.features = input_features + [target, id]
 
     # returns numpy array dict
-    def parse(self) -> Iterator[Tuple[str, Dict[str, np.ndarray]]]:
+    def parse(self) -> Iterator[Tuple[str, Dict[str, tf.Tensor]]]:
         for file_path in self.files:
             yield file_path, self._to_numpy_array_dict(self._parse_file_to_frame(file_path))
 
@@ -39,6 +40,6 @@ class DatasetGenerator:
             else:
                 df[col].bfill(inplace=True)
 
-    def _to_numpy_array_dict(self, df: pd.DataFrame) -> Dict[str, np.ndarray]:
-        return {col: df[col].values for col in self.features}
+    def _to_numpy_array_dict(self, df: pd.DataFrame) -> Dict[str, tf.Tensor]:
+        return {col: tf.convert_to_tensor(df[col].values) for col in self.features}
 

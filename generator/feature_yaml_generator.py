@@ -52,13 +52,13 @@ class FeatureYAMLGenerator:
                 prop['type'] = 'standardization'
                 prop['properties'] = {'mean': mean, 'stddev': stddev}
         else: # elif column in categorical_features
-            num_uniques = series.nunique()
-            if num_uniques >= 10:
-                prop['type'] = 'character_embedding'
-                prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': num_uniques // 3}
-            else:
-                prop['type'] = 'onehot'
-                prop['properties'] = {'vocab': series.unique().tolist()}
+            # num_uniques = series.nunique()
+            # if num_uniques >= 10:
+            #     prop['type'] = 'character_embedding'
+            #     prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': num_uniques // 3}
+            # else:
+            prop['type'] = 'onehot'
+            prop['properties'] = {'vocab': series.unique().tolist()}
 
 
         return prop

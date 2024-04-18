@@ -4,26 +4,16 @@ transformations:
 
   # required properties
   ## numerical_embedding: [vocab_size, embedding_size]
-  ## character_embedding: [vocab_size, embedding_size]
   ## onehot: [vocab]
   ## binning: [boundaries]
   ## standardization: [mean, stddev]
   ## raw: []
 
-  ## [NOTE] For character_embedding and onehot transformations,
+  ## [NOTE] For onehot transformations,
   ## the value 'NA' should be added to vocab to handle null values
   ## character_embedding: final vocab_size = vocab_size + 1
   ## onehot: vocab = vocab + [NA]
 
-  incometype_1044T:
-    type: character_embedding
-    properties:
-      vocab_size: 9
-      embedding_size: 3
-  sex_738L:
-    type: onehot
-    properties:
-      vocab: [M, F]
   annuity_780A:
     type: binning
     properties:

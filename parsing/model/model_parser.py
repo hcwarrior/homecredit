@@ -6,7 +6,6 @@ import pandas as pd
 import tensorflow.keras as tf_keras
 import yaml
 
-from layers.transformation.base_transformation import BaseTransformation
 from model.dcn import DeepCrossNetwork
 
 
@@ -26,7 +25,7 @@ class Model:
 class ModelParser:
     def __init__(self,
                  model_yaml_path: str,
-                 feature_conf: Dict[str, BaseTransformation]):
+                 feature_conf: Dict[str, tf_keras.layers.Layer]):
         self.model_yaml_path = model_yaml_path
         self.feature_conf = feature_conf
 

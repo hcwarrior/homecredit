@@ -1,14 +1,8 @@
-from typing import List, Dict, Set
+from typing import Dict, Set
 
+import tensorflow.keras as tf_keras
 import yaml
 
-from layers.transformation.character_embedding import CharacterEmbedding
-from layers.transformation.numerical_embedding import NumericalEmbedding
-from layers.transformation.onehot import OneHot
-from layers.transformation.binning import HistogramBinning
-from layers.transformation.raw import Raw
-from layers.transformation.standardization import Standardization
-from layers.transformation.base_transformation import BaseTransformation
 from parsing.feature.transformation_type import FeatureTransformation
 
 
@@ -24,8 +18,6 @@ class FeatureParser:
     def _get_required_fields_by_type(self, transformation_type: FeatureTransformation) -> Set[str]:
         if transformation_type == FeatureTransformation.NUMERICAL_EMBEDDING:
             return {'vocab_size', 'embedding_size'}
-        elif transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
-            return {'vocab_size', 'embedding_size'}
         elif transformation_type == FeatureTransformation.ONEHOT:
             return {'vocab'}
         elif transformation_type == FeatureTransformation.BINNING:
@@ -38,27 +30,7 @@ class FeatureParser:
             raise Exception(f'Wrong transformation type - {transformation_type}')
 
 
-    def _parse_transformation(self,
-                              transformation_type: FeatureTransformation,
-                              feature_props: Dict[str, object],
-                              num_hashing_bins: int) -> BaseTransformation:
-        if transformation_type == FeatureTransformation.NUMERICAL_EMBEDDING:
-            return NumericalEmbedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
-        if transformation_type == FeatureTransformation.CHARACTER_EMBEDDING:
-            return CharacterEmbedding(feature_props['vocab_size'], feature_props['embedding_size'], num_hashing_bins)
-        elif transformation_type == FeatureTransformation.ONEHOT:
-            return OneHot(feature_props['vocab'], num_hashing_bins)
-        elif transformation_type == FeatureTransformation.BINNING:
-            return HistogramBinning(feature_props['boundaries'], num_hashing_bins)
-        elif transformation_type == FeatureTransformation.STANDARDIZATION:
-            return Standardization(feature_props['mean'], feature_props['stddev'], num_hashing_bins)
-        elif transformation_type == FeatureTransformation.RAW:
-            return Raw(num_hashing_bins)
-        else:
-            raise Exception(f'Wrong transformation type - {transformation_type}')
-
-
-    def _parse(self, conf: Dict[str, object]) -> Dict[str, BaseTransformation]:
+    def _parse(self, conf: Dict[str, object]) -> Dict[str, object]:
         transformation_by_feature = {}
         if 'transformations' in conf:
             for feature, props in conf['transformations'].items():
@@ -72,8 +44,6 @@ class FeatureParser:
                 if not required_fields.issubset(feature_props.keys()):
                     raise Exception(f'Required fields for {feature}: {required_fields}')
 
-                num_hashing_bins = 0 if 'num_hashing_bins' not in props else int(props['num_hashing_bins'])
-                transformation = self._parse_transformation(transformation_type, feature_props, num_hashing_bins)
-                transformation_by_feature[feature] = transformation
+                transformation_by_feature[feature] = props
 
         return transformation_by_feature

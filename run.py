@@ -8,7 +8,6 @@ from dataclasses import dataclass
 
 from simple_parsing import ArgumentParser
 
-from layers.transformation.base_transformation import BaseTransformation
 from parsing.data.data_parser import DatasetGenerator
 from parsing.feature.feature_parser import FeatureParser
 from parsing.model.model_parser import ModelParser, ModelConf, Model
@@ -25,14 +24,14 @@ class Options:
     best_model_output_path: str  # A path for the best model
 
 
-def _parse_features(feature_yaml_path: str) -> Dict[str, BaseTransformation]:
+def _parse_features(feature_yaml_path: str) -> Dict[str, tf_keras.layers.Layer]:
     feature_parser = FeatureParser()
     feature_parser.load_prop(feature_yaml_path)
 
     return feature_parser.conf
 
 
-def _parse_model(model_yaml_path: str, feature_conf: Dict[str, BaseTransformation]) -> Model:
+def _parse_model(model_yaml_path: str, feature_conf: Dict[str, object]) -> Model:
     model_parser = ModelParser(model_yaml_path, feature_conf)
 
     return model_parser.parse()
