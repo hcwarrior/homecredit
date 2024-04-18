@@ -1,3 +1,4 @@
+import tempfile
 from typing import Dict, Iterator, List
 
 import numpy as np
@@ -64,16 +65,23 @@ if __name__ == '__main__':
     print('Fitting a model...')
     train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     validation_data_generator = _generate_datasets(options.val_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+
+
+    fd = tempfile.TemporaryFile('w+t')
     model_checkpoint_callback = tf_keras.callbacks.ModelCheckpoint(
-        filepath=options.best_model_output_path,
-        save_weights_only=False,
+        filepath=fd.name,
+        save_weights_only=True,
         monitor='val_accuracy',
         mode='max',
         save_best_only=True)
     keras_model.fit(train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback])
 
     # load the best model
-    keras_model = tf_keras.models.load_model(options.best_model_output_path)
+    keras_model.load_weights(fd.name)
+
+    keras_model.save(options.best_model_output_path)
+
+    fd.close()
 
     test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
