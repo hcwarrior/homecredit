@@ -408,7 +408,7 @@ data[
 # district_544M
 data['district_544M'].value_counts()
 data['district_544M'].isna().sum()
-기간세분화
+
 
 # cancelreason_3545846M
 data['cancelreason_3545846M'].value_counts()

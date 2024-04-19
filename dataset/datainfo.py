@@ -1,4 +1,5 @@
 import os
+from typing import Union
 import pandas as pd
 import polars as pl
 from pathlib import Path
@@ -122,6 +123,49 @@ class ColInfo:
             return f"{self.name}: {result_description}"
 
 
+class RawReader:
+    def __init__(self, return_type: str = 'pandas', format: str = "parquet") -> None:
+        self.return_type = return_type
+        self.format = format
+
+        if format == "parquet" and return_type == 'pandas':
+            self.reader = pd.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format == "csv" and return_type == 'pandas':
+            self.reader = pd.read_csv
+            self.column_getter = self._get_csv_columns
+        elif format == "parquet" and return_type == 'polars':
+            self.reader = pl.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format == "csv" and return_type == 'polars':
+            self.reader = pl.read_csv
+            self.column_getter = self._get_csv_columns
+        else:
+            raise ValueError(
+                "format should be either 'parquet' or 'csv'"
+                "and return_type should be 'pandas' or 'polars'."
+                f"Not {format}, {return_type}."
+            )
+
+    def read(self, file_path: Path) -> Union[pd.DataFrame, pl.DataFrame]:
+        return self.reader(file_path)
+
+    def columns(self, file_path: Path) -> list[ColInfo]:
+        return [ColInfo(c) for c in self.column_getter(file_path)]
+
+    def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
+        if self.return_type == 'pandas':
+            return [c for c in pd.read_csv(file_path, nrows=0).columns]
+        elif self.return_type == 'polars':
+            return [c for c in pl.read_csv(file_path, n_rows=0).columns]
+
+    def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
+        return [c for c in ParquetFile(file_path).columns]
+
+    def __call__(self, file_path) -> Union[pd.DataFrame, pl.DataFrame]:
+        return self.read(file_path)
+
+
 class RawInfo:
     VALID_TYPES = ["", "train", "test"]
     VALID_DEPTHS = ["", "0", "1", "2"]
@@ -166,55 +210,22 @@ class RawInfo:
         file_name: str,
         *,
         depth: int = None,
+        reader: RawReader = None,
         type_: str = "train",
     ) -> pd.DataFrame:
+        reader = self.reader if reader is None else reader
+
         raw_files = self.get_files(file_name, depth=depth, type_=type_)
 
-        if len(raw_files) > 0:
-            raw_df = pd.concat([self.reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
-        else:
+        if len(raw_files) == 0:
             raise FileNotFoundError(f"{file_name} (depth: {depth}) does not exist in {type_} files.")
 
+        if reader.return_type == 'pandas':
+            raw_df = pd.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
+        elif reader.return_type == 'polars':
+            raw_df = pl.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])            
+
         return raw_df
-
-
-class RawReader:
-    def __init__(self, format_: str = "parquet", return_type_: str = 'pandas') -> None:
-        self.format = format_
-        self.return_type = return_type_
-
-        if format_ == "parquet" and return_type_ == 'pandas':
-            self.reader = pd.read_parquet
-            self.column_getter = self._get_parquet_columns
-        elif format_ == "csv" and return_type_ == 'pandas':
-            self.reader = pd.read_csv
-            self.column_getter = self._get_csv_columns
-        elif format_ == "parquet" and return_type_ == 'polars':
-            self.reader = pl.read_parquet
-            self.column_getter = self._get_parquet_columns
-        elif format_ == "csv" and return_type_ == 'polars':
-            self.reader = pl.read_csv
-            self.column_getter = self._get_csv_columns
-        else:
-            raise ValueError(f"format_ should be either 'parquet' or 'csv'. Not {format_}.")
-
-    def read(self, file_path: Path) -> pd.DataFrame:
-        return self.reader(file_path)
-
-    def columns(self, file_path: Path) -> list[ColInfo]:
-        return [ColInfo(c) for c in self.column_getter(file_path)]
-
-    def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
-        if self.return_type == 'pandas':
-            return [c for c in pd.read_csv(file_path, nrows=0).columns]
-        elif self.return_type == 'polars':
-            return [c for c in pl.read_csv(file_path, n_rows=0).columns]
-
-    def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
-        return [c for c in ParquetFile(file_path).columns]
-
-    def __call__(self, file_path) -> pd.DataFrame:
-        return self.read(file_path)
 
 
 if __name__ == "__main__":
