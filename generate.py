@@ -27,6 +27,6 @@ if __name__ == '__main__':
     options = args.options
 
     _generate_feature_yaml(
-        options.feature_yaml_path,
+        options.feature_conf_yaml_path,
         options.data_parquet_file_path,
         options.output_yaml_path)

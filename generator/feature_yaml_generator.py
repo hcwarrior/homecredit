@@ -17,16 +17,18 @@ class FeatureYAMLGenerator:
     def generate(self):
         props = self._parse(self.conf)
         with open(self.output_yaml_path, 'w') as f:
-            yaml.dump(props, f)
+            yaml.dump(props, f, default_flow_style=None)
 
     def _parse(self, conf: Dict[str, object]) -> Dict[str, object]:
         features = conf['features']
         continuous_features = features['continuous']
         categorical_features = features['categorical']
 
+        all_features = set(continuous_features + categorical_features)
+
         props = {}
-        for feature in features:
-            prop = self._generate_prop(feature, continuous_features, categorical_features)
+        for feature in all_features:
+            prop = self._generate_prop(feature, set(continuous_features), set(categorical_features))
             props[feature] = prop
 
         return props
@@ -43,22 +45,21 @@ class FeatureYAMLGenerator:
         series = df[column].dropna()
         prop = {}
         if column in continuous_features:
-            if abs(series.skew()) >= 1.0:
+            if series.nunique() >= 20 and abs(series.skew()) >= 1.0:
                 boundaries = series.quantile(np.arange(0.05, 1.0, 0.05))
                 prop['type'] = 'binning'
-                prop['properties'] = {'boundaries': boundaries}
+                prop['properties'] = {'boundaries': boundaries.tolist()}
             else:
-                mean, stddev = series.mean(), series.std()
+                mean, stddev = series.mean().item(), series.std().item()
                 prop['type'] = 'standardization'
                 prop['properties'] = {'mean': mean, 'stddev': stddev}
         else: # elif column in categorical_features
-            # num_uniques = series.nunique()
-            # if num_uniques >= 10:
-            #     prop['type'] = 'character_embedding'
-            #     prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': num_uniques // 3}
-            # else:
-            prop['type'] = 'onehot'
-            prop['properties'] = {'vocab': series.unique().tolist()}
-
+            num_uniques = series.nunique()
+            if num_uniques >= 10:
+                prop['type'] = 'character_embedding'
+                prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': min(num_uniques // 3, 20)}
+            else:
+                prop['type'] = 'onehot'
+                prop['properties'] = {'vocab': series.unique().tolist()}
 
         return prop

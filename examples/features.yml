@@ -1,8 +1,9 @@
-# one of [embedding, onehot, binning, standardization, raw]
+# one of [character_embedding, numerical_embedding, onehot, binning, standardization, raw]
 transformations:
   # required fields when type is defined: [type, properties]
 
   # required properties
+  ## character_embedding: [vocab_size, embedding_size]
   ## numerical_embedding: [vocab_size, embedding_size]
   ## onehot: [vocab]
   ## binning: [boundaries]

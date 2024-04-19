@@ -1,3 +1,5 @@
+# type: [dcn, xgboost]
+type: dcn
 features: [annuity_780A, credamount_770A, credtype_322L, disbursedcredamount_1113A]
 label: target
 id: case_id

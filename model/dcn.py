@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 import tensorflow as tf
 import tensorflow.keras as tf_keras
@@ -15,30 +15,37 @@ class DeepCrossNetwork(tf_keras.Model):
         self._build_layers()
 
 
-    def _parse_into_layer(self, transformation: Dict[str, object]):
+    def _parse_into_layer(self, transformation: Dict[str, object]) -> List[tf_keras.layers.Layer]:
         type = transformation['type']
         feature_props = transformation['properties']
 
         if type == 'numerical_embedding':
-            return tf_keras.layers.Embedding(feature_props['vocab_size'], feature_props['embedding_size'])
+            return [tf_keras.layers.Embedding(feature_props['vocab_size'], feature_props['embedding_size'])]
+        if type == 'character_embedding':
+            return [
+                tf_keras.layers.Hashing(feature_props['vocab_size']),
+                tf_keras.layers.Embedding(feature_props['vocab_size'], feature_props['embedding_size'])]
         elif type == 'onehot':
-            return tf_keras.layers.StringLookup(vocabulary=feature_props['vocab'] + ['NA'], output_mode='one_hot')
+            return [tf_keras.layers.StringLookup(vocabulary=feature_props['vocab'] + ['NA'], output_mode='one_hot')]
         elif type == 'binning':
-            return tf_keras.layers.Discretization(bin_boundaries=feature_props['boundaries'])
+            return [tf_keras.layers.Discretization(bin_boundaries=feature_props['boundaries'])]
         elif type == 'standardization':
-            tf_keras.layers.Normalization(mean=feature_props['mean'], variance=feature_props['stddev'])
+            return [tf_keras.layers.Normalization(mean=feature_props['mean'], variance=feature_props['stddev'])]
         else:
-            return tf_keras.layers.Identity()
+            return [tf_keras.layers.Identity()]
 
     def _build_layers(self):
         input_by_feature_name, transformed_by_feature_name = {}, {}
         for feature, transformation in self.transformations_by_feature.items():
-            transformation = self._parse_into_layer(transformation)
+            layers = self._parse_into_layer(transformation)
             dtype = self._get_dtype_by_transformation(transformation)
             inputs_placeholder = tf_keras.Input((1, ),
                                                 dtype=dtype,
                                                 name=feature)
-            transformed = tf.cast(transformation(inputs_placeholder), tf.float32)
+            transformed = inputs_placeholder
+            for layer in layers:
+                transformed = layer(transformed)
+            transformed = tf.cast(tf.squeeze(transformed, axis=1), tf.float32)
 
             input_by_feature_name[feature] = inputs_placeholder
             transformed_by_feature_name[feature] = transformed
@@ -49,8 +56,9 @@ class DeepCrossNetwork(tf_keras.Model):
 
         self.model = Model(input_by_feature_name, logits)
 
-    def _get_dtype_by_transformation(self, transformation: tf_keras.layers.Layer) -> DType:
-        if isinstance(transformation, tf_keras.layers.StringLookup):
+    def _get_dtype_by_transformation(self, transformation: Dict[str, object]) -> DType:
+        type = transformation['type']
+        if type in ['character_embedding', 'onehot']:
             return tf.string
         return tf.float32
 
