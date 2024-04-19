@@ -23,7 +23,7 @@ class FeatureDefiner:
 
     def _update_integer_data_type(self):
         for col in self.raw_cols.values():
-            if col.data_type == 'float64' and all(
+            if col.data_type.startswith('float') and all(
                 self.rawdata[col.name].apply(lambda x: x.is_integer())
             ):
                 self.raw_cols[col.name].data_type = 'int64'
@@ -143,7 +143,7 @@ class FeatureDefiner:
         numeric_cols: Dict[str, Column] = {
             name: col
             for name, col in self.raw_cols.items()
-            if col.data_type in ('int64', 'float64')
+            if col.data_type.startswith('int') or col.data_type.startswith('float')
         }
         simple_numeric_aggregater = [
             'sum({0})',

@@ -184,8 +184,8 @@ class RawInfo:
 
         if not self.file_dir_path.exists():
             raise FileNotFoundError(f"{self.file_dir_path} does not exist.")
-        
-        self.reader = RawReader(self.format)
+
+        self.reader = RawReader(format=self.format)
 
     def show_files(self, type_: str = "train") -> list[RawFile]:
         return sorted([RawFile(f) for f in os.listdir(self.file_dir_path / type_)])
