@@ -212,21 +212,35 @@ class RawInfo:
         depth: int = None,
         reader: RawReader = None,
         type_: str = "train",
+        stage: str = "raw"
     ) -> pd.DataFrame:
         reader = self.reader if reader is None else reader
 
         raw_files = self.get_files(file_name, depth=depth, type_=type_)
-
         if len(raw_files) == 0:
             raise FileNotFoundError(f"{file_name} (depth: {depth}) does not exist in {type_} files.")
 
-        if reader.return_type == 'pandas':
+        if reader.return_type == 'pandas' and stage == "raw":
             raw_df = pd.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
-        elif reader.return_type == 'polars':
+        elif reader.return_type == 'polars' and stage == "raw":
             raw_df = pl.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])            
+        elif stage == "prep":
+            raw_df = reader(
+                DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+            )
 
         return raw_df
 
+    def save_as_prep(self, data: pl.DataFrame, file_name: str, depth: int, type_: str = "train"):
+        if type_ not in self.VALID_TYPES:
+            raise ValueError(f"type_ should be one of {self.VALID_TYPES}. Not {type_}.")
+        if str(depth) not in self.VALID_DEPTHS:
+            raise ValueError(f"depth should be one of {self.VALID_DEPTHS}. Not {depth}.")
+
+        os.makedirs(DATA_PATH / 'parquet_preps' / type_, exist_ok=True)
+        data.write_parquet(
+            DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+        )
 
 if __name__ == "__main__":
     raw_info = RawInfo(

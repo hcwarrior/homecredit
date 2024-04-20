@@ -9,15 +9,21 @@ import json
 class FeatureDefiner:
     RAW_INFO = RawInfo()
 
-    def __init__(self, topic: str, numgroup: str = 'num_group1' ,period_cols: List[str] = None):
+    def __init__(
+        self,
+        topic: str,
+        period_cols: List[str] = None,
+        depth: int = 1,
+        stage: str = 'prep',
+    ):
         self.topic: str = topic
-        self.rawdata: pd.DataFrame = self.RAW_INFO.read_raw(self.topic, depth=1)
+        self.rawdata: pd.DataFrame = self.RAW_INFO.read_raw(self.topic, depth=depth, stage=stage)
         self.raw_cols: Dict[str, Column] = {
             col: Column(name=col, data_type=str(type))
             for col, type in self.rawdata.dtypes.items()
             if col not in ('case_id')
         }
-        self.numgroup: str = numgroup
+        self.numgroup: str = f'num_group{depth}'
         self.period_cols: List[str] = period_cols
         self._update_integer_data_type()
 
@@ -28,10 +34,7 @@ class FeatureDefiner:
             ):
                 self.raw_cols[col.name].data_type = 'int64'
 
-    def define_features(self):
-        aggs = self.define_aggs()
-        filters = self.define_filters(self.numgroup, self.period_cols)
-        filters += [None]
+    def gen_features(self, aggs, filters):
         features: List[Feature] = [
             Feature(
                 data_type=agg.data_type,
@@ -43,7 +46,36 @@ class FeatureDefiner:
             for filter in filters
             if filter is None or (agg.columns[0] != filter.columns[0])
         ]
-        return features, aggs, filters
+        return features
+
+    def define_features(self):
+        aggs = self.define_aggs()
+        filters = self.define_filters(self.numgroup, self.period_cols)
+        filters += [None]
+        features: List[Feature] = self.gen_features(aggs, filters)
+        return features
+
+    def define_simple_features(self, cat_count: int = 10):
+        self.raw_cols.pop('num_group1')
+        features: List[Feature] = []
+
+        # filter features = 여부 피쳐 정의
+        aggs = [
+            Agg(columns=[Column('int', query='1')], logic="count({0})", data_type='int')
+        ]
+        filters = self.categorical_filters(cat_count)
+        if self.period_cols is not None:
+            filters += self.period_filters(self.period_cols)
+        features += self.gen_features(aggs, filters)
+
+        # count features = 정보건수 정의
+        aggs = [
+            Agg(columns=[col], logic="count({0})", data_type='int')
+            for col in self.raw_cols.values()
+        ]
+        filters = [None]
+        features += self.gen_features(aggs, filters)
+        return features
 
     def define_filters(self, numgroup: str = 'num_group1', period_cols: List[str] = None):
         filters = self.categorical_filters()
@@ -54,7 +86,7 @@ class FeatureDefiner:
             filters += self.numgroup_filters(numgroup)
         return filters
 
-    def categorical_filters(self):
+    def categorical_filters(self, cat_count: int = 10):
         filter_cols: Dict[str, Column] = {
             name: col
             for name, col in self.raw_cols.items()
@@ -64,7 +96,7 @@ class FeatureDefiner:
         filters: List[Filter] = [
             Filter(columns=[col], logic=f"{col} = '{val}'")
             for col in filter_cols.values()
-            for val in self.rawdata[col.name].value_counts().index[:10]
+            for val in self.rawdata[col.name].value_counts().index[:cat_count]
             if val != 'a55475b1'
         ]
         return filters
