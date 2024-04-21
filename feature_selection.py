@@ -69,34 +69,31 @@ def _select_features(
         feature_imps_png_output_path: str,
         top_k: int) -> Tuple[List[str], List[str]]:
     X, y = df.drop(columns=[label]), df[label]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
-    print('Split into train and test dataset')
-
-    rf = RandomForestClassifier(n_estimators=30, max_depth=3)
-    rf.fit(X_train, y_train)
+    rf = RandomForestClassifier(n_estimators=50, max_depth=3, class_weight='balanced')
+    rf.fit(X, y)
 
     print('Fitted Random Forest.')
-    explainer = shap.TreeExplainer(rf)
-    shap_values = explainer.shap_values(X_test)
+    imps = pd.Series(rf.feature_importances_, index=X.columns)
+    imps = imps.sort_values(ascending=False)[:top_k]
 
-    features = X.columns
-    cont_feature_set, cat_feature_set = set(cont_features), set(cat_features)
-    feature_imps = {features[i]: np.mean(np.abs(shap_values[:, i])) for i in range(len(features))}
-    feature_imps_ordered = OrderedDict(sorted(feature_imps.items(), key=lambda x: x[1]))
+    print('Feature Importances (Sorted)')
+    print(imps)
 
-    feature_imps = list(feature_imps_ordered.items())[:top_k]
-    print('Top K Feature Importances')
-    print(feature_imps)
-
-    shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
+    fig, ax = plt.subplots()
+    imps.plot.bar(ax=ax)
+    ax.set_title("Feature importances using MDI")
+    ax.set_ylabel("Mean decrease in impurity")
+    fig.tight_layout()
     plt.savefig(feature_imps_png_output_path)
 
+    cont_feature_set, cat_feature_set = set(cont_features), set(cat_features)
     selected_cont_features, selected_cat_features = [], []
-    for imp in feature_imps:
-        if imp in cont_feature_set:
-            selected_cont_features.append(imp[0])
+    for imp in imps.items():
+        col = imp[0]
+        if col in cont_feature_set:
+            selected_cont_features.append(col)
         else:
-            selected_cat_features.append(imp[0])
+            selected_cat_features.append(col)
 
     return selected_cont_features, selected_cat_features
 
