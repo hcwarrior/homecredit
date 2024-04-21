@@ -21,32 +21,114 @@ transformations:
   amtinstpaidbefduel24m_4187115A:
     properties: {mean: 55958.33028871331, stddev: 71614.1663544361}
     type: standardization
-  applications30d_658L:
-    properties: {mean: 0.13815200382010653, stddev: 0.4886631520243688}
+  applicationscnt_867L:
+    properties: {mean: 2.8803603162199285, stddev: 4.3464720417750975}
     type: standardization
+  assignmentdate_238D:
+    properties: {embedding_size: 10, vocab_size: 8887}
+    type: character_embedding
   assignmentdate_4527235D:
     properties: {embedding_size: 10, vocab_size: 372}
     type: character_embedding
   avgdbddpdlast3m_4187120P:
     properties: {mean: 29.49434229748537, stddev: 367.2739127178802}
     type: standardization
+  avglnamtstart24m_4525187A:
+    properties: {mean: 44717.566752741695, stddev: 44844.786729919884}
+    type: standardization
   avgmaxdpdlast9m_3716943P:
     properties: {mean: 0.7463922053185007, stddev: 4.796508274579271}
+    type: standardization
+  avgoutstandbalancel6m_4187114A:
+    properties: {mean: 45984.82680445623, stddev: 63993.92187634563}
     type: standardization
   birth_259D:
     properties: {embedding_size: 10, vocab_size: 680}
     type: character_embedding
+  birthdate_574D:
+    properties: {embedding_size: 10, vocab_size: 667}
+    type: character_embedding
+  cacccardblochreas_147M:
+    properties:
+      vocab: [a55475b1, P201_63_60, P33_145_161]
+    type: onehot
+  cancelreason_3545846M:
+    properties: {embedding_size: 10, vocab_size: 60}
+    type: character_embedding
+  childnum_21L:
+    properties: {mean: 0.9665242034959767, stddev: 1.1543217021272227}
+    type: standardization
+  classificationofcontr_1114M:
+    properties:
+      vocab: [ea6782cc, 01f63ac8, a55475b1, 1cf4e481, 07b11743, 00135d9c, 9b63302f,
+        8b9a3257, 90c587b1]
+    type: onehot
+  clientscnt_360L:
+    properties: {mean: 0.0030943386833602003, stddev: 0.06138902547630813}
+    type: standardization
+  clientscnt_946L:
+    properties: {mean: 0.032449944617625806, stddev: 0.3016756896284735}
+    type: standardization
+  cntincpaycont9m_3716944L:
+    properties: {mean: 6.19062520707552, stddev: 6.185545773980284}
+    type: standardization
+  cntpmts24_3658933L:
+    properties: {mean: 10.630644272998591, stddev: 7.888572807080202}
+    type: standardization
+  collater_typofvalofguarant_298M:
+    properties:
+      vocab: [a55475b1, 8fd95e4b]
+    type: onehot
   collater_valueofguarantee_1124L:
     properties: {mean: 530775.1453075282, stddev: 19618095.8053888}
     type: standardization
   collater_valueofguarantee_876L:
     properties: {mean: 797552.2090257308, stddev: 26211470.318611067}
     type: standardization
-  credlmt_935A:
-    properties: {mean: 84484.19247487842, stddev: 2381219.2639789474}
+  collaterals_typeofguarante_359M:
+    properties:
+      vocab: [a55475b1, c7a5ad39, f4d8a027, b1c5e678, 9276e4bb]
+    type: onehot
+  collaterals_typeofguarante_669M:
+    properties:
+      vocab: [c7a5ad39, a55475b1, f4d8a027, b1c5e678, 9276e4bb]
+    type: onehot
+  contractenddate_991D:
+    properties: {embedding_size: 10, vocab_size: 1318}
+    type: character_embedding
+  contractmaturitydate_151D:
+    properties: {embedding_size: 10, vocab_size: 3755}
+    type: character_embedding
+  conts_type_509L:
+    properties:
+      vocab: [PRIMARY_MOBILE, SECONDARY_MOBILE, HOME_PHONE, PRIMARY_EMAIL, EMPLOYMENT_PHONE,
+        PHONE, WHATSAPP]
+    type: onehot
+  credacc_status_367L:
+    properties:
+      vocab: [CL, CA, AC, CR, PCL, PO]
+    type: onehot
+  credtype_587L:
+    properties:
+      vocab: [CAL, REL, COL]
+    type: onehot
+  currdebtcredtyperange_828A:
+    properties: {mean: 10996.36094715594, stddev: 36790.31890960853}
     type: standardization
   dateactivated_425D:
     properties: {embedding_size: 10, vocab_size: 4173}
+    type: character_embedding
+  datelastinstal40dpd_247D:
+    properties: {embedding_size: 10, vocab_size: 5175}
+    type: character_embedding
+  dateofcredend_289D:
+    properties: {embedding_size: 10, vocab_size: 9411}
+    type: character_embedding
+  dateofcredend_353D:
+    properties: {embedding_size: 10, vocab_size: 10217}
+    type: character_embedding
+  dateofrealrepmt_138D:
+    properties: {embedding_size: 10, vocab_size: 5635}
     type: character_embedding
   days180_256L:
     properties: {mean: 2.388655912465333, stddev: 2.8911147640754034}
@@ -57,27 +139,61 @@ transformations:
   daysoverduetolerancedd_3976961L:
     properties: {mean: 96.35753888265607, stddev: 481.2986660739454}
     type: standardization
+  debtoutstand_525A:
+    properties: {mean: 202230.0590841734, stddev: 2139055.796261637}
+    type: standardization
   debtoverdue_47A:
     properties: {mean: 2587.659987818412, stddev: 591296.5529813371}
     type: standardization
+  description_351M:
+    properties: {embedding_size: 3, vocab_size: 10}
+    type: character_embedding
   disbursedcredamount_1113A:
     properties: {mean: 46074.75234066344, stddev: 42505.44333233253}
     type: standardization
+  district_544M:
+    properties: {embedding_size: 10, vocab_size: 625}
+    type: character_embedding
   dpdmax_139P:
     properties: {mean: 16.255781607317587, stddev: 137.90473781596458}
     type: standardization
   dpdmaxdateyear_596T:
     properties: {mean: 2018.433893850612, stddev: 0.7223195385427797}
     type: standardization
+  dpdmaxdateyear_742T:
+    properties: {mean: 2018.0518633399763, stddev: 1.5606987310623632}
+    type: standardization
+  dtlastpmt_581D:
+    properties: {embedding_size: 10, vocab_size: 2335}
+    type: character_embedding
+  dtlastpmtallstes_3545839D:
+    properties: {embedding_size: 10, vocab_size: 2297}
+    type: character_embedding
+  dtlastpmtallstes_4499206D:
+    properties: {embedding_size: 10, vocab_size: 4464}
+    type: character_embedding
   education_1138M:
     properties:
       vocab: [P97_36_170, a55475b1, P33_146_175, P17_36_170, P106_81_188, P157_18_172]
     type: onehot
+  education_927M:
+    properties:
+      vocab: [a55475b1, P97_36_170, P33_146_175, P17_36_170, P106_81_188, P157_18_172]
+    type: onehot
+  empladdr_zipcode_114M:
+    properties: {embedding_size: 8, vocab_size: 24}
+    type: character_embedding
   employedfrom_700D:
     properties: {embedding_size: 10, vocab_size: 9045}
     type: character_embedding
+  equalityempfrom_62L:
+    properties: {mean: 0.9728128636411721, stddev: 0.1626305489578005}
+    type: standardization
   financialinstitution_382M:
     properties: {embedding_size: 10, vocab_size: 148}
+    type: character_embedding
+  financialinstitution_591M:
+    properties: {embedding_size: 10, vocab_size: 85}
     type: character_embedding
   firstclxcampaign_1125D:
     properties: {embedding_size: 10, vocab_size: 1248}
@@ -85,9 +201,19 @@ transformations:
   firstdatedue_489D:
     properties: {embedding_size: 10, vocab_size: 5210}
     type: character_embedding
-  firstnonzeroinstldate_307D:
-    properties: {embedding_size: 10, vocab_size: 5105}
-    type: character_embedding
+  for3years_584L:
+    properties: {mean: 0.007695678369940297, stddev: 0.09107120394227884}
+    type: standardization
+  forquarter_634L:
+    properties: {mean: 0.6139289039820343, stddev: 1.1500013486485259}
+    type: standardization
+  forweek_528L:
+    properties: {mean: 0.09012981322232569, stddev: 0.2913022082780645}
+    type: standardization
+  gender_992L:
+    properties:
+      vocab: [F, M]
+    type: onehot
   incometype_1044T:
     properties:
       vocab: [RETIRED_PENSIONER, EMPLOYED, PRIVATE_SECTOR_EMPLOYEE, SALARIED_GOVT, OTHER,
@@ -96,8 +222,30 @@ transformations:
   inittransactionamount_650A:
     properties: {mean: 32560.265180830673, stddev: 33141.955098339444}
     type: standardization
+  installmentamount_833A:
+    properties: {mean: 145977.20209365696, stddev: 502122.21571309323}
+    type: standardization
+  instlamount_892A:
+    properties: {mean: 8822.350342458143, stddev: 99689.76710703936}
+    type: standardization
+  interesteffectiverate_369L:
+    properties: {mean: 494.33501114633845, stddev: 5062.614941663011}
+    type: standardization
+  language1_981M:
+    properties:
+      vocab: [a55475b1, P209_127_106, P10_39_147]
+    type: onehot
+  lastapprcommoditycat_1041M:
+    properties: {embedding_size: 10, vocab_size: 45}
+    type: character_embedding
   lastcancelreason_561M:
     properties: {embedding_size: 10, vocab_size: 74}
+    type: character_embedding
+  lastdelinqdate_224D:
+    properties: {embedding_size: 10, vocab_size: 4401}
+    type: character_embedding
+  lastrejectcommoditycat_161M:
+    properties: {embedding_size: 10, vocab_size: 45}
     type: character_embedding
   lastrejectreason_759M:
     properties: {embedding_size: 6, vocab_size: 18}
@@ -105,11 +253,22 @@ transformations:
   lastrejectreasonclient_4145040M:
     properties: {embedding_size: 4, vocab_size: 14}
     type: character_embedding
-  maxannuity_159A:
-    properties: {mean: 34606.5691952394, stddev: 94998.00049369909}
-    type: standardization
-  maxdbddpdlast1m_3658939P:
-    properties: {mean: 45.04647467058861, stddev: 464.771909617785}
+  lastrepayingdate_696D:
+    properties: {embedding_size: 10, vocab_size: 539}
+    type: character_embedding
+  lastst_736L:
+    properties: {embedding_size: 3, vocab_size: 11}
+    type: character_embedding
+  maritalst_385M:
+    properties:
+      vocab: [a55475b1, a7fcb6e5, 3439d993, b6cabe76, 38c061ee, ecd83604]
+    type: onehot
+  maritalst_893M:
+    properties:
+      vocab: [a55475b1, 46b968c3, 1a19667c, e18430ff, 977b2a70, ecd83604]
+    type: onehot
+  maxannuity_4075009A:
+    properties: {mean: 41559.72436226674, stddev: 85729.972800634}
     type: standardization
   maxdbddpdtollast12m_3658940P:
     properties: {mean: 52.77136228848391, stddev: 424.6626915729894}
@@ -123,6 +282,9 @@ transformations:
   maxdpdfrom6mto36m_3546853P:
     properties: {mean: 32.41555788804716, stddev: 247.07059094164407}
     type: standardization
+  maxdpdinstlnum_3546846P:
+    properties: {mean: 8.254666500300463, stddev: 6.003637610938989}
+    type: standardization
   maxdpdlast12m_727P:
     properties: {mean: 16.602238170140254, stddev: 192.64209090558404}
     type: standardization
@@ -131,6 +293,12 @@ transformations:
     type: standardization
   maxdpdtolerance_577P:
     properties: {mean: 24.99074463115109, stddev: 184.95116600974106}
+    type: standardization
+  maxoutstandbalancel12m_4187113A:
+    properties: {mean: 71363.99224561105, stddev: 81867.97231664076}
+    type: standardization
+  maxpmtlast3m_4525190A:
+    properties: {mean: 9970.821435327694, stddev: 18769.595081761046}
     type: standardization
   mindbddpdlast24m_3658935P:
     properties: {mean: -0.3447058810650091, stddev: 303.53402507384453}
@@ -141,20 +309,23 @@ transformations:
   monthlyinstlamount_332A:
     properties: {mean: 5298.283217736802, stddev: 56730.44703162237}
     type: standardization
+  name_4527232M:
+    properties: {embedding_size: 10, vocab_size: 111374}
+    type: character_embedding
   nominalrate_281L:
     properties: {mean: 39.01400532845968, stddev: 361.7853711586101}
-    type: standardization
-  nominalrate_498L:
-    properties: {mean: 61.54700441457206, stddev: 459.8093107967861}
-    type: standardization
-  num_group1:
-    properties: {mean: 2.5824274304148935, stddev: 2.347953613286735}
     type: standardization
   num_group2:
     properties: {mean: 11.222811089211877, stddev: 4.368732869556367}
     type: standardization
   numactiverelcontr_750L:
     properties: {mean: 0.243493144179545, stddev: 0.47195008923582393}
+    type: standardization
+  numberofinstls_229L:
+    properties: {mean: 12.174513027785224, stddev: 13.234457129432206}
+    type: standardization
+  numberofinstls_320L:
+    properties: {mean: 31.634847461657337, stddev: 31.463673218571948}
     type: standardization
   numberofoverdueinstlmax_1039L:
     properties: {mean: 20.619197905681425, stddev: 159.19787139103258}
@@ -177,8 +348,11 @@ transformations:
   numinstlswithdpd5_4187116L:
     properties: {mean: 2.2439694055627193, stddev: 4.8062741570301055}
     type: standardization
-  numinstpaid_4499208L:
-    properties: {mean: 33.47347189271606, stddev: 33.898698107804584}
+  numinstpaidearly_338L:
+    properties: {mean: 16.1754091461791, stddev: 21.938418416652024}
+    type: standardization
+  numinstpaidlastcontr_4325080L:
+    properties: {mean: 7.746829346230144, stddev: 6.124473221743859}
     type: standardization
   numinstpaidlate1d_3546852L:
     properties: {mean: 5.483399530382677, stddev: 8.650442371099036}
@@ -186,8 +360,17 @@ transformations:
   numinstregularpaidest_4493210L:
     properties: {mean: 33.48733041502129, stddev: 33.90761127905807}
     type: standardization
+  numinsttopaygrest_4493213L:
+    properties: {mean: 5.842908224771251, stddev: 10.19781144318945}
+    type: standardization
   numrejects9m_859L:
     properties: {mean: 0.3687634239211245, stddev: 1.248276859566943}
+    type: standardization
+  openingdate_313D:
+    properties: {embedding_size: 10, vocab_size: 1431}
+    type: character_embedding
+  outstandingamount_354A:
+    properties: {mean: 2.8118510979974176, stddev: 436.66618973162116}
     type: standardization
   overdueamount_659A:
     properties: {mean: 1123.0987327114265, stddev: 91196.74032249411}
@@ -198,6 +381,9 @@ transformations:
   overdueamountmax2_398A:
     properties: {mean: 7077.815705531562, stddev: 314643.04205109796}
     type: standardization
+  overdueamountmax2date_1002D:
+    properties: {embedding_size: 10, vocab_size: 4481}
+    type: character_embedding
   overdueamountmax_155A:
     properties: {mean: 2784.412559958202, stddev: 108588.78876408825}
     type: standardization
@@ -216,9 +402,6 @@ transformations:
   pctinstlsallpaidlate6d_3546844L:
     properties: {mean: 0.09774196851619191, stddev: 0.1778464849859361}
     type: standardization
-  persontype_792L:
-    properties: {mean: 1.823555344429522, stddev: 1.0642866823409605}
-    type: standardization
   pmtnum_254L:
     properties: {mean: 17.074068724881133, stddev: 9.786825006013146}
     type: standardization
@@ -234,29 +417,75 @@ transformations:
   pmts_overdue_1152A:
     properties: {mean: 4111.157511453203, stddev: 50489.411444241065}
     type: standardization
-  price_1097A:
-    properties: {mean: 34464.972297464585, stddev: 34483.160123554226}
+  pmts_year_507T:
+    properties: {mean: 2015.1151335770078, stddev: 2.661380884089918}
     type: standardization
+  posfpd30lastmonth_3976960P:
+    properties: {mean: 0.008049350036672686, stddev: 0.08935638603536482}
+    type: standardization
+  posfstqpd30lastmonth_3976962P:
+    properties: {mean: 0.030524615822530337, stddev: 0.17202582842347172}
+    type: standardization
+  postype_4733339M:
+    properties:
+      vocab: [a55475b1, P67_102_161, P46_145_78, P177_117_192, P60_146_156, P149_40_170,
+        P217_110_186, P169_115_83, P140_48_169]
+    type: onehot
+  purposeofcred_722M:
+    properties: {embedding_size: 4, vocab_size: 14}
+    type: character_embedding
   registaddr_zipcode_184M:
     properties: {embedding_size: 10, vocab_size: 3452}
     type: character_embedding
   residualamount_856A:
     properties: {mean: 37568.473502667206, stddev: 138903.28608668526}
     type: standardization
-  sellerplacecnt_915L:
-    properties: {mean: 0.1628451409253802, stddev: 0.45025028651889276}
+  responsedate_1012D:
+    properties: {embedding_size: 10, vocab_size: 292}
+    type: character_embedding
+  responsedate_4917613D:
+    properties: {embedding_size: 10, vocab_size: 207}
+    type: character_embedding
+  revolvingaccount_394A:
+    properties: {mean: 750095901.8685242, stddev: 51495324.44871413}
+    type: standardization
+  secondquarter_766L:
+    properties: {mean: 2.688481775518496, stddev: 3.3245457607760094}
     type: standardization
   sex_738L:
     properties:
       vocab: [F, M]
     type: onehot
+  subjectrole_43M:
+    properties:
+      vocab: [a55475b1, ab3c25cf, fa4f56f1, daf49a8a, 15f04f45]
+    type: onehot
+  subjectrole_93M:
+    properties:
+      vocab: [ab3c25cf, a55475b1, be4fd70b, daf49a8a]
+    type: onehot
   subjectroles_name_838M:
     properties:
       vocab: [ab3c25cf, daf49a8a, a55475b1, be4fd70b]
     type: onehot
+  tenor_203L:
+    properties: {mean: 15.005518904346312, stddev: 7.3050213602583005}
+    type: standardization
+  thirdquarter_1082L:
+    properties: {mean: 2.9183418236821916, stddev: 3.423862363675509}
+    type: standardization
+  totalamount_503A:
+    properties: {mean: 251204.15060994326, stddev: 4559375.780961304}
+    type: standardization
+  totalamount_996A:
+    properties: {mean: 215989.40852106028, stddev: 1627328.5270035348}
+    type: standardization
   totaldebtoverduevalue_178A:
     properties: {mean: 2044.4759704513224, stddev: 317588.6431845539}
     type: standardization
   totalsettled_863A:
     properties: {mean: 92238.16934995154, stddev: 162335.77996821262}
     type: standardization
+  validfrom_1069D:
+    properties: {embedding_size: 10, vocab_size: 618}
+    type: character_embedding

@@ -1,3 +1,4 @@
+import os
 import tempfile
 from typing import Dict, Iterator, List
 
@@ -62,7 +63,7 @@ if __name__ == '__main__':
     keras_model, model_conf = model.model, model.conf
 
     # TODO: Please add optimizer as a parameter
-    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.0005),
+    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.01),
                         loss='binary_crossentropy', metrics=[tf_keras.metrics.AUC()])
 
     print('Fitting a model...')
@@ -87,12 +88,14 @@ if __name__ == '__main__':
                     epochs=10,
                     class_weight={0: 0.51622883, 1: 15.904686})
 
+    fd.close()
+
     # load the best model
     keras_model.load_weights(fd.name)
 
-    keras_model.save(options.best_model_output_path)
+    os.remove(fd.name)
 
-    fd.close()
+    keras_model.save(options.best_model_output_path)
 
     test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})

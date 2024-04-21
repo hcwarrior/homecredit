@@ -46,7 +46,7 @@ class FeatureYAMLGenerator:
         prop = {}
         if column in continuous_features:
             boundaries = series.quantile(np.arange(0.1, 1.0, 0.1))
-            if boundaries.nunique() >= 10 and abs(series.skew()) >= 1.0:
+            if boundaries.nunique() >= 9 and abs(series.skew()) >= 1.0:
                 prop['type'] = 'binning'
                 prop['properties'] = {'boundaries': boundaries.tolist()}
             else:

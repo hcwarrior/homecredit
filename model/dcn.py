@@ -104,9 +104,9 @@ class DeepCrossNetwork(tf_keras.Model):
     def _build_dense_layers(self, inputs):
         # TODO: Please add parameters
         layer1 = Dense(50, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
-        bn_layer1 = BatchNormalization(aixs=1)
+        bn_layer1 = BatchNormalization(axis=1)
         layer2 = Dense(30, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
-        bn_layer2 = BatchNormalization(aixs=1)
+        bn_layer2 = BatchNormalization(axis=1)
 
         output = bn_layer2(layer2(bn_layer1(layer1(inputs))))
         logits = Dense(units=1, activation=tf_keras.activations.sigmoid)(output)
