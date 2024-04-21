@@ -7,10 +7,12 @@ import tensorflow.keras as tf_keras
 import yaml
 
 from model.dcn import DeepCrossNetwork
+from model.xgboost_ import XGBoost
 
 
 @dataclass
 class ModelConf:
+    model: str
     features: List[str]
     target: str
     id: str
@@ -33,7 +35,9 @@ class ModelParser:
         model_conf = self._parse_model_conf()
         self.feature_conf = {col: transformation for col, transformation in self.feature_conf.items()
                              if col in model_conf.features + [model_conf.target]}
-        return Model(model=DeepCrossNetwork(self.feature_conf), conf=model_conf)
+
+        model = XGBoost(self.feature_conf)
+        return Model(model=model, conf=model_conf)
 
     def _parse_model_conf(self) -> ModelConf:
         with open(self.model_yaml_path) as f:
@@ -48,4 +52,4 @@ class ModelParser:
             if 'id' not in conf:
                 raise Exception('Please define "id".')
 
-            return ModelConf(conf['features'], conf['label'], conf['id'])
+            return ModelConf(conf['model'], conf['features'], conf['label'], conf['id'])

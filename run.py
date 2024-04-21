@@ -60,56 +60,26 @@ if __name__ == '__main__':
 
     feature_conf = _parse_features(options.feature_yaml_path)
     model = _parse_model(options.model_yaml_path, feature_conf)
-    keras_model, model_conf = model.model, model.conf
-
-    # TODO: Please add optimizer as a parameter
-    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.01),
-                        loss='binary_crossentropy', metrics=[tf_keras.metrics.AUC()])
+    model, model_conf = model.model, model.conf
 
     print('Fitting a model...')
     train_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     train_data_generator = _generate_datasets(train_data_parser, model_conf.target)
 
-    val_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
-    validation_data_generator = _generate_datasets(val_data_parser, model_conf.target)
+    for train_data_dict, target in train_data_generator:
+        model.fit(pd.DataFrame.from_dict(train_data_dict), target)
 
-
-    fd = tempfile.TemporaryFile('w+t')
-    model_checkpoint_callback = tf_keras.callbacks.ModelCheckpoint(
-        filepath=fd.name,
-        save_weights_only=True,
-        monitor='val_accuracy',
-        mode='max',
-        save_best_only=True)
-
-    keras_model.fit(x=train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback],
-                    steps_per_epoch=len(train_data_parser.files),
-                    validation_steps=len(val_data_parser.files),
-                    epochs=10,
-                    class_weight={0: 0.51622883, 1: 15.904686})
-
-    fd.close()
-
-    # load the best model
-    keras_model.load_weights(fd.name)
-
-    os.remove(fd.name)
-
-    keras_model.save(options.best_model_output_path)
-
-    test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target)
+    test_data_parser = DatasetGenerator(options.test_data_root_dir, model_conf.features, model_conf.target,
+                                         model_conf.id)
+    test_data_generator = _generate_datasets(test_data_parser, model_conf.target, model_conf.id)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
     for test_data_dict, target, case_id in test_data_generator:
-        preds = keras_model.predict(test_data_dict).reshape((-1,))
+        preds = model.predict(test_data_dict, target).reshape((-1,))
         eval_df = pd.concat([eval_df,
                              pd.DataFrame({'case_id': case_id, 'target': target, 'score': preds})],
                             axis=0,
                             ignore_index=True)
 
-    eval_df[['case_id', 'target']] = eval_df[['case_id', 'target']].astype(int)
-    log_loss = sklearn.metrics.log_loss(eval_df['target'], eval_df['score'])
-    auroc = sklearn.metrics.roc_auc_score(eval_df['target'], eval_df['score'])
-    print(f'Log-loss / AUROC from test data set: {log_loss} / {auroc}')
 
     print('Saving results to the submission CSV file...')
     eval_df.drop(columns=['target']).to_csv(options.submission_csv_file_path, index=False)
