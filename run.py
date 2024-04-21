@@ -8,6 +8,7 @@ import tensorflow.keras as tf_keras
 from dataclasses import dataclass
 
 from simple_parsing import ArgumentParser
+from sklearn.utils import class_weight
 
 from parsing.data.data_parser import DatasetGenerator
 from parsing.feature.feature_parser import FeatureParser
@@ -38,14 +39,15 @@ def _parse_model(model_yaml_path: str, feature_conf: Dict[str, object]) -> Model
     return model_parser.parse()
 
 
-def _generate_datasets(
-        data_root_dir: str, input_cols: List[str], target: str, id: str) -> Iterator[Dict[str, np.ndarray]]:
-    data_parser = DatasetGenerator(data_root_dir, input_cols, target, id)
+def _generate_datasets(data_parser: DatasetGenerator, target: str, id: str = None) -> Iterator[Dict[str, np.ndarray]]:
 
     for file_path, array_dict in data_parser.parse():
         print(f'\nParsing {file_path}...')
-        # dict, target, id
-        yield {col: array_dict[col] for col in input_cols}, array_dict[target], array_dict[id]
+        # dict, target, id (optional)
+        result = {col: array_dict[col] for col in data_parser.features}, array_dict[target]
+        if id is not None:
+            result = result + array_dict[id]
+        yield result
 
 
 if __name__ == '__main__':
@@ -60,12 +62,15 @@ if __name__ == '__main__':
     keras_model, model_conf = model.model, model.conf
 
     # TODO: Please add optimizer as a parameter
-    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.0001),
-                        loss='binary_crossentropy', metrics=['accuracy', tf_keras.metrics.AUC()])
+    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.0005),
+                        loss='binary_crossentropy', metrics=[tf_keras.metrics.AUC()])
 
     print('Fitting a model...')
-    train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
-    validation_data_generator = _generate_datasets(options.val_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+    train_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+    train_data_generator = _generate_datasets(train_data_parser, model_conf.target)
+
+    val_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+    validation_data_generator = _generate_datasets(val_data_parser, model_conf.target)
 
 
     fd = tempfile.TemporaryFile('w+t')
@@ -75,9 +80,12 @@ if __name__ == '__main__':
         monitor='val_accuracy',
         mode='max',
         save_best_only=True)
-    keras_model.fit(train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback],
-                    batch_size=8192,
-                    epochs=10)
+
+    keras_model.fit(x=train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback],
+                    steps_per_epoch=len(train_data_parser.files),
+                    validation_steps=len(val_data_parser.files),
+                    epochs=10,
+                    class_weight={0: 0.51622883, 1: 15.904686})
 
     # load the best model
     keras_model.load_weights(fd.name)
@@ -86,7 +94,7 @@ if __name__ == '__main__':
 
     fd.close()
 
-    test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
+    test_data_generator = _generate_datasets(options.test_data_root_dir, model_conf.features, model_conf.target)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
     for test_data_dict, target, case_id in test_data_generator:
         preds = keras_model.predict(test_data_dict).reshape((-1,))

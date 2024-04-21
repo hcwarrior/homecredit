@@ -15,13 +15,14 @@ class DatasetGenerator:
         self.root_dir = root_dir
         self.files = list(itertools.chain.from_iterable(
             [glob.glob(f'{root_dir}/*.{ext}') for ext in DatasetGenerator._SUPPORTED_EXTENSIONS]))
+        self.label = target
         self.features = input_features + [target, id]
 
     # returns numpy array dict
     def parse(self) -> Iterator[Tuple[str, Dict[str, tf.Tensor]]]:
         file_iterator = itertools.cycle(self.files)
         for file_path in file_iterator:
-            yield file_path, self._to_numpy_array_dict(self._parse_file_to_frame(file_path))
+            yield file_path, self._to_numpy_array_dict(self._parse_file_to_frame(file_path), self.label)
 
     def _parse_file_to_frame(self, file_path: str) -> pd.DataFrame:
         if file_path.endswith('csv'):
@@ -41,6 +42,7 @@ class DatasetGenerator:
             else:
                 df[col] = df[col].bfill()
 
-    def _to_numpy_array_dict(self, df: pd.DataFrame) -> Dict[str, tf.Tensor]:
+    def _to_numpy_array_dict(self, df: pd.DataFrame, label: str) -> Dict[str, tf.Tensor]:
+        df[label] = df[label].astype('int32')
         return {col: tf.convert_to_tensor(df[col].values) for col in self.features}
 

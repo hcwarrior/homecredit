@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 import shap
+import sklearn
 import yaml
 
 from matplotlib import pyplot as plt
@@ -119,3 +120,8 @@ if __name__ == '__main__':
 
     print(f'Selected Continuous Features: [{", ".join(cont_features)}]')
     print(f'Selected Categorical Features: [{", ".join(cat_features)}]')
+
+    # Optional - class weights
+    weights = sklearn.utils.class_weight.compute_class_weight(class_weight='balanced', classes=np.array([0, 1]), y=df[label].values)
+    weights = dict(zip([0, 1], weights))
+    print(f'Weights: {weights}')

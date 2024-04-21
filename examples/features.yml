@@ -18,651 +18,66 @@ transformations:
   MONTH:
     properties: {mean: 201936.28798245057, stddev: 44.73597450348372}
     type: standardization
-  WEEK_NUM:
-    properties: {mean: 40.76903617638254, stddev: 23.797981292733006}
-    type: standardization
-  actualdpd_943P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  actualdpdtolerance_344P:
-    properties: {mean: 0.0792336539823416, stddev: 11.206518002706646}
-    type: standardization
-  addres_district_368M:
-    properties: {embedding_size: 10, vocab_size: 339}
-    type: character_embedding
-  addres_role_871L:
-    properties:
-      vocab: [PERMANENT, TEMPORARY]
-    type: onehot
-  addres_zip_823M:
-    properties: {embedding_size: 10, vocab_size: 1168}
-    type: character_embedding
-  amount_1115A:
-    properties:
-      boundaries: [17399.140000000003, 27197.600000000002, 39392.80000000002, 53977.200000000004,
-        73687.0, 101015.23659999999, 148580.31999999992, 238405.288, 497021.461]
-    type: binning
-  amount_416A:
-    properties:
-      boundaries: [0.0, 0.0, 139.181015, 218.06266666666667, 266.85534666666666, 290.578,
-        478.27002, 1089.302, 4139.9683]
-    type: binning
-  amount_4527230A:
-    properties:
-      boundaries: [712.4213063506493, 850.0, 1043.4328571428573, 1319.818674666667,
-        1644.6848789473684, 2028.0755622222216, 2546.857434671428, 3337.380030000001,
-        4942.200011666667]
-    type: binning
-  amount_4917619A:
-    properties:
-      boundaries: [6880.50016, 8184.232390793652, 10139.063915194805, 12355.55057263158,
-        14996.352564102563, 18090.702857142856, 22142.41252, 28088.73346666667, 40130.4363190476]
-    type: binning
-  amtdebitincoming_4809443A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 2000.0, 5597.479999999997, 10666.601, 21333.4]
-    type: binning
-  amtdebitoutgoing_4809440A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 1850.0, 5435.919999999994, 10415.560600000012,
-        20950.680000000015]
-    type: binning
-  amtdepositbalance_4809441A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 237.6, 402.4, 2518.6]
-    type: binning
-  amtdepositincoming_4809444A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6]
-    type: binning
-  amtdepositoutgoing_4809442A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 1.8000001, 2.6000001, 3.6000001, 9.8, 346.80002]
-    type: binning
   amtinstpaidbefduel24m_4187115A:
-    properties:
-      boundaries: [0.0, 3721.0, 11071.0, 19209.127000000008, 29758.396, 43648.265, 63088.55879999994,
-        93382.4540000001, 150680.696]
-    type: binning
-  annualeffectiverate_199L:
-    properties:
-      boundaries: [0.12, 5.4799999999999995, 15.0, 21.9, 26.6, 34.41, 41.714999999999996,
-        50.12, 111.525]
-    type: binning
-  annualeffectiverate_63L:
-    properties:
-      boundaries: [0.12, 2.02, 9.195, 18.74, 22.83, 26.8, 34.295, 41.59, 48.28]
-    type: binning
-  annuity_780A:
-    properties:
-      boundaries: [1360.6, 1782.0, 2167.6, 2609.4001, 3151.8, 3828.4001, 4714.6, 5973.6,
-        7752.4]
-    type: binning
-  annuity_853A:
-    properties:
-      boundaries: [1414.8980008000003, 1920.86668, 2299.848848461539, 2649.1744864537814,
-        3006.7333527777773, 3400.8, 3877.0, 4525.0, 5654.602906250002]
-    type: binning
-  annuitynextmonth_57A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 951.60004, 2861.2, 5332.2]
-    type: binning
-  applicationcnt_361L:
-    properties: {mean: 2.1615829075124175e-05, stddev: 0.008133702328143965}
+    properties: {mean: 55958.33028871331, stddev: 71614.1663544361}
     type: standardization
   applications30d_658L:
     properties: {mean: 0.13815200382010653, stddev: 0.4886631520243688}
     type: standardization
-  applicationscnt_1086L:
-    properties: {mean: 0.42450999208074625, stddev: 3.1281108379338955}
-    type: standardization
-  applicationscnt_464L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  applicationscnt_629L:
-    properties: {mean: 0.26871292148410353, stddev: 2.464199301981377}
-    type: standardization
-  applicationscnt_867L:
-    properties: {mean: 2.8803603162199285, stddev: 4.3464720417750975}
-    type: standardization
-  approvaldate_319D:
-    properties: {embedding_size: 10, vocab_size: 5389}
-    type: character_embedding
-  assignmentdate_238D:
-    properties: {embedding_size: 10, vocab_size: 8887}
-    type: character_embedding
   assignmentdate_4527235D:
     properties: {embedding_size: 10, vocab_size: 372}
     type: character_embedding
-  assignmentdate_4955616D:
-    properties: {embedding_size: 10, vocab_size: 7565}
-    type: character_embedding
-  avgdbddpdlast24m_3658932P:
-    properties:
-      boundaries: [-22.0, -13.0, -9.0, -7.0, -5.0, -3.0, -2.0, -1.0, 2.0]
-    type: binning
   avgdbddpdlast3m_4187120P:
-    properties:
-      boundaries: [-25.0, -14.0, -9.0, -6.0, -4.0, -2.0, -1.0, 0.0, 1.0]
-    type: binning
-  avgdbdtollast24m_4525197P:
-    properties:
-      boundaries: [-23.0, -14.0, -10.0, -7.0, -5.0, -3.0, -2.0, -1.0, 1.0]
-    type: binning
-  avgdpdtolclosure24_3658938P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 4.0]
-    type: binning
-  avginstallast24m_3658937A:
-    properties:
-      boundaries: [1630.0, 2253.6, 2809.6, 3393.440080000002, 4068.6, 4874.0, 5903.0,
-        7368.2, 9968.4]
-    type: binning
-  avglnamtstart24m_4525187A:
-    properties:
-      boundaries: [9998.0, 13600.0, 17987.201, 22732.720200000003, 28419.4, 36640.48,
-        48282.0, 66751.52200000003, 101763.96100000023]
-    type: binning
-  avgmaxdpdlast9m_3716943P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]
-    type: binning
-  avgoutstandbalancel6m_4187114A:
-    properties: {mean: 45984.82680445623, stddev: 63993.92187634563}
+    properties: {mean: 29.49434229748537, stddev: 367.2739127178802}
     type: standardization
-  avgpmtlast12m_4525200A:
-    properties:
-      boundaries: [1597.8, 2283.8, 2914.4001, 3609.2, 4417.6, 5401.2, 6681.2, 8547.8,
-        11986.780100000004]
-    type: binning
+  avgmaxdpdlast9m_3716943P:
+    properties: {mean: 0.7463922053185007, stddev: 4.796508274579271}
+    type: standardization
   birth_259D:
     properties: {embedding_size: 10, vocab_size: 680}
     type: character_embedding
-  birthdate_574D:
-    properties: {embedding_size: 10, vocab_size: 667}
-    type: character_embedding
-  birthdate_87D:
-    properties: {embedding_size: 10, vocab_size: 636}
-    type: character_embedding
-  byoccupationinc_3656910L:
-    properties:
-      boundaries: [1.0, 1.0, 1.0, 1.0, 10000.0, 15370.050000000032, 23000.0, 30540.0,
-        46213.43333333327]
-    type: binning
-  cacccardblochreas_147M:
-    properties:
-      vocab: [a55475b1, P201_63_60, P33_145_161]
-    type: onehot
-  cancelreason_3545846M:
-    properties: {embedding_size: 10, vocab_size: 60}
-    type: character_embedding
-  cardtype_51L:
-    properties:
-      vocab: [INSTANT, PERSONALIZED]
-    type: onehot
-  childnum_185L:
-    properties: {mean: 0.616029070354295, stddev: 0.9660800058970467}
-    type: standardization
-  childnum_21L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.2, 0.7272727272727273, 1.0, 1.2, 2.0, 2.4285714285714284]
-    type: binning
-  classificationofcontr_1114M:
-    properties:
-      vocab: [ea6782cc, 01f63ac8, a55475b1, 1cf4e481, 07b11743, 00135d9c, 9b63302f,
-        8b9a3257, 90c587b1]
-    type: onehot
-  classificationofcontr_13M:
-    properties:
-      vocab: [ea6782cc, a55475b1, be7b251d, 4408ff0f]
-    type: onehot
-  classificationofcontr_400M:
-    properties: {embedding_size: 10, vocab_size: 118}
-    type: character_embedding
-  clientscnt12m_3712952L:
-    properties: {mean: 0.03675149460357552, stddev: 0.7808771808324428}
-    type: standardization
-  clientscnt3m_3712950L:
-    properties: {mean: 0.01777541677611045, stddev: 0.5261164220839041}
-    type: standardization
-  clientscnt6m_3712949L:
-    properties: {mean: 0.025622617755504014, stddev: 0.7333208163110356}
-    type: standardization
-  clientscnt_100L:
-    properties: {mean: 0.04934238752727361, stddev: 0.4324478725584979}
-    type: standardization
-  clientscnt_1022L:
-    properties: {mean: 0.10543611900234434, stddev: 1.203374084369868}
-    type: standardization
-  clientscnt_1071L:
-    properties: {mean: 0.033447547880698966, stddev: 0.1883078669063969}
-    type: standardization
-  clientscnt_1130L:
-    properties: {mean: 0.03125124864164165, stddev: 0.2511513439164937}
-    type: standardization
-  clientscnt_136L:
-    properties: {mean: 0.05755395683453238, stddev: 0.362346469596127}
-    type: standardization
-  clientscnt_157L:
-    properties: {mean: 0.07874777537092435, stddev: 0.7700826544705368}
-    type: standardization
-  clientscnt_257L:
-    properties: {mean: 0.0030327663217522708, stddev: 0.061679502992002394}
-    type: standardization
-  clientscnt_304L:
-    properties: {mean: 0.07886764496852276, stddev: 1.2926155318575694}
-    type: standardization
-  clientscnt_360L:
-    properties: {mean: 0.0030943386833602003, stddev: 0.06138902547630813}
-    type: standardization
-  clientscnt_493L:
-    properties: {mean: 0.015776935124346695, stddev: 1.2935126587791008}
-    type: standardization
-  clientscnt_533L:
-    properties: {mean: 0.07549230050718596, stddev: 0.2821073922234692}
-    type: standardization
-  clientscnt_887L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-    type: binning
-  clientscnt_946L:
-    properties: {mean: 0.032449944617625806, stddev: 0.3016756896284735}
-    type: standardization
-  cntincpaycont9m_3716944L:
-    properties: {mean: 6.19062520707552, stddev: 6.185545773980284}
-    type: standardization
-  cntpmts24_3658933L:
-    properties: {mean: 10.630644272998591, stddev: 7.888572807080202}
-    type: standardization
-  collater_typofvalofguarant_298M:
-    properties:
-      vocab: [a55475b1, 8fd95e4b]
-    type: onehot
-  collater_typofvalofguarant_407M:
-    properties:
-      vocab: [a55475b1, c7a5ad39, 9a0c095e, 8fd95e4b, f4d8a027]
-    type: onehot
   collater_valueofguarantee_1124L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
+    properties: {mean: 530775.1453075282, stddev: 19618095.8053888}
+    type: standardization
   collater_valueofguarantee_876L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12909.09090909091, 75000.0]
-    type: binning
-  collaterals_typeofguarante_359M:
-    properties:
-      vocab: [a55475b1, c7a5ad39, f4d8a027, b1c5e678, 9276e4bb]
-    type: onehot
-  collaterals_typeofguarante_669M:
-    properties:
-      vocab: [c7a5ad39, a55475b1, f4d8a027, b1c5e678, 9276e4bb]
-    type: onehot
-  contaddr_district_15M:
-    properties: {embedding_size: 10, vocab_size: 613}
-    type: character_embedding
-  contaddr_smempladdr_334L:
-    properties: {mean: 0.004541946170206353, stddev: 0.06724076038852582}
+    properties: {mean: 797552.2090257308, stddev: 26211470.318611067}
     type: standardization
-  contaddr_zipcode_807M:
-    properties: {embedding_size: 10, vocab_size: 3451}
-    type: character_embedding
-  contractdate_551D:
-    properties: {embedding_size: 10, vocab_size: 3317}
-    type: character_embedding
-  contractenddate_991D:
-    properties: {embedding_size: 10, vocab_size: 1318}
-    type: character_embedding
-  contractmaturitydate_151D:
-    properties: {embedding_size: 10, vocab_size: 3755}
-    type: character_embedding
-  contractssum_5085716L:
-    properties:
-      boundaries: [0.0, 49965.64400000001, 111177.53800000002, 194909.992, 307282.4,
-        458843.3520000001, 661103.9879999998, 968279.9440000001, 1624148.2180000031]
-    type: binning
-  contractst_516M:
-    properties: {embedding_size: 4, vocab_size: 14}
-    type: character_embedding
-  contractst_545M:
-    properties: {embedding_size: 6, vocab_size: 18}
-    type: character_embedding
-  contractst_964M:
-    properties: {embedding_size: 10, vocab_size: 141}
-    type: character_embedding
-  contractsum_5085717L:
-    properties:
-      boundaries: [0.0, 32331.82, 65059.40700000002, 104604.54533333334, 156999.23,
-        225794.63100000002, 322848.59, 469285.6170000001, 757913.6503333336]
-    type: binning
-  contracttype_653M:
-    properties: {embedding_size: 7, vocab_size: 22}
-    type: character_embedding
-  conts_role_79M:
-    properties:
-      vocab: [a55475b1, P7_147_157, P38_92_157, P58_79_51, P42_134_91]
-    type: onehot
-  conts_type_509L:
-    properties:
-      vocab: [PRIMARY_MOBILE, SECONDARY_MOBILE, HOME_PHONE, PRIMARY_EMAIL, EMPLOYMENT_PHONE,
-        PHONE, WHATSAPP]
-    type: onehot
-  creationdate_885D:
-    properties: {embedding_size: 10, vocab_size: 5381}
-    type: character_embedding
-  credacc_actualbalance_314A:
-    properties:
-      boundaries: [0.0, 0.0, 29.426, 864.7180000000017, 9320.797, 16200.0, 23452.0,
-        33619.920000000006, 51512.0]
-    type: binning
-  credacc_cards_status_52L:
-    properties:
-      vocab: [CANCELLED, ACTIVE, INACTIVE, BLOCKED, RENEWED, UNCONFIRMED]
-    type: onehot
-  credacc_credlmt_575A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2398.6812121212142, 13450.900000000007]
-    type: binning
-  credacc_maxhisbal_375A:
-    properties:
-      boundaries: [-15124.322599999998, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 17.64320060000001,
-        160.99720200000024]
-    type: binning
-  credacc_minhisbal_90A:
-    properties:
-      boundaries: [-22020.3106, -7592.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 29.688800000000107]
-    type: binning
-  credacc_status_367L:
-    properties:
-      vocab: [CL, CA, AC, CR, PCL, PO]
-    type: onehot
-  credacc_transactions_402L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-    type: binning
-  credamount_590A:
-    properties:
-      boundaries: [12746.666666666666, 17974.540300000004, 22463.804615384615, 27178.02285714286,
-        32177.738636363636, 38028.17428571428, 44858.996666666666, 54167.09600000001,
-        69538.73733333338]
-    type: binning
-  credamount_770A:
-    properties:
-      boundaries: [12798.0, 17478.0, 21903.880000000016, 27996.0, 35199.402, 43996.0,
-        57636.0, 76329.16000000019, 102596.0]
-    type: binning
-  credlmt_1052A:
-    properties:
-      boundaries: [0.0, 0.0, 10000.0, 20000.0, 36184.0, 60000.0, 100000.0, 160000.0,
-        246912.0]
-    type: binning
-  credlmt_228A:
-    properties:
-      boundaries: [0.0, 0.0, 6000.0, 14369.0, 22600.0, 36000.0, 51735.5, 71000.0, 114000.0]
-    type: binning
-  credlmt_230A:
-    properties:
-      boundaries: [0.0, 0.0, 5000.0, 10000.0, 16879.6, 22597.459999999966, 30493.706666666665,
-        42398.0, 63292.800000000105]
-    type: binning
-  credlmt_3940954A:
-    properties:
-      boundaries: [0.0, 0.0, 7998.0, 15722.8, 26598.0, 42000.0, 68136.0, 109558.0, 191857.61]
-    type: binning
   credlmt_935A:
-    properties:
-      boundaries: [0.0, 0.0, 4000.0, 11694.0, 20892.4, 35974.0, 59496.96666666664, 99000.0,
-        165989.0]
-    type: binning
-  credor_3940957M:
-    properties: {embedding_size: 10, vocab_size: 95}
-    type: character_embedding
-  credquantity_1099L:
-    properties: {mean: 1.535819134633852, stddev: 0.7501301012061443}
+    properties: {mean: 84484.19247487842, stddev: 2381219.2639789474}
     type: standardization
-  credquantity_984L:
-    properties: {mean: 4.562820226035642, stddev: 4.177751373859948}
-    type: standardization
-  credtype_322L:
-    properties:
-      vocab: [CAL, REL, COL]
-    type: onehot
-  credtype_587L:
-    properties:
-      vocab: [CAL, REL, COL]
-    type: onehot
-  currdebt_22A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5990.2, 22678.8, 61625.560000000056]
-    type: binning
-  currdebt_94A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 1795.8003999999999, 4957.841599999999, 9712.104000000005,
-        18996.482900000003]
-    type: binning
-  currdebtcredtyperange_828A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2358.3999999999533, 30014.0]
-    type: binning
-  date_decision:
-    properties: {embedding_size: 10, vocab_size: 644}
-    type: character_embedding
   dateactivated_425D:
     properties: {embedding_size: 10, vocab_size: 4173}
     type: character_embedding
-  datefirstoffer_1144D:
-    properties: {embedding_size: 10, vocab_size: 1404}
-    type: character_embedding
-  datelastinstal40dpd_247D:
-    properties: {embedding_size: 10, vocab_size: 5175}
-    type: character_embedding
-  datelastunpaid_3546854D:
-    properties: {embedding_size: 10, vocab_size: 5231}
-    type: character_embedding
-  dateofbirth_337D:
-    properties: {embedding_size: 10, vocab_size: 724}
-    type: character_embedding
-  dateofbirth_342D:
-    properties: {embedding_size: 10, vocab_size: 664}
-    type: character_embedding
-  dateofcredend_289D:
-    properties: {embedding_size: 10, vocab_size: 9411}
-    type: character_embedding
-  dateofcredend_353D:
-    properties: {embedding_size: 10, vocab_size: 10217}
-    type: character_embedding
-  dateofcredstart_181D:
-    properties: {embedding_size: 10, vocab_size: 5825}
-    type: character_embedding
-  dateofcredstart_739D:
-    properties: {embedding_size: 10, vocab_size: 4791}
-    type: character_embedding
-  dateofrealrepmt_138D:
-    properties: {embedding_size: 10, vocab_size: 5635}
-    type: character_embedding
-  days120_123L:
-    properties: {mean: 1.6077148512908, stddev: 2.083003150425913}
-    type: standardization
   days180_256L:
     properties: {mean: 2.388655912465333, stddev: 2.8911147640754034}
     type: standardization
   days30_165L:
     properties: {mean: 0.517707771790392, stddev: 0.8992376602749538}
     type: standardization
-  days360_512L:
-    properties: {mean: 4.777066459982781, stddev: 5.168856073766738}
-    type: standardization
-  days90_310L:
-    properties: {mean: 1.2114201506685112, stddev: 1.6559313941691354}
-    type: standardization
   daysoverduetolerancedd_3976961L:
-    properties:
-      boundaries: [0.0, 0.0, 1.0, 1.0, 2.0, 4.0, 9.0, 21.0, 58.0]
-    type: binning
-  debtoutstand_525A:
-    properties:
-      boundaries: [0.0, 2331.434, 14328.964000000002, 30230.338, 53329.957, 86933.82,
-        134916.97, 214129.16, 427854.75]
-    type: binning
+    properties: {mean: 96.35753888265607, stddev: 481.2986660739454}
+    type: standardization
   debtoverdue_47A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  debtpastduevalue_732A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1313.5920300000025]
-    type: binning
-  debtvalue_227A:
-    properties:
-      boundaries: [7313.9248, 13838.082, 21359.571200000006, 31306.92404, 45729.027,
-        66359.25564999999, 102074.33399999997, 173287.47686666666, 381052.0700000001]
-    type: binning
-  deductiondate_4917603D:
-    properties: {embedding_size: 10, vocab_size: 247}
-    type: character_embedding
-  description_351M:
-    properties: {embedding_size: 3, vocab_size: 10}
-    type: character_embedding
-  description_5085714M:
-    properties:
-      vocab: [a55475b1, 2fc785b2]
-    type: onehot
+    properties: {mean: 2587.659987818412, stddev: 591296.5529813371}
+    type: standardization
   disbursedcredamount_1113A:
-    properties:
-      boundaries: [11572.0, 15999.601, 20176.0, 25974.0, 31946.0, 40000.0, 51744.0,
-        69857.88300000002, 100000.0]
-    type: binning
-  disbursementtype_67L:
-    properties:
-      vocab: [GBA, DD, SBA]
-    type: onehot
-  district_544M:
-    properties: {embedding_size: 10, vocab_size: 625}
-    type: character_embedding
-  downpmt_116A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  downpmt_134A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 350.0, 1266.6666666666667]
-    type: binning
-  dpd_550P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8657.10000000002]
-    type: binning
-  dpd_733P:
-    properties: {mean: 284.97109577221744, stddev: 43699.902855426124}
+    properties: {mean: 46074.75234066344, stddev: 42505.44333233253}
     type: standardization
   dpdmax_139P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 2.5, 10.0]
-    type: binning
-  dpdmax_757P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.6666666666666666, 2.125, 5.0, 11.5, 44.55555555555556,
-        186.6]
-    type: binning
-  dpdmax_851P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 3439.3999999999924, 9364.8, 18545.5, 44362.0]
-    type: binning
-  dpdmaxdatemonth_442T:
-    properties: {mean: 6.544523816682384, stddev: 1.980966306877148}
-    type: standardization
-  dpdmaxdatemonth_804T:
-    properties: {mean: 6.589665830826712, stddev: 2.741661214435336}
-    type: standardization
-  dpdmaxdatemonth_89T:
-    properties: {mean: 6.615276663937418, stddev: 2.8062272693751122}
+    properties: {mean: 16.255781607317587, stddev: 137.90473781596458}
     type: standardization
   dpdmaxdateyear_596T:
     properties: {mean: 2018.433893850612, stddev: 0.7223195385427797}
     type: standardization
-  dpdmaxdateyear_742T:
-    properties: {mean: 2018.0518633399763, stddev: 1.5606987310623632}
-    type: standardization
-  dpdmaxdateyear_896T:
-    properties: {mean: 2015.12070381661, stddev: 2.6324993424494254}
-    type: standardization
-  dtlastpmt_581D:
-    properties: {embedding_size: 10, vocab_size: 2335}
-    type: character_embedding
-  dtlastpmtallstes_3545839D:
-    properties: {embedding_size: 10, vocab_size: 2297}
-    type: character_embedding
-  dtlastpmtallstes_4499206D:
-    properties: {embedding_size: 10, vocab_size: 4464}
-    type: character_embedding
-  education_1103M:
-    properties:
-      vocab: [a55475b1, 6b2ae0fa, 717ddd49, 39a0853f, c8e1a1d0]
-    type: onehot
   education_1138M:
     properties:
       vocab: [P97_36_170, a55475b1, P33_146_175, P17_36_170, P106_81_188, P157_18_172]
     type: onehot
-  education_88M:
-    properties:
-      vocab: [a55475b1, 6b2ae0fa, a34a13c8, c8e1a1d0, 717ddd49]
-    type: onehot
-  education_927M:
-    properties:
-      vocab: [a55475b1, P97_36_170, P33_146_175, P17_36_170, P106_81_188, P157_18_172]
-    type: onehot
-  eir_270L:
-    properties: {mean: 0.27711409053274916, stddev: 0.19753433150680869}
-    type: standardization
-  empl_employedfrom_271D:
-    properties: {embedding_size: 10, vocab_size: 8075}
-    type: character_embedding
-  empl_employedtotal_800L:
-    properties:
-      vocab: [MORE_FIVE, MORE_ONE, LESS_ONE]
-    type: onehot
-  empl_industry_691L:
-    properties: {embedding_size: 8, vocab_size: 24}
-    type: character_embedding
-  empladdr_district_926M:
-    properties: {embedding_size: 7, vocab_size: 22}
-    type: character_embedding
-  empladdr_zipcode_114M:
-    properties: {embedding_size: 8, vocab_size: 24}
-    type: character_embedding
   employedfrom_700D:
     properties: {embedding_size: 10, vocab_size: 9045}
     type: character_embedding
-  employername_160M:
-    properties: {embedding_size: 10, vocab_size: 114657}
-    type: character_embedding
-  empls_economicalst_849M:
-    properties:
-      vocab: [a55475b1, P28_32_178, P22_131_138, P164_110_33, P148_57_109, P112_86_147]
-    type: onehot
-  empls_employedfrom_796D:
-    properties: {embedding_size: 10, vocab_size: 801}
-    type: character_embedding
-  equalitydataagreement_891L:
-    properties: {mean: 0.9363938123982724, stddev: 0.24405164175117833}
-    type: standardization
-  equalityempfrom_62L:
-    properties: {mean: 0.9728128636411721, stddev: 0.1626305489578005}
-    type: standardization
-  familystate_447L:
-    properties:
-      vocab: [SINGLE, MARRIED, WIDOWED, DIVORCED, LIVING_WITH_PARTNER]
-    type: onehot
-  familystate_726L:
-    properties:
-      vocab: [MARRIED, WIDOWED, DIVORCED, SINGLE, LIVING_WITH_PARTNER]
-    type: onehot
   financialinstitution_382M:
     properties: {embedding_size: 10, vocab_size: 148}
-    type: character_embedding
-  financialinstitution_591M:
-    properties: {embedding_size: 10, vocab_size: 85}
     type: character_embedding
   firstclxcampaign_1125D:
     properties: {embedding_size: 10, vocab_size: 1248}
@@ -673,199 +88,16 @@ transformations:
   firstnonzeroinstldate_307D:
     properties: {embedding_size: 10, vocab_size: 5105}
     type: character_embedding
-  firstquarter_103L:
-    properties: {mean: 2.8605901315661284, stddev: 3.6109659476727147}
-    type: standardization
-  for3years_128L:
-    properties: {mean: 8.216026729473627e-05, stddev: 0.009063981849338562}
-    type: standardization
-  for3years_504L:
-    properties: {mean: 4.382346497233938, stddev: 5.815513965477529}
-    type: standardization
-  for3years_584L:
-    properties: {mean: 0.007695678369940297, stddev: 0.09107120394227884}
-    type: standardization
-  formonth_206L:
-    properties: {mean: 0.0003560278249438572, stddev: 0.018865598754726157}
-    type: standardization
-  formonth_535L:
-    properties: {mean: 0.236758503587665, stddev: 0.5354934977481485}
-    type: standardization
-  forquarter_1017L:
-    properties: {mean: 0.0009585364517719231, stddev: 0.03349580453311794}
-    type: standardization
-  forquarter_634L:
-    properties: {mean: 0.6139289039820343, stddev: 1.1500013486485259}
-    type: standardization
-  fortoday_1092L:
-    properties: {mean: 0.036944733526866405, stddev: 0.1892086009688422}
-    type: standardization
-  forweek_1077L:
-    properties: {mean: 5.4773511529824174e-05, stddev: 0.007400811537930038}
-    type: standardization
-  forweek_528L:
-    properties: {mean: 0.09012981322232569, stddev: 0.2913022082780645}
-    type: standardization
-  foryear_618L:
-    properties: {mean: 5.4773511529824174e-05, stddev: 0.007400811537930039}
-    type: standardization
-  foryear_818L:
-    properties: {mean: 0.0020813934381333186, stddev: 0.04904863091722274}
-    type: standardization
-  foryear_850L:
-    properties: {mean: 2.4207153420605794, stddev: 3.5524597355473984}
-    type: standardization
-  fourthquarter_440L:
-    properties: {mean: 2.8512135822488562, stddev: 3.4316522846575372}
-    type: standardization
-  gender_992L:
-    properties:
-      vocab: [F, M]
-    type: onehot
-  homephncnt_628L:
-    properties: {mean: 0.6357451140038476, stddev: 0.8488274671871279}
-    type: standardization
-  housetype_905L:
-    properties:
-      vocab: [OWNED, COMPANY_FLAT, PARENTAL, FLAT, COOP_FLAT, STATE_FLAT]
-    type: onehot
-  housingtype_772L:
-    properties:
-      vocab: [OWNED, PARENTAL, COMPANY_FLAT, FLAT, STATE_FLAT, COOP_FLAT]
-    type: onehot
   incometype_1044T:
     properties:
       vocab: [RETIRED_PENSIONER, EMPLOYED, PRIVATE_SECTOR_EMPLOYEE, SALARIED_GOVT, OTHER,
         HANDICAPPED_2, HANDICAPPED_3, SELFEMPLOYED, HANDICAPPED]
     type: onehot
   inittransactionamount_650A:
-    properties:
-      boundaries: [0.0, 0.0, 13894.0, 19466.00100000002, 24376.0, 30596.0, 39596.0,
-        52892.0, 75459.68049999999]
-    type: binning
-  inittransactioncode_186L:
-    properties:
-      vocab: [CASH, NDF, POS]
-    type: onehot
-  inittransactioncode_279L:
-    properties:
-      vocab: [CASH, NDF, POS]
-    type: onehot
-  installmentamount_644A:
-    properties: {mean: 318.5448283879014, stddev: 34590.40673289497}
+    properties: {mean: 32560.265180830673, stddev: 33141.955098339444}
     type: standardization
-  installmentamount_833A:
-    properties:
-      boundaries: [0.0, 7988.118800000001, 17117.059000000005, 29570.267400000022, 47417.746,
-        72949.43, 108772.98599999996, 166285.31400000004, 312165.10600000015]
-    type: binning
-  instlamount_768A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 586.0, 1661.6, 2825.4001, 4273.80732, 6309.6, 9720.190400000001]
-    type: binning
-  instlamount_852A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 100.0, 451.5309780000003, 1000.0, 2240.0]
-    type: binning
-  instlamount_892A:
-    properties:
-      boundaries: [1791.84, 2473.0000000000005, 3079.64496, 3793.1826400000004, 4589.2,
-        5602.0891999999985, 6970.387599999999, 9167.64257, 13906.4606]
-    type: binning
-  interesteffectiverate_369L:
-    properties:
-      boundaries: [0.12, 5.11, 10.777000000000003, 19.376000000000005, 23.43, 27.654,
-        34.65299999999999, 43.18400000000001, 48.35]
-    type: binning
-  interestrate_311L:
-    properties: {mean: 0.27711409053274916, stddev: 0.19753433150680869}
-    type: standardization
-  interestrate_508L:
-    properties:
-      boundaries: [14.25, 17.0, 19.0, 19.0, 21.0, 23.0, 24.0, 26.0, 35.0]
-    type: binning
-  interestrateyearly_538L:
-    properties:
-      boundaries: [0.0, 8.5, 21.0, 29.0, 37.73, 40.0, 42.0, 43.0, 45.0]
-    type: binning
-  isbidproduct_1095L:
-    properties: {mean: 0.11568398705932366, stddev: 0.31984569593365414}
-    type: standardization
-  isbidproduct_390L:
-    properties: {mean: 0.03992220965875915, stddev: 0.09714489272625978}
-    type: standardization
-  isbidproductrequest_292L:
-    properties: {mean: 8.026970621287526e-05, stddev: 0.008959336259616292}
-    type: standardization
-  isdebitcard_527L:
-    properties: {mean: 0.22254020182321946, stddev: 0.39638112114224267}
-    type: standardization
-  language1_981M:
-    properties:
-      vocab: [a55475b1, P209_127_106, P10_39_147]
-    type: onehot
-  last180dayaveragebalance_704A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.222222, 6.0, 85.28889200000064]
-    type: binning
-  last180dayturnover_1134A:
-    properties:
-      boundaries: [410.0, 2804.0000000000055, 14359.400000000038, 22909.227200000005,
-        30000.0, 40000.0, 50904.0, 60000.0, 99990.0]
-    type: binning
-  last30dayturnover_651A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9972.199999999979]
-    type: binning
-  lastactivateddate_801D:
-    properties: {embedding_size: 10, vocab_size: 4173}
-    type: character_embedding
-  lastapplicationdate_877D:
-    properties: {embedding_size: 10, vocab_size: 5381}
-    type: character_embedding
-  lastapprcommoditycat_1041M:
-    properties: {embedding_size: 10, vocab_size: 45}
-    type: character_embedding
-  lastapprcommoditytypec_5251766M:
-    properties: {embedding_size: 10, vocab_size: 214}
-    type: character_embedding
-  lastapprcredamount_781A:
-    properties:
-      boundaries: [6400.0, 10984.0, 14996.0, 20000.0, 24774.0, 31396.0, 40130.0, 57172.12000000002,
-        88260.0]
-    type: binning
-  lastapprdate_640D:
-    properties: {embedding_size: 10, vocab_size: 5389}
-    type: character_embedding
   lastcancelreason_561M:
     properties: {embedding_size: 10, vocab_size: 74}
-    type: character_embedding
-  lastdelinqdate_224D:
-    properties: {embedding_size: 10, vocab_size: 4401}
-    type: character_embedding
-  lastdependentsnum_448L:
-    properties: {mean: 0.5796998339939696, stddev: 1.0422982098992435}
-    type: standardization
-  lastotherinc_902A:
-    properties: {mean: 782.2621629581151, stddev: 3472.6761442365523}
-    type: standardization
-  lastotherlnsexpense_631A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1280.1600000000021, 20000.0, 38000.0]
-    type: binning
-  lastrejectcommoditycat_161M:
-    properties: {embedding_size: 10, vocab_size: 45}
-    type: character_embedding
-  lastrejectcommodtypec_5251769M:
-    properties: {embedding_size: 10, vocab_size: 187}
-    type: character_embedding
-  lastrejectcredamount_222A:
-    properties:
-      boundaries: [7000.0, 13000.0, 20000.0, 25900.0, 33998.0, 43154.0, 60000.0, 80000.0,
-        100162.80000000028]
-    type: binning
-  lastrejectdate_50D:
-    properties: {embedding_size: 10, vocab_size: 5374}
     type: character_embedding
   lastrejectreason_759M:
     properties: {embedding_size: 6, vocab_size: 18}
@@ -873,824 +105,158 @@ transformations:
   lastrejectreasonclient_4145040M:
     properties: {embedding_size: 4, vocab_size: 14}
     type: character_embedding
-  lastrepayingdate_696D:
-    properties: {embedding_size: 10, vocab_size: 539}
-    type: character_embedding
-  lastst_736L:
-    properties: {embedding_size: 3, vocab_size: 11}
-    type: character_embedding
-  lastupdate_1112D:
-    properties: {embedding_size: 10, vocab_size: 677}
-    type: character_embedding
-  lastupdate_260D:
-    properties: {embedding_size: 10, vocab_size: 564}
-    type: character_embedding
-  lastupdate_388D:
-    properties: {embedding_size: 10, vocab_size: 4087}
-    type: character_embedding
-  maininc_215A:
-    properties:
-      boundaries: [17600.0, 25000.0, 30000.0, 38000.0, 40000.0, 50000.0, 60000.0, 70000.0,
-        90000.0]
-    type: binning
-  mainoccupationinc_384A:
-    properties:
-      boundaries: [24000.0, 30000.0, 40000.0, 42000.0, 50000.0, 60000.0, 66000.0, 80000.0,
-        100000.0]
-    type: binning
-  mainoccupationinc_437A:
-    properties:
-      boundaries: [17440.0, 23900.0, 28750.0, 32666.666666666668, 37100.0, 41500.0,
-        48000.0, 55500.0, 70000.0]
-    type: binning
-  maritalst_385M:
-    properties:
-      vocab: [a55475b1, a7fcb6e5, 3439d993, b6cabe76, 38c061ee, ecd83604]
-    type: onehot
-  maritalst_703L:
-    properties:
-      vocab: [WIDOWED, SINGLE, MARRIED, DIVORCED, LIVING_WITH_PARTNER]
-    type: onehot
-  maritalst_893M:
-    properties:
-      vocab: [a55475b1, 46b968c3, 1a19667c, e18430ff, 977b2a70, ecd83604]
-    type: onehot
   maxannuity_159A:
-    properties:
-      boundaries: [0.0, 2889.2720000000013, 4980.0, 7440.0, 10758.5255, 15634.4, 23926.119999999974,
-        41129.23600000004, 87000.0]
-    type: binning
-  maxannuity_4075009A:
-    properties:
-      boundaries: [6440.0, 8988.00000000003, 11060.0, 13140.0, 15020.0, 17520.0, 20960.0,
-        27260.0, 95332.00000000012]
-    type: binning
+    properties: {mean: 34606.5691952394, stddev: 94998.00049369909}
+    type: standardization
   maxdbddpdlast1m_3658939P:
-    properties:
-      boundaries: [-23.0, -11.0, -6.0, -4.0, -2.0, -1.0, 0.0, 0.0, 2.0]
-    type: binning
+    properties: {mean: 45.04647467058861, stddev: 464.771909617785}
+    type: standardization
   maxdbddpdtollast12m_3658940P:
-    properties:
-      boundaries: [-6.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 8.0]
-    type: binning
+    properties: {mean: 52.77136228848391, stddev: 424.6626915729894}
+    type: standardization
   maxdbddpdtollast6m_4187119P:
-    properties:
-      boundaries: [-9.0, -3.0, -1.0, 0.0, 0.0, 0.0, 0.0, 2.0, 5.0]
-    type: binning
+    properties: {mean: 48.514143204850065, stddev: 434.6208832081723}
+    type: standardization
   maxdebt4_972A:
-    properties:
-      boundaries: [0.0, 0.0, 13168.0, 23067.920000000006, 32965.7, 44905.814, 60001.711899999995,
-        82017.2, 122695.836]
-    type: binning
-  maxdebtpduevalodued_3940955A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.15000000000000002, 0.5, 1.80000005, 7.70000015]
-    type: binning
+    properties: {mean: 48397.6092154394, stddev: 53398.887390947304}
+    type: standardization
   maxdpdfrom6mto36m_3546853P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 11.0]
-    type: binning
-  maxdpdinstldate_3546855D:
-    properties: {embedding_size: 10, vocab_size: 5287}
-    type: character_embedding
-  maxdpdinstlnum_3546846P:
-    properties: {mean: 8.254666500300463, stddev: 6.003637610938989}
+    properties: {mean: 32.41555788804716, stddev: 247.07059094164407}
     type: standardization
   maxdpdlast12m_727P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 5.0]
-    type: binning
-  maxdpdlast24m_143P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 3.0, 9.0]
-    type: binning
+    properties: {mean: 16.602238170140254, stddev: 192.64209090558404}
+    type: standardization
   maxdpdlast3m_392P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-    type: binning
-  maxdpdlast6m_474P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0]
-    type: binning
-  maxdpdlast9m_1059P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 4.0]
-    type: binning
-  maxdpdtolerance_374P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 1.0, 2.0, 5.0, 13.0, 37.0]
-    type: binning
+    properties: {mean: 6.660290503342509, stddev: 137.7646483366376}
+    type: standardization
   maxdpdtolerance_577P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.3333333333333333, 1.0, 2.5, 9.333333333333334]
-    type: binning
-  maxinstallast24m_3658928A:
-    properties:
-      boundaries: [1894.2001, 2770.8, 3805.2, 5042.4, 6648.6, 8954.8, 12431.601, 19305.880000000005,
-        37978.08000000002]
-    type: binning
-  maxlnamtstart6m_4525199A:
-    properties:
-      boundaries: [11980.0, 16884.480000000003, 21795.520000000008, 26837.56, 32934.6,
-        40600.0, 51160.0, 66833.56000000006, 96236.04]
-    type: binning
-  maxoutstandbalancel12m_4187113A:
-    properties:
-      boundaries: [9499.0, 16477.8, 23940.0, 32068.4, 42520.402, 56319.2, 75988.6, 109071.62,
-        177314.61]
-    type: binning
-  maxpmtlast3m_4525190A:
-    properties:
-      boundaries: [1517.4, 2238.0, 2956.6, 3832.4001, 4904.0, 6211.8003, 7974.4, 11077.817200000001,
-        20232.396]
-    type: binning
+    properties: {mean: 24.99074463115109, stddev: 184.95116600974106}
+    type: standardization
   mindbddpdlast24m_3658935P:
-    properties:
-      boundaries: [-78.0, -44.0, -30.0, -23.0, -17.0, -12.0, -9.0, -5.0, -2.0]
-    type: binning
-  mindbdtollast24m_4525191P:
-    properties:
-      boundaries: [-82.0, -47.0, -31.0, -24.0, -17.0, -13.0, -9.0, -5.0, -2.0]
-    type: binning
+    properties: {mean: -0.3447058810650091, stddev: 303.53402507384453}
+    type: standardization
   mobilephncnt_593L:
     properties: {mean: 1.772636849486362, stddev: 1.133039545080211}
     type: standardization
   monthlyinstlamount_332A:
-    properties:
-      boundaries: [0.0, 1502.0, 2281.800025, 2990.115, 3720.3336833333333, 4552.4001,
-        5622.52755, 7170.2, 10156.053]
-    type: binning
-  monthlyinstlamount_674A:
-    properties:
-      boundaries: [0.0, 752.1965714285716, 1329.9101500000002, 1915.60157, 2558.7083033333333,
-        3379.9600679999985, 4587.227986666664, 6737.889772000002, 11955.21692]
-    type: binning
-  monthsannuity_845L:
-    properties: {mean: 25.842321607796915, stddev: 22.956229357273486}
+    properties: {mean: 5298.283217736802, stddev: 56730.44703162237}
     type: standardization
-  name_4527232M:
-    properties: {embedding_size: 10, vocab_size: 111374}
-    type: character_embedding
-  name_4917606M:
-    properties: {embedding_size: 10, vocab_size: 41502}
-    type: character_embedding
   nominalrate_281L:
-    properties:
-      boundaries: [0.06, 13.04, 22.0, 31.43, 39.0, 40.165, 42.0, 43.3, 45.0]
-    type: binning
-  nominalrate_498L:
-    properties:
-      boundaries: [0.12, 18.0, 23.380000000000003, 30.040000000000003, 35.75, 40.5,
-        43.3, 45.0, 45.0]
-    type: binning
-  num_group1:
-    properties:
-      boundaries: [0.9552238805970149, 1.1428571428571428, 1.3218390804597702, 1.5196850393700787,
-        1.7808219178082192, 2.149161577978091, 2.7251461988304095, 3.650735294117647,
-        5.241379310344827]
-    type: binning
-  num_group2:
-    properties:
-      boundaries: [4.3125, 9.243243243243244, 10.534136546184738, 11.364779874213836,
-        12.27450980392157, 12.9870756482224, 13.666666666666666, 14.401869158878505,
-        15.6]
-    type: binning
-  numactivecreds_622L:
-    properties: {mean: 0.4705811841413177, stddev: 0.7083305727494631}
+    properties: {mean: 39.01400532845968, stddev: 361.7853711586101}
     type: standardization
-  numactivecredschannel_414L:
-    properties: {mean: 0.10182103534581069, stddev: 0.32533749153879965}
+  nominalrate_498L:
+    properties: {mean: 61.54700441457206, stddev: 459.8093107967861}
+    type: standardization
+  num_group1:
+    properties: {mean: 2.5824274304148935, stddev: 2.347953613286735}
+    type: standardization
+  num_group2:
+    properties: {mean: 11.222811089211877, stddev: 4.368732869556367}
     type: standardization
   numactiverelcontr_750L:
     properties: {mean: 0.243493144179545, stddev: 0.47195008923582393}
     type: standardization
-  numberofcontrsvalue_258L:
-    properties: {mean: 2.038436526408893, stddev: 1.1012288838524433}
-    type: standardization
-  numberofcontrsvalue_358L:
-    properties:
-      boundaries: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 13.0]
-    type: binning
-  numberofinstls_229L:
-    properties:
-      boundaries: [2.7142857142857144, 4.888888888888889, 6.25, 8.0, 9.777777777777779,
-        11.727272727272727, 13.11111111111111, 16.333333333333332, 22.285714285714285]
-    type: binning
-  numberofinstls_320L:
-    properties:
-      boundaries: [10.0, 12.0, 15.0, 18.0, 24.0, 28.0, 36.0, 44.0, 60.0]
-    type: binning
-  numberofinstls_810L:
-    properties:
-      boundaries: [8.5, 12.0, 13.666666666666666, 18.0, 24.0, 26.0, 36.0, 42.0, 60.0]
-    type: binning
-  numberofoutstandinstls_520L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  numberofoutstandinstls_59L:
-    properties:
-      boundaries: [3.0, 6.0, 8.0, 10.5, 13.333333333333334, 17.5, 22.666666666666668,
-        31.0, 46.0]
-    type: binning
   numberofoverdueinstlmax_1039L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.25, 1.6666666666666667, 6.5, 19.0]
-    type: binning
+    properties: {mean: 20.619197905681425, stddev: 159.19787139103258}
+    type: standardization
   numberofoverdueinstlmax_1151L:
-    properties:
-      boundaries: [0.0, 0.0, 0.125, 1.0, 2.7142857142857144, 6.0, 14.2, 54.357142857142854,
-        212.5]
-    type: binning
-  numberofoverdueinstlmaxdat_148D:
-    properties: {embedding_size: 10, vocab_size: 4679}
-    type: character_embedding
+    properties: {mean: 82.05144358695769, stddev: 325.4155635769149}
+    type: standardization
   numberofoverdueinstlmaxdat_641D:
     properties: {embedding_size: 10, vocab_size: 2678}
     type: character_embedding
   numberofoverdueinstls_725L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  numberofoverdueinstls_834L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  numberofqueries_373L:
-    properties: {mean: 4.777066459982781, stddev: 5.168856073766738}
+    properties: {mean: 10.869649366654595, stddev: 131.1681068166249}
     type: standardization
   numcontrs3months_479L:
     properties: {mean: 0.2710002692153258, stddev: 0.7902545714860608}
     type: standardization
-  numincomingpmts_3546848L:
-    properties:
-      boundaries: [5.0, 8.0, 12.0, 16.0, 21.0, 28.0, 37.0, 50.0, 75.0]
-    type: binning
-  numinstlallpaidearly3d_817L:
-    properties:
-      boundaries: [1.0, 3.0, 6.0, 8.0, 12.0, 16.0, 22.0, 32.0, 51.0]
-    type: binning
-  numinstls_657L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.0, 13.0, 24.0]
-    type: binning
-  numinstlsallpaid_934L:
-    properties:
-      boundaries: [3.0, 6.0, 10.0, 13.0, 17.0, 23.0, 31.0, 42.0, 65.0]
-    type: binning
   numinstlswithdpd10_728L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 10.0]
-    type: binning
+    properties: {mean: 3.6129546499415044, stddev: 11.218278956053}
+    type: standardization
   numinstlswithdpd5_4187116L:
     properties: {mean: 2.2439694055627193, stddev: 4.8062741570301055}
     type: standardization
-  numinstlswithoutdpd_562L:
-    properties:
-      boundaries: [4.0, 8.0, 12.0, 15.0, 21.0, 27.0, 36.0, 50.0, 74.0]
-    type: binning
-  numinstmatpaidtearly2d_4499204L:
-    properties:
-      boundaries: [2.0, 4.0, 7.0, 10.0, 13.0, 18.0, 25.0, 35.0, 56.0]
-    type: binning
   numinstpaid_4499208L:
-    properties:
-      boundaries: [6.0, 9.0, 12.0, 17.0, 22.0, 29.0, 38.0, 52.0, 77.0]
-    type: binning
-  numinstpaidearly3d_3546850L:
-    properties:
-      boundaries: [1.0, 3.0, 6.0, 8.0, 11.0, 16.0, 22.0, 31.0, 49.0]
-    type: binning
-  numinstpaidearly3dest_4493216L:
-    properties:
-      boundaries: [1.0, 3.0, 6.0, 8.0, 12.0, 16.0, 22.0, 32.0, 51.0]
-    type: binning
-  numinstpaidearly5d_1087L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 1.0, 2.0, 3.0, 5.0, 7.0, 11.0]
-    type: binning
-  numinstpaidearly5dest_4493211L:
-    properties: {mean: 3.2504806760221747, stddev: 4.437851997230088}
-    type: standardization
-  numinstpaidearly5dobd_4499205L:
-    properties:
-      boundaries: [0.0, 2.0, 4.0, 6.0, 9.0, 12.0, 18.0, 26.0, 42.0]
-    type: binning
-  numinstpaidearly_338L:
-    properties:
-      boundaries: [0.0, 2.0, 4.0, 6.0, 9.0, 12.0, 17.0, 25.0, 42.0]
-    type: binning
-  numinstpaidearlyest_4493214L:
-    properties:
-      boundaries: [0.0, 2.0, 4.0, 6.0, 9.0, 12.0, 18.0, 26.0, 42.0]
-    type: binning
-  numinstpaidlastcontr_4325080L:
-    properties: {mean: 7.746829346230144, stddev: 6.124473221743859}
+    properties: {mean: 33.47347189271606, stddev: 33.898698107804584}
     type: standardization
   numinstpaidlate1d_3546852L:
     properties: {mean: 5.483399530382677, stddev: 8.650442371099036}
     type: standardization
-  numinstregularpaid_973L:
-    properties:
-      boundaries: [4.0, 7.0, 11.0, 13.0, 18.0, 25.0, 34.0, 47.0, 71.0]
-    type: binning
   numinstregularpaidest_4493210L:
-    properties:
-      boundaries: [6.0, 9.0, 12.0, 17.0, 22.0, 29.0, 38.0, 52.0, 77.0]
-    type: binning
-  numinsttopaygr_769L:
-    properties: {mean: 5.955126551931214, stddev: 10.187258459253503}
-    type: standardization
-  numinsttopaygrest_4493213L:
-    properties: {mean: 5.842908224771251, stddev: 10.19781144318945}
-    type: standardization
-  numinstunpaidmax_3546851L:
-    properties: {mean: 5.409234078012038, stddev: 8.918625758211585}
-    type: standardization
-  numinstunpaidmaxest_4493212L:
-    properties: {mean: 5.298332538887747, stddev: 8.889129787093568}
-    type: standardization
-  numnotactivated_1143L:
-    properties: {mean: 0.021712117768277, stddev: 0.15730159655425036}
-    type: standardization
-  numpmtchanneldd_318L:
-    properties: {mean: 0.02441671650316148, stddev: 0.1619721588672446}
+    properties: {mean: 33.48733041502129, stddev: 33.90761127905807}
     type: standardization
   numrejects9m_859L:
     properties: {mean: 0.3687634239211245, stddev: 1.248276859566943}
     type: standardization
-  opencred_647L:
-    properties: {mean: 0.04159728600876611, stddev: 0.19966718419061993}
-    type: standardization
-  openingdate_313D:
-    properties: {embedding_size: 10, vocab_size: 1431}
-    type: character_embedding
-  openingdate_857D:
-    properties: {embedding_size: 10, vocab_size: 1430}
-    type: character_embedding
-  outstandingamount_354A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  outstandingamount_362A:
-    properties:
-      boundaries: [8156.728999999999, 15038.382000000001, 23113.040000000005, 33658.3,
-        48374.85916666666, 70198.16, 105343.8205, 176922.44, 369911.37]
-    type: binning
-  outstandingdebt_522A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 1948.4, 5565.058875000001, 11469.0, 23837.800000000003]
-    type: binning
-  overdueamount_31A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
   overdueamount_659A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
+    properties: {mean: 1123.0987327114265, stddev: 91196.74032249411}
+    type: standardization
   overdueamountmax2_14A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 2.9, 996.4, 2421.0, 5162.37]
-    type: binning
+    properties: {mean: 3612.917495806776, stddev: 117197.16246928122}
+    type: standardization
   overdueamountmax2_398A:
-    properties:
-      boundaries: [0.0, 0.0, 0.4826844877777943, 307.49705714285716, 787.223025, 1440.1327249999995,
-        2501.8154799999993, 4858.174176923077, 12609.354741454576]
-    type: binning
-  overdueamountmax2date_1002D:
-    properties: {embedding_size: 10, vocab_size: 4481}
-    type: character_embedding
-  overdueamountmax2date_1142D:
-    properties: {embedding_size: 10, vocab_size: 2988}
-    type: character_embedding
+    properties: {mean: 7077.815705531562, stddev: 314643.04205109796}
+    type: standardization
   overdueamountmax_155A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 39.600002, 1502.6111999999998, 3888.0248333333334]
-    type: binning
-  overdueamountmax_35A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 238.02020317460324, 701.43761, 1314.9795499999998,
-        2307.6893600000003, 4466.539548571431, 11563.352433333337]
-    type: binning
-  overdueamountmax_950A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 1.0323809552380918, 2.8693336000000094,
-        10.2]
-    type: binning
-  overdueamountmaxdatemonth_284T:
-    properties: {mean: 6.573576883270845, stddev: 2.001518455572414}
-    type: standardization
-  overdueamountmaxdatemonth_365T:
-    properties: {mean: 6.625923635627749, stddev: 2.8032779031252155}
-    type: standardization
-  overdueamountmaxdatemonth_494T:
-    properties: {mean: 6.609412210477867, stddev: 2.7669793723207476}
+    properties: {mean: 2784.412559958202, stddev: 108588.78876408825}
     type: standardization
   overdueamountmaxdateyear_2T:
     properties: {mean: 2018.417968729094, stddev: 0.7209409319959792}
-    type: standardization
-  overdueamountmaxdateyear_432T:
-    properties: {mean: 2018.15957314958, stddev: 1.4968295743906581}
-    type: standardization
-  overdueamountmaxdateyear_994T:
-    properties: {mean: 2015.0373960652728, stddev: 2.6102182837353314}
     type: standardization
   payvacationpostpone_4187118D:
     properties: {embedding_size: 10, vocab_size: 596}
     type: character_embedding
   pctinstlsallpaidearl3d_427L:
-    properties:
-      boundaries: [0.14286, 0.29412, 0.41333, 0.5122, 0.61905, 0.70833, 0.80198, 0.9,
-        1.0]
-    type: binning
-  pctinstlsallpaidlat10d_839L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.02, 0.05882, 0.125, 0.25714]
-    type: binning
+    properties: {mean: 0.598825113224668, stddev: 0.3489412914128534}
+    type: standardization
   pctinstlsallpaidlate1d_3546856L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.03846, 0.08333, 0.14706, 0.22388, 0.33333, 0.5]
-    type: binning
-  pctinstlsallpaidlate4d_3546849L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.01695, 0.0566, 0.11111, 0.2, 0.36364]
-    type: binning
+    properties: {mean: 0.1781565006400286, stddev: 0.22847105557617817}
+    type: standardization
   pctinstlsallpaidlate6d_3546844L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.03846, 0.08333, 0.16667, 0.33333]
-    type: binning
-  periodicityofpmts_1102L:
-    properties:
-      boundaries: [30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0, 30.0]
-    type: binning
-  periodicityofpmts_837L:
-    properties: {mean: 30.38592721308299, stddev: 7.083863607944074}
-    type: standardization
-  periodicityofpmts_997L:
-    properties:
-      vocab: ["\u0415\u0436\u0435\u043C\u0435\u0441\u044F\u0447\u043D\u044B\u0435 \u043F\
-          \u043B\u0430\u0442\u0435\u0436\u0438 - 30 \u0434\u043D\u0435\u0439", "\u041F\u043E\
-          \u043B\u0443\u0433\u043E\u0434\u043E\u0432\u044B\u0435 \u043F\u043B\u0430\u0442\
-          \u0435\u0436\u0438 - 180 \u0434\u043D\u0435\u0439", "\u0412\u0437\u043D\u043E\
-          \u0441\u044B \u0441 \u043D\u0435\u0440\u0435\u0433\u0443\u043B\u044F\u0440\
-          \u043D\u043E\u0439 \u043F\u0435\u0440\u0438\u043E\u0434\u0438\u0447\u043D\u043E\
-          \u0441\u0442\u044C\u044E", "\u0412 \u0434\u0435\u043D\u044C \u0438\u0441\u0442\
-          \u0435\u0447\u0435\u043D\u0438\u044F \u0441\u0440\u043E\u043A\u0430 \u043A\
-          \u0440\u0435\u0434\u0438\u0442\u043D\u043E\u0433\u043E \u0434\u043E\u0433\u043E\
-          \u0432\u043E\u0440\u0430", "\u0415\u0436\u0435\u043A\u0432\u0430\u0440\u0442\
-          \u0430\u043B\u044C\u043D\u044B\u0435 \u043F\u043B\u0430\u0442\u0435\u0436\u0438\
-          \ - 90 \u0434\u043D\u0435\u0439"]
-    type: onehot
-  periodicityofpmts_997M:
-    properties:
-      vocab: [a55475b1, a0b598e4, d479a207, 9c7cbdb6, 842dca9f, 3ecc50a0, e24bdef1,
-        e4c51201, f50a4e2c]
-    type: onehot
-  personindex_1023L:
-    properties: {mean: 0.2636636603196916, stddev: 0.3652490534716258}
-    type: standardization
-  persontype_1072L:
-    properties: {mean: 1.6385591245483169, stddev: 0.8533569052188762}
+    properties: {mean: 0.09774196851619191, stddev: 0.1778464849859361}
     type: standardization
   persontype_792L:
     properties: {mean: 1.823555344429522, stddev: 1.0642866823409605}
     type: standardization
-  pmtamount_36A:
-    properties:
-      boundaries: [618.0000051999999, 850.0, 1000.0, 1244.9085443916083, 1551.00001,
-        1919.1529933333331, 2399.4993235384613, 3122.7787200000002, 4628.306114285716]
-    type: binning
-  pmtaverage_3A:
-    properties:
-      boundaries: [4297.533, 6018.5, 6908.3335, 7221.6, 7305.9, 7850.280060000002, 11367.759999999998,
-        14241.268, 16365.8]
-    type: binning
-  pmtaverage_4527227A:
-    properties:
-      boundaries: [5717.2, 6710.0, 7222.2, 7223.4, 7553.0, 9087.601, 11893.2, 14590.8,
-        16674.201]
-    type: binning
-  pmtaverage_4955615A:
-    properties:
-      boundaries: [11133.64, 13141.4, 14146.4, 15056.4, 15765.2, 16667.4, 19611.1608,
-        23688.6, 27166.9606]
-    type: binning
-  pmtcount_4527229L:
-    properties: {mean: 6.598027448729322, stddev: 2.1889919089243093}
-    type: standardization
-  pmtcount_4955617L:
-    properties: {mean: 13.061117683902847, stddev: 1.8552162096624094}
-    type: standardization
-  pmtcount_693L:
-    properties: {mean: 5.714991188885701, stddev: 1.7581173613032208}
-    type: standardization
-  pmtdaysoverdue_1135P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0]
-    type: binning
-  pmtmethod_731M:
-    properties:
-      vocab: [a55475b1, e914c86c, dbcbe8f8, f6e26148, d01fcb1e, a7c1fc40, b03dfa05,
-        5f8f7038]
-    type: onehot
   pmtnum_254L:
     properties: {mean: 17.074068724881133, stddev: 9.786825006013146}
     type: standardization
-  pmtnum_8L:
-    properties: {mean: 15.005518904346312, stddev: 7.3050213602583005}
-    type: standardization
-  pmtnumpending_403L:
-    properties:
-      boundaries: [2.0, 5.0, 7.5, 10.0, 12.666666666666666, 16.666666666666668, 21.666666666666668,
-        29.5, 45.0]
-    type: binning
-  pmts_date_1107D:
-    properties: {embedding_size: 9, vocab_size: 27}
-    type: character_embedding
   pmts_dpd_1073P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.034482758620689655, 0.25, 1.3392857142857142]
-    type: binning
+    properties: {mean: 10.632465337537088, stddev: 117.02361250984498}
+    type: standardization
   pmts_dpd_303P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.09090909090909091, 0.30952380952380953, 0.8310620479634497,
-        2.4927536231884058, 19.137422020836993, 167.95234748803836]
-    type: binning
-  pmts_dpdvalue_108P:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 81.75166297117492, 764.8753968253968, 2241.6941176470586,
-        8554.778325123145]
-    type: binning
+    properties: {mean: 68.1360135109404, stddev: 237.1251449342586}
+    type: standardization
   pmts_overdue_1140A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.391577357723577, 160.79803773584905,
-        567.8716875]
-    type: binning
+    properties: {mean: 1334.3323613671373, stddev: 67322.48411908705}
+    type: standardization
   pmts_overdue_1152A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 28.695431372549045, 107.60829816017316, 268.94628170430104,
-        671.1472838235293, 2249.4951255813967, 9381.8438730897]
-    type: binning
-  pmts_pmtsoverdue_635A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.008000000000000002, 0.055224959178981896,
-        0.2553664302600474, 1.421696448839285]
-    type: binning
-  pmts_year_1139T:
-    properties: {mean: 2018.742635066614, stddev: 0.5199521652023075}
+    properties: {mean: 4111.157511453203, stddev: 50489.411444241065}
     type: standardization
-  pmts_year_507T:
-    properties: {mean: 2015.1151335770078, stddev: 2.661380884089918}
-    type: standardization
-  pmtscount_423L:
-    properties: {mean: 5.839291140301552, stddev: 4.1482637555854955}
-    type: standardization
-  pmtssum_45A:
-    properties:
-      boundaries: [0.0, 1684.6, 4250.0, 6031.641600000001, 8391.9, 11313.0, 14828.0,
-        19606.529600000005, 28726.291899999997]
-    type: binning
-  posfpd10lastmonth_333P:
-    properties: {mean: 0.016133877206030107, stddev: 0.12599042096026758}
-    type: standardization
-  posfpd30lastmonth_3976960P:
-    properties: {mean: 0.008049350036672686, stddev: 0.08935638603536482}
-    type: standardization
-  posfstqpd30lastmonth_3976962P:
-    properties: {mean: 0.030524615822530337, stddev: 0.17202582842347172}
-    type: standardization
-  postype_4733339M:
-    properties:
-      vocab: [a55475b1, P67_102_161, P46_145_78, P177_117_192, P60_146_156, P149_40_170,
-        P217_110_186, P169_115_83, P140_48_169]
-    type: onehot
-  previouscontdistrict_112M:
-    properties: {embedding_size: 10, vocab_size: 223}
-    type: character_embedding
   price_1097A:
-    properties:
-      boundaries: [0.0, 11610.0, 15920.0, 20137.6, 25156.0, 31076.319999999974, 39976.0,
-        52192.0, 74200.0]
-    type: binning
-  processingdate_168D:
-    properties: {embedding_size: 10, vocab_size: 323}
-    type: character_embedding
-  profession_152M:
-    properties: {embedding_size: 10, vocab_size: 956}
-    type: character_embedding
-  prolongationcount_1120L:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.2857142857142857, 0.6, 1.0, 1.9324137931034617]
-    type: binning
-  prolongationcount_599L:
-    properties: {mean: 0.856059412031618, stddev: 2.326502777333348}
+    properties: {mean: 34464.972297464585, stddev: 34483.160123554226}
     type: standardization
-  purposeofcred_426M:
-    properties:
-      vocab: [a55475b1, e19fdece, e8f3b178, b1285059, 96a8fdfe, d9ae1a0e, P188_162_121]
-    type: onehot
-  purposeofcred_722M:
-    properties: {embedding_size: 4, vocab_size: 14}
-    type: character_embedding
-  purposeofcred_874M:
-    properties: {embedding_size: 5, vocab_size: 15}
-    type: character_embedding
-  recorddate_4527225D:
-    properties: {embedding_size: 10, vocab_size: 397}
-    type: character_embedding
-  refreshdate_3813885D:
-    properties: {embedding_size: 10, vocab_size: 637}
-    type: character_embedding
-  registaddr_district_1083M:
-    properties: {embedding_size: 10, vocab_size: 636}
-    type: character_embedding
   registaddr_zipcode_184M:
     properties: {embedding_size: 10, vocab_size: 3452}
     type: character_embedding
-  rejectreason_755M:
-    properties: {embedding_size: 4, vocab_size: 12}
-    type: character_embedding
-  rejectreasonclient_4145042M:
-    properties:
-      vocab: [a55475b1, P94_109_143, P5_143_178, P53_10_15, P84_14_61, P19_25_34, P30_86_84,
-        P69_72_116]
-    type: onehot
-  relatedpersons_role_762T:
-    properties: {embedding_size: 3, vocab_size: 10}
-    type: character_embedding
-  relationshiptoclient_415T:
-    properties: {embedding_size: 3, vocab_size: 10}
-    type: character_embedding
-  relationshiptoclient_642T:
-    properties: {embedding_size: 3, vocab_size: 10}
-    type: character_embedding
-  requesttype_4525192L:
-    properties:
-      vocab: [DEDUCTION_6, PENSION_6, SOCIAL_6]
-    type: onehot
-  residualamount_1093A:
-    properties: {mean: 0.019968992248062017, stddev: 2.535747523685268}
-    type: standardization
-  residualamount_127A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 5138.6, 14461.327, 28342.598, 52456.105, 96958.4,
-        176067.11]
-    type: binning
-  residualamount_3940956A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 4279.350200000007, 11146.89, 21303.672000000006, 38376.71849999999,
-        69661.71700000021, 125446.70624999999]
-    type: binning
-  residualamount_488A:
-    properties: {mean: 1.715233553770704, stddev: 617.1109440778253}
-    type: standardization
   residualamount_856A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 2578.1268400000013, 8729.8, 17498.0, 32382.0, 60072.5892,
-        113330.62120000007]
-    type: binning
-  responsedate_1012D:
-    properties: {embedding_size: 10, vocab_size: 292}
-    type: character_embedding
-  responsedate_4527233D:
-    properties: {embedding_size: 10, vocab_size: 397}
-    type: character_embedding
-  responsedate_4917613D:
-    properties: {embedding_size: 10, vocab_size: 207}
-    type: character_embedding
-  revolvingaccount_394A:
-    properties:
-      boundaries: [704248500.0, 740850028.0, 742785300.0, 760260764.0, 760511360.0,
-        770144396.0, 780233600.0, 780546900.0, 780810700.0]
-    type: binning
-  riskassesment_302T:
-    properties: {embedding_size: 5, vocab_size: 16}
-    type: character_embedding
-  riskassesment_940T:
-    properties: {mean: 0.2259680301459335, stddev: 0.9761695040881798}
-    type: standardization
-  role_1084L:
-    properties:
-      vocab: [PE, EM, CL]
-    type: onehot
-  safeguarantyflag_411L:
-    properties: {mean: 0.9465551201088391, stddev: 0.22491900284635805}
-    type: standardization
-  secondquarter_766L:
-    properties: {mean: 2.688481775518496, stddev: 3.3245457607760094}
+    properties: {mean: 37568.473502667206, stddev: 138903.28608668526}
     type: standardization
   sellerplacecnt_915L:
     properties: {mean: 0.1628451409253802, stddev: 0.45025028651889276}
-    type: standardization
-  sellerplacescnt_216L:
-    properties: {mean: 1.6155467592959527, stddev: 2.0611517527209617}
     type: standardization
   sex_738L:
     properties:
       vocab: [F, M]
     type: onehot
-  status_219L:
-    properties: {embedding_size: 3, vocab_size: 11}
-    type: character_embedding
-  subjectrole_182M:
-    properties:
-      vocab: [ab3c25cf, daf49a8a, a55475b1, be4fd70b]
-    type: onehot
-  subjectrole_326M:
-    properties:
-      vocab: [ab3c25cf, fa4f56f1, daf49a8a, a55475b1, 15f04f45, P28_48_88]
-    type: onehot
-  subjectrole_43M:
-    properties:
-      vocab: [a55475b1, ab3c25cf, fa4f56f1, daf49a8a, 15f04f45]
-    type: onehot
-  subjectrole_93M:
-    properties:
-      vocab: [ab3c25cf, a55475b1, be4fd70b, daf49a8a]
-    type: onehot
-  subjectroles_name_541M:
-    properties:
-      vocab: [a55475b1, ab3c25cf, be4fd70b, daf49a8a]
-    type: onehot
   subjectroles_name_838M:
     properties:
       vocab: [ab3c25cf, daf49a8a, a55475b1, be4fd70b]
     type: onehot
-  sumoutstandtotal_3546847A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 8312.2, 19903.6, 39581.4812, 87270.8800000001]
-    type: binning
-  sumoutstandtotalest_4493215A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 8069.040000000003, 19795.879999999994, 39754.92,
-        88913.60000000012]
-    type: binning
-  tenor_203L:
-    properties: {mean: 15.005518904346312, stddev: 7.3050213602583005}
-    type: standardization
-  thirdquarter_1082L:
-    properties: {mean: 2.9183418236821916, stddev: 3.423862363675509}
-    type: standardization
-  totalamount_503A:
-    properties:
-      boundaries: [7643.4, 20596.4, 36691.120000000024, 56917.62, 82998.4, 117804.15199999999,
-        165000.0, 237926.68000000002, 429684.36800000025]
-    type: binning
-  totalamount_6A:
-    properties:
-      boundaries: [13585.0, 20000.0, 25822.87873333333, 31913.433533333337, 39015.333333333336,
-        47795.689999999995, 60167.666021428566, 82159.17454545456, 136417.6625000001]
-    type: binning
-  totalamount_881A:
-    properties:
-      boundaries: [19521.68, 37669.920000000006, 60366.80000000002, 90000.0, 127548.5,
-        179421.76100000003, 250000.0, 363697.5720000001, 600000.0]
-    type: binning
-  totalamount_996A:
-    properties:
-      boundaries: [19297.8, 30000.0, 42100.0, 58578.6, 79155.78, 106199.0, 151674.8,
-        240000.0, 480000.0]
-    type: binning
-  totaldebt_9A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5991.700150000001, 22679.0, 61628.001000000004]
-    type: binning
   totaldebtoverduevalue_178A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  totaldebtoverduevalue_718A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
-  totaloutstanddebtvalue_39A:
-    properties:
-      boundaries: [0.0, 10501.696, 23334.460000000003, 41017.05, 66000.0, 100000.0,
-        149300.15000000002, 229167.08, 441366.2]
-    type: binning
-  totaloutstanddebtvalue_668A:
-    properties:
-      boundaries: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    type: binning
+    properties: {mean: 2044.4759704513224, stddev: 317588.6431845539}
+    type: standardization
   totalsettled_863A:
-    properties:
-      boundaries: [0.0, 0.0, 1040.0, 18165.83999999999, 35977.664, 59911.2808, 94404.92000000001,
-        151240.0, 266277.92000000004]
-    type: binning
-  totinstallast1m_4525188A:
-    properties:
-      boundaries: [1884.4, 2810.4001, 3834.6, 4930.8003, 6221.2, 7869.051199999997,
-        10166.0, 13556.4, 20553.708999999995]
-    type: binning
-  twobodfilling_608L:
-    properties:
-      vocab: [FO, BO]
-    type: onehot
-  type_25L:
-    properties:
-      vocab: [PRIMARY_MOBILE, SECONDARY_MOBILE, PHONE, HOME_PHONE, WHATSAPP]
-    type: onehot
-  validfrom_1069D:
-    properties: {embedding_size: 10, vocab_size: 618}
-    type: character_embedding
+    properties: {mean: 92238.16934995154, stddev: 162335.77996821262}
+    type: standardization

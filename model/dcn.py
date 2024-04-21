@@ -1,3 +1,4 @@
+import math
 from typing import Dict, Optional, List
 
 import tensorflow as tf
@@ -30,7 +31,7 @@ class DeepCrossNetwork(tf_keras.Model):
         elif type == 'binning':
             return [tf_keras.layers.Discretization(bin_boundaries=feature_props['boundaries'])]
         elif type == 'standardization':
-            return [tf_keras.layers.Normalization(mean=feature_props['mean'], variance=feature_props['stddev'])]
+            return [tf_keras.layers.Normalization(mean=feature_props['mean'], variance=math.pow(feature_props['stddev'], 2))]
         else:
             return [tf_keras.layers.Identity()]
 
@@ -79,7 +80,7 @@ class DeepCrossNetwork(tf_keras.Model):
                x1,
                use_bias: bool = True,
                activation: tf_keras.layers.Activation = None,
-               kernel_initializer: tf_keras.initializers.Initializer = tf_keras.initializers.truncated_normal,
+               kernel_initializer: tf_keras.initializers.Initializer = tf_keras.initializers.he_normal,
                bias_initializer: tf_keras.initializers.Initializer = tf_keras.initializers.zeros,
                kernel_regularizer: Optional[tf_keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[tf_keras.regularizers.Regularizer] = None) -> tf.Tensor:
@@ -102,8 +103,8 @@ class DeepCrossNetwork(tf_keras.Model):
 
     def _build_dense_layers(self, inputs):
         # TODO: Please add parameters
-        layer1 = Dense(50, activation=tf_keras.activations.relu)
-        layer2 = Dense(30, activation=tf_keras.activations.relu)
+        layer1 = Dense(30, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
+        layer2 = Dense(15, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
 
         output = layer2(layer1(inputs))
         logits = Dense(units=1, activation=tf_keras.activations.sigmoid)(output)
