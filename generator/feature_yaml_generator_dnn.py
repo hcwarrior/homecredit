@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-class FeatureYAMLGenerator:
+class FeatureYAMLGeneratorDNN:
     def __init__(self,
                  feature_conf_yaml_path: str,
                  parquet_data_file_path: str,

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from simple_parsing import ArgumentParser
 
-from generator.feature_yaml_generator import FeatureYAMLGenerator
+from generator.feature_yaml_generator_tree import FeatureYAMLGeneratorTree
 
 
 @dataclass
@@ -15,7 +15,7 @@ def _generate_feature_yaml(
         feature_conf_yaml_path: str,
         data_parquet_file_path: str,
         output_yaml_path: str):
-    feature_yaml_generator = FeatureYAMLGenerator(
+    feature_yaml_generator = FeatureYAMLGeneratorTree(
         feature_conf_yaml_path, data_parquet_file_path, output_yaml_path)
     feature_yaml_generator.generate()
 
