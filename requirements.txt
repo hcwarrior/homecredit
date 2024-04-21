@@ -8,3 +8,5 @@ ipython==8.18.1
 simple-parsing==0.1.5
 fastparquet==2024.2.0
 scikit-learn==1.4.2
+shap==0.45.0
+matplotlib==3.8.4
