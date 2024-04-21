@@ -4,7 +4,7 @@ from typing import Dict, Optional, List
 import tensorflow as tf
 import tensorflow.keras as tf_keras
 from tensorflow.keras import Model
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, BatchNormalization
 from tensorflow.python.framework.dtypes import DType
 
 class DeepCrossNetwork(tf_keras.Model):
@@ -103,10 +103,12 @@ class DeepCrossNetwork(tf_keras.Model):
 
     def _build_dense_layers(self, inputs):
         # TODO: Please add parameters
-        layer1 = Dense(30, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
-        layer2 = Dense(15, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
+        layer1 = Dense(50, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
+        bn_layer1 = BatchNormalization(aixs=1)
+        layer2 = Dense(30, activation=tf_keras.activations.relu, kernel_initializer=tf_keras.initializers.he_normal, bias_initializer=tf_keras.initializers.zeros)
+        bn_layer2 = BatchNormalization(aixs=1)
 
-        output = layer2(layer1(inputs))
+        output = bn_layer2(layer2(bn_layer1(layer1(inputs))))
         logits = Dense(units=1, activation=tf_keras.activations.sigmoid)(output)
 
         return logits
