@@ -45,8 +45,8 @@ class FeatureYAMLGenerator:
         series = df[column].dropna()
         prop = {}
         if column in continuous_features:
-            if series.nunique() >= 20 and abs(series.skew()) >= 1.0:
-                boundaries = series.quantile(np.arange(0.05, 1.0, 0.05))
+            if series.nunique() >= 200 and abs(series.skew()) >= 1.0:
+                boundaries = series.quantile(np.arange(0.1, 1.0, 0.1))
                 prop['type'] = 'binning'
                 prop['properties'] = {'boundaries': boundaries.tolist()}
             else:
@@ -57,7 +57,7 @@ class FeatureYAMLGenerator:
             num_uniques = series.nunique()
             if num_uniques >= 10:
                 prop['type'] = 'character_embedding'
-                prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': min(num_uniques // 3, 20)}
+                prop['properties'] = {'vocab_size': num_uniques, 'embedding_size': min(num_uniques // 3, 10)}
             else:
                 prop['type'] = 'onehot'
                 prop['properties'] = {'vocab': series.unique().tolist()}

@@ -16,7 +16,8 @@ class FeatureParser:
             self.conf = self._parse(conf)
 
     def _get_required_fields_by_type(self, transformation_type: FeatureTransformation) -> Set[str]:
-        if transformation_type == FeatureTransformation.NUMERICAL_EMBEDDING:
+        if transformation_type in {FeatureTransformation.NUMERICAL_EMBEDDING,
+                                   FeatureTransformation.CHARACTER_EMBEDDING}:
             return {'vocab_size', 'embedding_size'}
         elif transformation_type == FeatureTransformation.ONEHOT:
             return {'vocab'}

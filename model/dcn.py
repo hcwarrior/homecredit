@@ -45,7 +45,9 @@ class DeepCrossNetwork(tf_keras.Model):
             transformed = inputs_placeholder
             for layer in layers:
                 transformed = layer(transformed)
-            transformed = tf.cast(tf.squeeze(transformed, axis=1), tf.float32)
+            if len(transformed.shape) == 3:
+                transformed = tf.squeeze(transformed, axis=1)
+            transformed = tf.cast(transformed, tf.float32)
 
             input_by_feature_name[feature] = inputs_placeholder
             transformed_by_feature_name[feature] = transformed
@@ -64,8 +66,10 @@ class DeepCrossNetwork(tf_keras.Model):
 
     def _build_cross_layers(self, x0):
         # TODO: Please add parameters
-        x1 = self._cross(x0, x0)
-        x2 = self._cross(x0, x1)
+        # x1 = self._cross(x0, x0)
+        # x2 = self._cross(x0, x1)
+
+        x2 = x0
 
         return x2
 

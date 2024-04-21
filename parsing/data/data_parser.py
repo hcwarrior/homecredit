@@ -19,7 +19,8 @@ class DatasetGenerator:
 
     # returns numpy array dict
     def parse(self) -> Iterator[Tuple[str, Dict[str, tf.Tensor]]]:
-        for file_path in self.files:
+        file_iterator = itertools.cycle(self.files)
+        for file_path in file_iterator:
             yield file_path, self._to_numpy_array_dict(self._parse_file_to_frame(file_path))
 
     def _parse_file_to_frame(self, file_path: str) -> pd.DataFrame:
@@ -35,10 +36,10 @@ class DatasetGenerator:
 
     def _fill_na(self, df: pd.DataFrame):
         for col in df.columns:
-            if is_string_dtype(df[col]):
-                df[col].fillna(DatasetGenerator._NA_STRING_VAL, inplace=True)
+            if is_string_dtype(df[col].dtype):
+                df.fillna({col: DatasetGenerator._NA_STRING_VAL}, inplace=True)
             else:
-                df[col].bfill(inplace=True)
+                df[col] = df[col].bfill()
 
     def _to_numpy_array_dict(self, df: pd.DataFrame) -> Dict[str, tf.Tensor]:
         return {col: tf.convert_to_tensor(df[col].values) for col in self.features}

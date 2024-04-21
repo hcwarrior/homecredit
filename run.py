@@ -60,7 +60,8 @@ if __name__ == '__main__':
     keras_model, model_conf = model.model, model.conf
 
     # TODO: Please add optimizer as a parameter
-    keras_model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy', tf_keras.metrics.AUC()])
+    keras_model.compile(optimizer=tf_keras.optimizers.Adam(learning_rate=0.0001),
+                        loss='binary_crossentropy', metrics=['accuracy', tf_keras.metrics.AUC()])
 
     print('Fitting a model...')
     train_data_generator = _generate_datasets(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
@@ -74,7 +75,9 @@ if __name__ == '__main__':
         monitor='val_accuracy',
         mode='max',
         save_best_only=True)
-    keras_model.fit(train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback])
+    keras_model.fit(train_data_generator, validation_data=validation_data_generator, callbacks=[model_checkpoint_callback],
+                    batch_size=8192,
+                    epochs=10)
 
     # load the best model
     keras_model.load_weights(fd.name)
