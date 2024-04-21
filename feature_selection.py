@@ -36,6 +36,7 @@ def _get_preprocessed_dataframe(
     cont_features, cat_features, label = _parse_feature_conf(feature_conf_yaml_path)
     features = cont_features + cat_features + [label]
     df = pd.read_parquet(data_parquet_file_path, columns=features, engine='fastparquet')
+    df.bfill(inplace=True)
 
     # Use label encoding for categorical features
     le = LabelEncoder()
@@ -46,13 +47,15 @@ def _get_preprocessed_dataframe(
 
 def _drop_correlated_features(
         df: pd.DataFrame, threshold: float = 0.8) -> pd.DataFrame:
-    corr_mat = df.corr()
+    corr_mat = np.corrcoef(df.values, rowvar=False)
+    print('Correlation')
+    print(corr_mat)
     columns = df.columns
 
     drop_columns = []
     for i in range(len(columns)):
         for j in range(i + 1, len(columns)):
-            if corr_mat[columns[i]][columns[j]] >= threshold:
+            if corr_mat[i][j] >= threshold:
                 drop_columns.append(columns[j])
 
     return df.drop(columns=drop_columns)
@@ -104,7 +107,12 @@ if __name__ == '__main__':
     df, cont_features, cat_features, label = _get_preprocessed_dataframe(
         options.feature_conf_yaml_path, options.data_parquet_file_path)
 
+    print('Preprocessed DataFrame')
+    print(df.head(5))
+
     df = _drop_correlated_features(df, 0.8)
+
+    print(f'Columns after dropping highly correlated features: {df.columns.tolist()}')
 
     cont_features, cat_features = _select_features(df, label, cont_features, cat_features, options.feature_imps_png_output_path, options.top_k)
 
