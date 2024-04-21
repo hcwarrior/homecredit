@@ -70,20 +70,21 @@ def _select_features(
         top_k: int) -> Tuple[List[str], List[str]]:
     X, y = df.drop(columns=[label]), df[label]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+    print('Split into train and test dataset')
 
-    rf = RandomForestClassifier(n_estimators=30)
+    rf = RandomForestClassifier(n_estimators=30, max_depth=3)
     rf.fit(X_train, y_train)
 
     print('Fitted Random Forest.')
     explainer = shap.TreeExplainer(rf)
     shap_values = explainer.shap_values(X_test)
 
-    features = df.columns
+    features = X.columns
     cont_feature_set, cat_feature_set = set(cont_features), set(cat_features)
     feature_imps = {features[i]: np.mean(np.abs(shap_values[:, i])) for i in range(len(features))}
     feature_imps_ordered = OrderedDict(sorted(feature_imps.items(), key=lambda x: x[1]))
 
-    feature_imps = feature_imps_ordered.items()[:top_k]
+    feature_imps = list(feature_imps_ordered.items())[:top_k]
     print('Top K Feature Importances')
     print(feature_imps)
 
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
     df = _drop_correlated_features(df, 0.8)
 
-    print(f'Columns after dropping highly correlated features: {df.columns.tolist()}')
+    print(f'Columns after dropping highly correlated features: {df.columns}')
 
     cont_features, cat_features = _select_features(df, label, cont_features, cat_features, options.feature_imps_png_output_path, options.top_k)
 
