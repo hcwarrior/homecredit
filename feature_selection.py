@@ -71,9 +71,10 @@ def _select_features(
     X, y = df.drop(columns=[label]), df[label]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-    rf = RandomForestClassifier(n_estimators=100)
+    rf = RandomForestClassifier(n_estimators=30)
     rf.fit(X_train, y_train)
 
+    print('Fitted Random Forest.')
     explainer = shap.TreeExplainer(rf)
     shap_values = explainer.shap_values(X_test)
 
@@ -83,6 +84,8 @@ def _select_features(
     feature_imps_ordered = OrderedDict(sorted(feature_imps.items(), key=lambda x: x[1]))
 
     feature_imps = feature_imps_ordered.items()[:top_k]
+    print('Top K Feature Importances')
+    print(feature_imps)
 
     shap.summary_plot(shap_values, X_test, plot_type="bar", show=False)
     plt.savefig(feature_imps_png_output_path)
