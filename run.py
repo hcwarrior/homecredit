@@ -47,7 +47,7 @@ def _generate_datasets(data_parser: DatasetGenerator, target: str, id: str = Non
         # dict, target, id (optional)
         result = {col: array_dict[col] for col in data_parser.features}, array_dict[target]
         if id is not None:
-            result = result + array_dict[id]
+            result = result + (array_dict[id], )
         yield result
 
 

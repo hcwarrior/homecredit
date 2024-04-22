@@ -64,7 +64,6 @@ class XGBoost:
         params = {
             'learning_rate': 0.005,
             'tree_method': 'exact',
-            'early_stopping_rounds': 3,
             'refresh_leaf': True,
             'max_depth': 5,
             'scale_pos_weight': 30,
@@ -73,7 +72,6 @@ class XGBoost:
             else {
             'learning_rate': 0.005,
             'tree_method': 'exact',
-            'early_stopping_rounds': 3,
             'updater': 'refresh',
             'process_type': 'update',
             'refresh_leaf': True,
@@ -81,7 +79,7 @@ class XGBoost:
             'scale_pos_weight': 30,
             'reg_lambda': 3
         }
-        self.model = xgb.train(params, dtrain=train_mat, num_boost_round=10, xgb_model=self.model)
+        self.model = xgb.train(params, dtrain=train_mat, num_boost_round=10, early_stopping_rounds=3, xgb_model=self.model)
 
     def _preprocess_predict(self, df: pd.DataFrame):
         for col, transformation in self.transformations_by_feature.items():
