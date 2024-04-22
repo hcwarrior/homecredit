@@ -62,6 +62,7 @@ class FeatureYAMLGeneratorTree:
                 prop['type'] = 'target_encoding'
 
                 target_encoded = series_with_label.groupby(column)[label].mean()
+                target_encoded['NA'] = 0
                 encoded_df = pd.DataFrame({'value': target_encoded.index.values, 'encoded': target_encoded.values})
 
                 values, encoded = [], []

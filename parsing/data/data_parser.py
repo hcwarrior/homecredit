@@ -19,8 +19,7 @@ class DatasetGenerator:
 
     # returns numpy array dict
     def parse(self) -> Iterator[Tuple[str, Dict[str, np.ndarray]]]:
-        file_iterator = itertools.cycle(self.files)
-        for file_path in file_iterator:
+        for file_path in self.files:
             yield file_path, self._to_numpy_array_dict(self._parse_file_to_frame(file_path), self.label)
 
     def _parse_file_to_frame(self, file_path: str) -> pd.DataFrame:

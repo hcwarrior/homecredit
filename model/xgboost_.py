@@ -9,6 +9,8 @@ from sklearn.metrics import log_loss, auc
 from sklearn.preprocessing import OneHotEncoder
 from xgboost import XGBClassifier
 
+pd.set_option('future.no_silent_downcasting', True)
+
 
 class XGBoost:
     def __init__(self,
@@ -17,21 +19,21 @@ class XGBoost:
         self.preprocessing_by_col = {}
         self.model = None
 
-
     def _preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         for col, transformation in self.transformations_by_feature.items():
             type = transformation['type']
             prop = transformation['properties']
 
             if type == 'onehot':
-                ohe = OneHotEncoder(sparse_output=False)
-                transformed = ohe.fit_transform(df[col].values.reshape(-1, 1))
-                onehot_df = pd.DataFrame(transformed, columns=ohe.get_feature_names_out([col]))
+                onehot = pd.DataFrame(np.zeros((len(df[col]), len(prop['vocab']))))
+                for i, vocab in enumerate(prop['vocab']):
+                    rows = df[col].index[df[col] == vocab]
+                    onehot.loc[rows, i] = 1
 
                 df = df.drop(columns=[col])
-                df = pd.concat([df, onehot_df], axis=1)
+                df = pd.concat([df, onehot], axis=1)
 
-                self.preprocessing_by_col[col] = ohe
+                self.preprocessing_by_col[col] = prop
             elif type == 'target_encoding':
                 df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
                 self.preprocessing_by_col[col] = prop
@@ -49,22 +51,25 @@ class XGBoost:
 
         return df
 
-
     def fit(self, df: pd.DataFrame, label_array: np.array):
         df = self._preprocess(df)
         train_mat = xgb.DMatrix(df.values, label_array)
 
-        classifier = XGBClassifier(objective='binary:logistic')
-        self.model = classifier.fit({
+        params = {
             'learning_rate': 0.005,
-            'update': 'refresh',
+            'tree_method': 'exact',
+            'refresh_leaf': True,
+            'reg_lambda': 3
+        } if self.model is None \
+            else {
+            'learning_rate': 0.005,
+            'tree_method': 'exact',
+            'updater': 'refresh',
             'process_type': 'update',
             'refresh_leaf': True,
-            'reg_lambda': 3,  # L2
-            #'reg_alpha': 3,  # L1
-            'silent': False,
-        }, dtrain=train_mat, xgb_model=self.model)
-
+            'reg_lambda': 3
+        }
+        self.model = xgb.train(params, dtrain=train_mat, num_boost_round=10, xgb_model=self.model)
 
     def _preprocess_predict(self, df: pd.DataFrame):
         for col, transformation in self.transformations_by_feature.items():
@@ -72,10 +77,13 @@ class XGBoost:
             prop = self.preprocessing_by_col[col]
 
             if type == 'onehot':
-                ohe = prop
-                onehot_df = ohe.transform(df[col].values.reshape(-1, 1))
+                onehot = pd.DataFrame(np.zeros((len(df[col]), len(prop['vocab']))))
+                for i, vocab in enumerate(prop['vocab']):
+                    rows = df[col].index[df[col] == vocab]
+                    onehot.loc[rows, i] = 1
+
                 df = df.drop(columns=[col])
-                df = pd.concat([df, onehot_df], axis=1)
+                df = pd.concat([df, onehot], axis=1)
             elif type == 'target_encoding':
                 df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
             elif type == 'binning':
@@ -97,6 +105,3 @@ class XGBoost:
         auroc = auc(df[label].values, pred)
 
         return loss, auroc
-
-
-
