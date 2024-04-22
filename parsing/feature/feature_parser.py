@@ -25,6 +25,8 @@ class FeatureParser:
             return {'boundaries'}
         elif transformation_type == FeatureTransformation.STANDARDIZATION:
             return {'mean', 'stddev'}
+        elif transformation_type == FeatureTransformation.TARGET_ENCODING:
+            return {'value', 'encoded'}
         elif transformation_type == FeatureTransformation.RAW:
             return set()
         else:

@@ -6,7 +6,6 @@ import pandas as pd
 import tensorflow.keras as tf_keras
 import yaml
 
-from model.dcn import DeepCrossNetwork
 from model.xgboost_ import XGBoost
 
 
@@ -52,4 +51,4 @@ class ModelParser:
             if 'id' not in conf:
                 raise Exception('Please define "id".')
 
-            return ModelConf(conf['model'], conf['features'], conf['label'], conf['id'])
+            return ModelConf(conf['type'], conf['features'], conf['label'], conf['id'])

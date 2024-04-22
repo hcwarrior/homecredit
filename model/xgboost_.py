@@ -1,6 +1,7 @@
 import math
 from typing import Dict
 
+import numpy as np
 import pandas as pd
 import xgboost as xgb
 
@@ -13,18 +14,18 @@ class XGBoost:
     def __init__(self,
                  transformations_by_feature: Dict[str, object]):
         self.transformations_by_feature = transformations_by_feature
-        self.preprocessing_by_col: {}
+        self.preprocessing_by_col = {}
         self.model = None
 
 
     def _preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         for col, transformation in self.transformations_by_feature.items():
             type = transformation['type']
-            feature_props = transformation['properties']
+            prop = transformation['properties']
 
             if type == 'onehot':
-                ohe = OneHotEncoder(sparse=False)
-                transformed = ohe.fit_transform(df[col])
+                ohe = OneHotEncoder(sparse_output=False)
+                transformed = ohe.fit_transform(df[col].values.reshape(-1, 1))
                 onehot_df = pd.DataFrame(transformed, columns=ohe.get_feature_names_out([col]))
 
                 df = df.drop(columns=[col])
@@ -32,11 +33,10 @@ class XGBoost:
 
                 self.preprocessing_by_col[col] = ohe
             elif type == 'target_encoding':
-                for prop in feature_props:
-                    df[df[col] == prop['value']] = prop['encoded']
+                df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
                 self.preprocessing_by_col[col] = prop
             elif type == 'binning':
-                boundaries = [[float('-inf')] + prop['boundaries'] + float('inf')]
+                boundaries = [[float('-inf')] + prop['boundaries'] + [float('inf')]]
                 for i in range(len(boundaries) - 1):
                     df[col][(df[col] >= boundaries[i]) & (df[col] < boundaries[i + 1])] = i
                 self.preprocessing_by_col[col] = prop
@@ -50,9 +50,9 @@ class XGBoost:
         return df
 
 
-    def fit(self, df: pd.DataFrame, label: str):
+    def fit(self, df: pd.DataFrame, label_array: np.array):
         df = self._preprocess(df)
-        train_mat = xgb.DMatrix(df.drop(columns=[label]).values, df[label].values)
+        train_mat = xgb.DMatrix(df.values, label_array)
 
         classifier = XGBClassifier(objective='binary:logistic')
         self.model = classifier.fit({
@@ -69,17 +69,15 @@ class XGBoost:
     def _preprocess_predict(self, df: pd.DataFrame):
         for col, transformation in self.transformations_by_feature.items():
             type = transformation['type']
-            feature_props = transformation['properties']
             prop = self.preprocessing_by_col[col]
 
             if type == 'onehot':
                 ohe = prop
-                onehot_df = ohe.transform(df[col])
+                onehot_df = ohe.transform(df[col].values.reshape(-1, 1))
                 df = df.drop(columns=[col])
                 df = pd.concat([df, onehot_df], axis=1)
             elif type == 'target_encoding':
-                for prop in feature_props:
-                    df[df[col] == prop['value']] = prop['encoded']
+                df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
             elif type == 'binning':
                 boundaries = [[float('-inf')] + prop['boundaries'] + float('inf')]
                 for i in range(len(boundaries) - 1):
@@ -98,7 +96,7 @@ class XGBoost:
         loss = log_loss(df[label].values, pred)
         auroc = auc(df[label].values, pred)
 
-        return log_loss, auc
+        return loss, auroc
 
 
 

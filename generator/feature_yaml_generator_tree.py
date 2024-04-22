@@ -57,16 +57,20 @@ class FeatureYAMLGeneratorTree:
                 prop['properties'] = {'mean': mean, 'stddev': stddev}
         else: # elif column in categorical_features
             series = series_with_label[column]
-            uniques = series.unique()
+            uniques = list(series.unique()) + ['NA']
             if len(uniques) >= 10:
                 prop['type'] = 'target_encoding'
 
                 target_encoded = series_with_label.groupby(column)[label].mean()
                 encoded_df = pd.DataFrame({'value': target_encoded.index.values, 'encoded': target_encoded.values})
 
-                prop['properties'] = {row[0]: row[1] for row in encoded_df.iterrows()}
+                values, encoded = [], []
+                for _, row in encoded_df.iterrows():
+                    values.append(row['value'])
+                    encoded.append(row['encoded'])
+                prop['properties'] = {'value': values, 'encoded': encoded}
             else:
                 prop['type'] = 'onehot'
-                prop['properties'] = {'vocab': series.unique().tolist()}
+                prop['properties'] = {'vocab': uniques}
 
         return prop
