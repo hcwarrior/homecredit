@@ -35,7 +35,9 @@ class XGBoost:
 
                 self.preprocessing_by_col[col] = prop
             elif type == 'target_encoding':
-                df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
+                encoding_dict = dict(zip(prop['value'], prop['encoded']))
+                df[col] = df[col].map(encoding_dict.get)
+
                 self.preprocessing_by_col[col] = prop
             elif type == 'binning':
                 boundaries = [[float('-inf')] + prop['boundaries'] + [float('inf')]]
@@ -52,21 +54,31 @@ class XGBoost:
         return df
 
     def fit(self, df: pd.DataFrame, label_array: np.array):
+        print('Preprocessing...')
         df = self._preprocess(df)
+
+        print('Fitting...')
         train_mat = xgb.DMatrix(df.values, label_array)
 
+        # negative : positive = 30 : 1
         params = {
             'learning_rate': 0.005,
             'tree_method': 'exact',
+            'early_stopping_rounds': 3,
             'refresh_leaf': True,
+            'max_depth': 5,
+            'scale_pos_weight': 30,
             'reg_lambda': 3
         } if self.model is None \
             else {
             'learning_rate': 0.005,
             'tree_method': 'exact',
+            'early_stopping_rounds': 3,
             'updater': 'refresh',
             'process_type': 'update',
             'refresh_leaf': True,
+            'max_depth': 5,
+            'scale_pos_weight': 30,
             'reg_lambda': 3
         }
         self.model = xgb.train(params, dtrain=train_mat, num_boost_round=10, xgb_model=self.model)
@@ -85,7 +97,8 @@ class XGBoost:
                 df = df.drop(columns=[col])
                 df = pd.concat([df, onehot], axis=1)
             elif type == 'target_encoding':
-                df[col] = df[col].replace(dict(zip(prop['value'], prop['encoded'])))
+                encoding_dict = dict(zip(prop['value'], prop['encoded']))
+                df[col] = df[col].map(encoding_dict.get)
             elif type == 'binning':
                 boundaries = [[float('-inf')] + prop['boundaries'] + float('inf')]
                 for i in range(len(boundaries) - 1):
