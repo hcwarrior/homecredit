@@ -1,3 +1,4 @@
+import os
 from typing import Dict
 from dataset.feature.feature import *
 from dataset.feature.feature_definer import FeatureDefiner
@@ -26,6 +27,6 @@ if __name__ == '__main__':
         if topic.depth == 1:
             print(f'[*] Defining features for {topic.name}')
             fd = FeatureDefiner(topic.name, period_cols=period_col.get(topic.name, None))
-            features = fd.define_features()
-            print(f'{topic.name} has {len(features)} features')
-            FeatureDefiner.save_json(features, DATA_PATH / f'feature_definition/{topic.name}.json')
+            fd.define_features()
+            print(f'{topic.name} has {len(fd.features)} features')
+            fd.save_features_as_json(DATA_PATH / f'feature_definition/{topic.name}.json')

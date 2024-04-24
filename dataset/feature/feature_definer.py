@@ -1,7 +1,6 @@
 import pandas as pd
-from dataset.datainfo import RawInfo, RawReader
+from dataset.datainfo import RawInfo
 from dataset.feature.feature import *
-from dataset.const import TOPICS
 from typing import Dict, List
 import json
 
@@ -26,6 +25,7 @@ class FeatureDefiner:
         self.numgroup: str = f'num_group{depth}'
         self.period_cols: List[str] = period_cols
         self._update_integer_data_type()
+        self.features: List[Feature] = None
 
     def _update_integer_data_type(self):
         for col in self.raw_cols.values():
@@ -52,8 +52,7 @@ class FeatureDefiner:
         aggs = self.define_aggs()
         filters = self.define_filters(self.numgroup, self.period_cols)
         filters += [None]
-        features: List[Feature] = self.gen_features(aggs, filters)
-        return features
+        self.features = self.gen_features(aggs, filters)
 
     def define_simple_features(self, cat_count: int = 10):
         self.raw_cols.pop('num_group1')
@@ -75,7 +74,7 @@ class FeatureDefiner:
         ]
         filters = [None]
         features += self.gen_features(aggs, filters)
-        return features
+        self.features = features
 
     def define_filters(self, numgroup: str = 'num_group1', period_cols: List[str] = None):
         filters = self.categorical_filters()
@@ -252,6 +251,12 @@ class FeatureDefiner:
         if x.dtype == 'object':
             x = pd.to_datetime(x)
         return (pd.to_datetime(date) - x).dt.days
+
+    def save_features_as_json(
+        self,
+        filename: str,
+    ):
+        self.save_json(self.features, filename)
 
     @staticmethod
     def save_json(features: List[Feature], filename: str):

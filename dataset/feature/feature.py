@@ -1,13 +1,12 @@
-import pandas as pd
-import os
-from pathlib import Path
-from glob import glob
 from dataclasses import dataclass
-from dataset.const import TOPICS
-from typing import List, Union
+from dataset.const import QUERY_FORMAT_REPLACEMENTS
+from typing import List
 
 
 class Column:
+    """
+    Column class to represent a column in the dataset.
+    """
 
     def __init__(
         self, data_type: str, query: str = None, name: str = None
@@ -39,35 +38,18 @@ class Column:
         if formated_query is None:
             return None
 
-        formated_query = formated_query.replace("<", "lt")
-        formated_query = formated_query.replace("<=", "le")
-        formated_query = formated_query.replace(">", "gt")
-        formated_query = formated_query.replace(">=", "ge")
-        formated_query = formated_query.replace("!=", "ne")
-        formated_query = formated_query.replace("=", "eq")
-        formated_query = formated_query.replace("-", "sub")
-        formated_query = formated_query.replace("+", "plus")
-        formated_query = formated_query.replace("/", "div")
-        formated_query = formated_query.replace("*", "mul")
-        formated_query = formated_query.replace("case when ", "_if_")
-        formated_query = formated_query.replace("else null end", "")
-        formated_query = formated_query.replace("(", "_")
-        formated_query = formated_query.replace(")", "_")
-        formated_query = formated_query.replace("'", "")
-        formated_query = formated_query.replace(" and ", "")
-        formated_query = formated_query.replace(" else ", "_")
-        formated_query = formated_query.replace(" ", "_")
+        for key, value in QUERY_FORMAT_REPLACEMENTS:
+            formated_query = formated_query.replace(key, value)
         return formated_query.lower()
 
     def to_dict(self):
-        return {
-            "data_type": self.data_type,
-            "query": self.query,
-            "name": self.name,
-        }
+        return self.__dict__
 
 @dataclass
 class Element:
+    """
+    Element class to represent a filter or aggregation in the dataset.
+    """
     columns: List[Column]
     logic: str
 
@@ -129,6 +111,29 @@ class Agg(Element):
 
 
 class Feature(Column):
+    """
+    Feature class to represent a feature in the dataset.
+
+    Args:
+        data_type (str): The data type of the feature.
+        topic (str): The topic of the feature.
+        agg (Agg): The aggregation object associated with the feature.
+        filters (List[Filter]): The list of filters applied to the feature.
+
+    Attributes:
+        topic (str): The topic of the feature.
+        agg (Agg): The aggregation object associated with the feature.
+        filters (List[Filter]): The list of filters applied to the feature.
+        query (str): The SQL query generated based on the aggregation and filters.
+        name (str): The name of the feature derived from the query.
+
+    Methods:
+        _init_query: Initializes the SQL query based on the aggregation and filters.
+        to_dict: Converts the Feature object to a dictionary.
+        from_dict: Creates a Feature object from a dictionary.
+
+    """
+
     def __init__(
             self, data_type: str, topic: str, agg: Agg, filters: List[Filter]
         ):
