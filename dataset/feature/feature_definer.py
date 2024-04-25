@@ -182,7 +182,11 @@ class FeatureDefiner:
             'max({0})',
         ]
         aggs += [
-            Agg(columns=[col], logic=agg, data_type=col.data_type.replace('64', ''))
+            Agg(
+                columns=[col],
+                logic=agg,
+                data_type=col.data_type.replace('64', '').replace('32', ''),
+            )
             for col in numeric_cols.values()
             for agg in simple_numeric_aggregater
         ]

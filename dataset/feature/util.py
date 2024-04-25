@@ -15,7 +15,7 @@ def optimize_int_datatype(c_min: float, c_max: float):
         return pl.Int64
     raise OverflowError('[-] not supported int-range')
 
-pl.String
+
 def optimize_dataframe_datatype(col_type, c_min: float, c_max: float):
     c_min = c_min if c_min is not None else 0
     c_max = c_max if c_max is not None else 0
