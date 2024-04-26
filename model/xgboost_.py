@@ -51,8 +51,6 @@ class XGBoost:
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
 
-        print(df.head(50))
-
         print('Fitting...')
         train_mat = xgb.DMatrix(df.values, label_array)
         val_mat = xgb.DMatrix(val_df.values, val_label_array)
@@ -74,6 +72,7 @@ class XGBoost:
         }
         update_param = base_param | {'updater': 'refresh', 'process_type': 'update'}
         params = base_param if self.model is None else update_param
+
         self.model = xgb.train(params, dtrain=train_mat, evals=evals, num_boost_round=400, early_stopping_rounds=100, xgb_model=self.model)
 
     def _preprocess_predict(self, df: pd.DataFrame):

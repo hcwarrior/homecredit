@@ -46,7 +46,7 @@ def _generate_datasets(data_parser: DatasetGenerator, target: str, id: str = Non
     for file_path, array_dict in data_parser.parse():
         print(f'\nParsing {file_path}...')
         # dict, target, id (optional)
-        result = {col: array_dict[col] for col in data_parser.features}, array_dict[target]
+        result = {col: array_dict[col] for col in data_parser.features if col != target}, array_dict[target]
         if id is not None:
             result = result + (array_dict[id], )
         yield result
