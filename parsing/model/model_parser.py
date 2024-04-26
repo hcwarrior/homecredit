@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Any
 
 import numpy as np
 import pandas as pd
@@ -19,7 +19,7 @@ class ModelConf:
 
 @dataclass
 class Model:
-    model: tf_keras.Model
+    model: Any
     conf: ModelConf
 
 

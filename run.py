@@ -25,6 +25,7 @@ class Options:
     test_data_root_dir: str  # A root directory that test data files exist
     submission_csv_file_path: str  # A submission CSV output file path
     best_model_output_path: str  # A path for the best model
+    preprocess_json_path: str  # A path for preprocess json
 
 
 def _parse_features(feature_yaml_path: str) -> Dict[str, tf_keras.layers.Layer]:
@@ -66,21 +67,40 @@ if __name__ == '__main__':
     train_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
     train_data_generator = _generate_datasets(train_data_parser, model_conf.target)
 
+    val_data_parser = DatasetGenerator(options.val_data_root_dir, model_conf.features, model_conf.target,
+                                         model_conf.id)
+    val_data_generator = _generate_datasets(val_data_parser, model_conf.target)
+
+    val_df, val_target = None, None
+    for val_data_dict, val_target_arr in val_data_generator:
+        _val_tmp_df = pd.DataFrame.from_dict(val_data_dict)
+        val_df = _val_tmp_df if val_df is None else pd.concat([val_df, _val_tmp_df], axis=0, ignore_index=True)
+        val_target = val_target_arr if val_target is None else np.concatenate([val_target, val_target_arr], axis=0)
+
     for train_data_dict, target in train_data_generator:
-        model.fit(pd.DataFrame.from_dict(train_data_dict), target)
+        model.fit(pd.DataFrame.from_dict(train_data_dict), target, val_df, val_target)
 
     test_data_parser = DatasetGenerator(options.test_data_root_dir, model_conf.features, model_conf.target,
                                          model_conf.id)
     test_data_generator = _generate_datasets(test_data_parser, model_conf.target, model_conf.id)
     eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
-    for test_data_dict, target, case_id in test_data_generator:
-        preds = model.predict(test_data_dict, target).reshape((-1,))
-        eval_df = pd.concat([eval_df,
-                             pd.DataFrame({'case_id': case_id, 'target': target, 'score': preds})],
-                            axis=0,
-                            ignore_index=True)
 
+    test_df, test_target, test_case_id = None, None, None
+    for test_data_dict, test_target_arr, case_id in test_data_generator:
+        _test_tmp_df = pd.DataFrame.from_dict(test_data_dict)
+        test_df = _test_tmp_df if test_df is None else pd.concat([test_df, _test_tmp_df], axis=0, ignore_index=True)
+        test_target = test_target_arr if test_target is None else np.concatenate([test_target, test_target_arr], axis=0)
+        test_case_id = case_id if test_case_id is None else np.concatenate([test_case_id, case_id], axis=0)
+
+    preds, loss, auc = model.predict(test_df, test_target)
+    print(f'Test AUC: {auc} / Log Loss: {loss}')
+    eval_df = pd.concat([eval_df,
+                         pd.DataFrame({'case_id': test_case_id, 'target': test_target, 'score': preds})],
+                        axis=0,
+                        ignore_index=True)
 
     print('Saving results to the submission CSV file...')
     eval_df.drop(columns=['target']).to_csv(options.submission_csv_file_path, index=False)
 
+    print('Saving model...')
+    model.save(options.best_model_output_path, options.preprocess_json_path)
