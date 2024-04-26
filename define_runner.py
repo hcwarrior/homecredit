@@ -1,8 +1,7 @@
 import os
 from typing import Dict
 from dataset.feature.feature import *
-from dataset.feature.feature_definer import FeatureDefiner
-from dataset.datainfo import DATA_PATH
+from dataset.feature.feature_definer import FeatureDefiner, FEATURE_DEF_PATH
 from dataset import const
 
 period_col: Dict[str, List[str]] = {
@@ -20,7 +19,7 @@ period_col: Dict[str, List[str]] = {
 
 if __name__ == '__main__':
     # create folder for feature definition
-    os.makedirs(DATA_PATH / 'feature_definition', exist_ok=True)
+    os.makedirs(FEATURE_DEF_PATH, exist_ok=True)
 
     # define features for each topic
     for topic in const.TOPICS:
@@ -28,5 +27,5 @@ if __name__ == '__main__':
             print(f'[*] Defining features for {topic.name}')
             fd = FeatureDefiner(topic.name, period_cols=period_col.get(topic.name, None))
             fd.define_features()
+            fd.save_features_as_json(FEATURE_DEF_PATH / f'{topic.name}.json')
             print(f'{topic.name} has {len(fd.features)} features')
-            fd.save_features_as_json(DATA_PATH / f'feature_definition/{topic.name}.json')

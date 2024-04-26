@@ -1,3 +1,4 @@
+import gc
 import polars as pl
 import os
 
@@ -52,32 +53,43 @@ class Preprocessor:
         self.RAW_INFO.save_as_prep(depth1, topic, depth=1, type_=self.type_)
 
     def _preprocess_cb_a(self, topic: str, query: str):
+        temp_path = DATA_PATH / 'parquet_preps' / self.type_
+        os.makedirs(temp_path, exist_ok=True)
+
         depth2 = self.RAW_INFO.read_raw(topic, depth=2, reader=RawReader('polars'), type_=self.type_)
         print('[*] Read depth=2 data')
         depth2 = optimize_dataframe(depth2, verbose=True)
 
+        depth2 = pl.SQLContext(data=depth2).execute(
+            CB_A_PREPREP_QUERY,
+            eager=True,
+        )
+        depth2 = optimize_dataframe(depth2, verbose=True)
+
+        depth2 = pl.SQLContext(data=depth2).execute(query, eager=True)
+        depth2 = optimize_dataframe(depth2, verbose=True)
+
+        temp_file = temp_path / f"{self.type_}_{topic}_temp1.parquet"
+        depth2.write_parquet(temp_file)
+        del depth2
+        gc.collect()
+
         depth1 = self.RAW_INFO.read_raw(topic, depth=1, reader=RawReader('polars'), type_=self.type_)
         print('[*] Read depth=1 data')
         depth1 = optimize_dataframe(depth1, verbose=True)
-        depth1 = self._join_depth2_0(depth1, depth2)
 
-        temp_path = (
-            DATA_PATH / 'parquet_preps' / self.type_ / f"{self.type_}_{topic}_temp.parquet"
-        )
-        print(f'[*] Temp path: {temp_path}')
-        if not os.path.exists(temp_path):
-            depth2_temp = pl.SQLContext(data=depth2).execute(
-                CB_A_PREPREP_QUERY,
-                eager=True,
-            )
-            depth2_temp.write_parquet(temp_path)
-            print('[*] Temp data saved')
-        else:
-            depth2_temp = pl.read_parquet(temp_path)
-            print('[*] Read temp data')
-        depth2_temp = pl.SQLContext(data=depth2_temp).execute(query, eager=True)
-        depth2_temp = optimize_dataframe(depth2_temp, verbose=True)
+        depth2 = self.RAW_INFO.read_raw(topic, depth=2, reader=RawReader('polars'), type_=self.type_)
+        print('[*] Read depth=2 data')
+        depth2 = optimize_dataframe(depth2, verbose=True)
+
+        depth1 = self._join_depth2_0(depth1, depth2)
+        del depth2
+        gc.collect()
+
+        depth2_temp = pl.read_parquet(temp_file)
         depth1 = depth1.join(depth2_temp, on=['case_id', 'num_group1'], how='left')
+        del depth2_temp
+        gc.collect()
 
         self.RAW_INFO.save_as_prep(depth1, topic, depth=1, type_=self.type_)
 

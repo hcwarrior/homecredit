@@ -1,9 +1,10 @@
 import pandas as pd
-from dataset.datainfo import RawInfo
+from dataset.datainfo import RawInfo, DATA_PATH
 from dataset.feature.feature import *
 from typing import Dict, List
 import json
 
+FEATURE_DEF_PATH = DATA_PATH / 'feature_definition'
 
 class FeatureDefiner:
     RAW_INFO = RawInfo()

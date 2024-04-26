@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from typing import Dict
 
-DATA_KEYS = ["case_id"]
+KEY_COL = ["case_id"]
+DATE_COL = ["date_decision"]
+TARGET_COL = ["target"]
 
 TOPIC_NAMES = [
     "applprev",
@@ -172,8 +174,8 @@ DEPTH_2_TO_1_QUERY: Dict[str, str] = {
                 , sum(pmts_dpd_1073P303P) as sum_pmts_dpd_1073P303P__P
                 , sum(pmts_month_158T706T) as sum_pmts_month_158T706T__T
                 , sum(pmts_overdue_1140A1152A) as sum_pmts_overdue_1140A1152A__A
-                , min(concat(pmts_year_1139T507T, '-01-01')) as min_pmts_year_1139T507T__D
-                , max(concat(pmts_year_1139T507T, '-01-01')) as max_pmts_year_1139T507T__D
+                , min(case when concat(pmts_year_1139T507T, '-01-01')='-01-01' then null else replace(concat(pmts_year_1139T507T, '-01-01'), '.0', '') end) as min_pmts_year_1139T507T__D
+                , max(case when concat(pmts_year_1139T507T, '-01-01')='-01-01' then null else replace(concat(pmts_year_1139T507T, '-01-01'), '.0', '') end) as max_pmts_year_1139T507T__D
                 , count(distinct subjectroles_name_541M838M) as count_distinct_subjectroles_name_541M838M__L
                 --, count(distinct case when status = 1 then collater_typofvalofguarant_298M407M else null end) as count_distinct__if__status_eq_1_then_collater_typofvalofguarant_298m407m__L
                 --, sum(case when status = 1 then collater_valueofguarantee_1124L876L else null end) as sum__if__status_eq_1_then_collater_valueofguarantee_1124l876l__L
