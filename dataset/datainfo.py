@@ -1,5 +1,7 @@
 import os
+from typing import Union
 import pandas as pd
+import polars as pl
 from pathlib import Path
 from argparse import Namespace
 from dataclasses import dataclass
@@ -121,6 +123,49 @@ class ColInfo:
             return f"{self.name}: {result_description}"
 
 
+class RawReader:
+    def __init__(self, return_type: str = 'pandas', format: str = "parquet") -> None:
+        self.return_type = return_type
+        self.format = format
+
+        if format == "parquet" and return_type == 'pandas':
+            self.reader = pd.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format == "csv" and return_type == 'pandas':
+            self.reader = pd.read_csv
+            self.column_getter = self._get_csv_columns
+        elif format == "parquet" and return_type == 'polars':
+            self.reader = pl.read_parquet
+            self.column_getter = self._get_parquet_columns
+        elif format == "csv" and return_type == 'polars':
+            self.reader = pl.read_csv
+            self.column_getter = self._get_csv_columns
+        else:
+            raise ValueError(
+                "format should be either 'parquet' or 'csv'"
+                "and return_type should be 'pandas' or 'polars'."
+                f"Not {format}, {return_type}."
+            )
+
+    def read(self, file_path: Path) -> Union[pd.DataFrame, pl.DataFrame]:
+        return self.reader(file_path)
+
+    def columns(self, file_path: Path) -> list[ColInfo]:
+        return [ColInfo(c) for c in self.column_getter(file_path)]
+
+    def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
+        if self.return_type == 'pandas':
+            return [c for c in pd.read_csv(file_path, nrows=0).columns]
+        elif self.return_type == 'polars':
+            return [c for c in pl.read_csv(file_path, n_rows=0).columns]
+
+    def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
+        return [c for c in ParquetFile(file_path).columns]
+
+    def __call__(self, file_path) -> Union[pd.DataFrame, pl.DataFrame]:
+        return self.read(file_path)
+
+
 class RawInfo:
     VALID_TYPES = ["", "train", "test"]
     VALID_DEPTHS = ["", "0", "1", "2"]
@@ -139,8 +184,8 @@ class RawInfo:
 
         if not self.file_dir_path.exists():
             raise FileNotFoundError(f"{self.file_dir_path} does not exist.")
-        
-        self.reader = RawReader(self.format)
+
+        self.reader = RawReader(format=self.format)
 
     def show_files(self, type_: str = "train") -> list[RawFile]:
         return sorted([RawFile(f) for f in os.listdir(self.file_dir_path / type_)])
@@ -165,46 +210,37 @@ class RawInfo:
         file_name: str,
         *,
         depth: int = None,
+        reader: RawReader = None,
         type_: str = "train",
+        stage: str = "raw"
     ) -> pd.DataFrame:
-        raw_files = self.get_files(file_name, depth=depth, type_=type_)
+        reader = self.reader if reader is None else reader
 
-        if len(raw_files) > 0:
-            raw_df = pd.concat([self.reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
-        else:
+        raw_files = self.get_files(file_name, depth=depth, type_=type_)
+        if len(raw_files) == 0:
             raise FileNotFoundError(f"{file_name} (depth: {depth}) does not exist in {type_} files.")
+
+        if reader.return_type == 'pandas' and stage == "raw":
+            raw_df = pd.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
+        elif reader.return_type == 'polars' and stage == "raw":
+            raw_df = pl.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])            
+        elif stage == "prep":
+            raw_df = reader(
+                DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+            )
 
         return raw_df
 
+    def save_as_prep(self, data: pl.DataFrame, file_name: str, depth: int, type_: str = "train"):
+        if type_ not in self.VALID_TYPES:
+            raise ValueError(f"type_ should be one of {self.VALID_TYPES}. Not {type_}.")
+        if str(depth) not in self.VALID_DEPTHS:
+            raise ValueError(f"depth should be one of {self.VALID_DEPTHS}. Not {depth}.")
 
-class RawReader:
-    def __init__(self, format_: str = "parquet") -> None:
-        self.format = format_
-        
-        if format_ == "parquet":
-            self.reader = pd.read_parquet
-            self.column_getter = self._get_parquet_columns
-        elif format_ == "csv":
-            self.reader = pd.read_csv
-            self.column_getter = self._get_csv_columns
-        else:
-            raise ValueError(f"format_ should be either 'parquet' or 'csv'. Not {format_}.")
-
-    def read(self, file_path: Path) -> pd.DataFrame:
-        return self.reader(file_path)
-
-    def columns(self, file_path: Path) -> list[ColInfo]:
-        return [ColInfo(c) for c in self.column_getter(file_path)]
-
-    def _get_csv_columns(self, file_path: Path) -> list[ColInfo]:
-        return [c for c in self.reader(file_path, nrows=0).columns]
-
-    def _get_parquet_columns(self, file_path: Path) -> list[ColInfo]:
-        return [c for c in ParquetFile(file_path).columns]
-
-    def __call__(self, file_path) -> pd.DataFrame:
-        return self.read(file_path)
-
+        os.makedirs(DATA_PATH / 'parquet_preps' / type_, exist_ok=True)
+        data.write_parquet(
+            DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+        )
 
 if __name__ == "__main__":
     raw_info = RawInfo(
