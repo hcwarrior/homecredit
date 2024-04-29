@@ -90,23 +90,29 @@ class XGBoost:
                 df = pd.concat([df, onehot], axis=1)
             elif type == 'target_encoding':
                 encoding_dict = dict(zip(prop['value'], prop['encoded']))
-                df[col] = df[col].map(encoding_dict.get)
+                df.loc[:, col] = df[col].map(encoding_dict.get)
             elif type == 'binning':
                 boundaries = [[float('-inf')] + prop['boundaries'] + [float('inf')]]
                 for i in range(len(boundaries) - 1):
                     df[col][(df[col] >= boundaries[i]) & (df[col] < boundaries[i + 1])] = i
             elif type == 'standardization':
-                df[col] = (df[col] - prop['mean']) / prop['stddev']
+                df.loc[:, col] = (df[col] - prop['mean']) / prop['stddev']
             else:
                 pass
         return df
 
     def predict(self, df_without_label: pd.DataFrame, label_array: np.ndarray = None):
-        df_without_label = self._preprocess_predict(df_without_label)
-        test_mat = xgb.DMatrix(df_without_label.values)
-        pred = self.model.predict(test_mat)
+        batch_size = 65536
+        chunked_dfs = [df_without_label[i:i + batch_size].reset_index(drop=True) for i in range(0, len(df_without_label), batch_size)]
+
+        preds = []
+        for i in range(len(chunked_dfs)):
+            chunked_df = self._preprocess_predict(chunked_dfs[i])
+            test_mat = xgb.DMatrix(chunked_df.values)
+            preds.append(self.model.predict(test_mat))
 
         loss, auroc = None, None
+        pred = np.array([y for x in preds for y in x])
         if label_array is not None:
             loss = log_loss(label_array, pred)
             auroc = roc_auc_score(label_array, pred)
