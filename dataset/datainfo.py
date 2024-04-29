@@ -130,6 +130,9 @@ class RawReader:
         self.return_type = return_type
         self.format = format
 
+        self._set_reader(return_type, format)
+
+    def _set_reader(self, return_type, format):
         if format == "parquet" and return_type == 'pandas':
             self.reader = pd.read_parquet
             self.column_getter = self._get_parquet_columns
@@ -258,15 +261,21 @@ class RawInfo:
             for rf in raw_files:
                 yield reader(rf.get_path(self.data_dir_path))
 
-    def save_as_prep(self, data: pl.DataFrame, file_name: str, depth: int, type_: str = "train"):
+    def save_as_prep(
+            self,
+            data: pl.DataFrame,
+            file_name: str,
+            depth: int,
+            type_: str = "train",
+        ):
         if type_ not in self.VALID_TYPES:
             raise ValueError(f"type_ should be one of {self.VALID_TYPES}. Not {type_}.")
         if str(depth) not in self.VALID_DEPTHS:
             raise ValueError(f"depth should be one of {self.VALID_DEPTHS}. Not {depth}.")
 
-        os.makedirs(DATA_PATH / 'parquet_preps' / type_, exist_ok=True)
+        os.makedirs(self.data_dir_path / 'parquet_preps' / type_, exist_ok=True)
         data.write_parquet(
-            DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+            self.data_dir_path / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
         )
 
 if __name__ == "__main__":
