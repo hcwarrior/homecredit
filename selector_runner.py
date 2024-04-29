@@ -150,3 +150,271 @@ if __name__ == '__main__':
             temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
             if os.path.exists(temp_path):
                 os.remove(temp_path)
+
+if __name__ == '__main__':
+    SELECT_PATH = DATA_PATH / 'feature_selection'
+    os.makedirs(SELECT_PATH, exist_ok=True)
+    batch_size = 260
+    postfix_preselected = '_secondary'
+    postfix = '_tertiary'
+
+    depth1_topics = [
+        topic
+        for topic in TOPICS
+        if topic.depth == 1 and topic.name in ('applprev', 'person')
+    ]
+    for topic in depth1_topics:
+        preselected = read_json(SELECT_PATH / f'{topic.name}{postfix_preselected}.json')
+        if len(preselected) < 260:
+            continue
+        if os.path.exists(SELECT_PATH / f'{topic.name}{postfix}.json'):
+            continue
+
+        print(f'[*] Selecting features for {topic.name}')
+        selected_feature_list = []
+
+        # load already taken features
+        already_taken = sorted(list(SELECT_PATH.glob(f'{topic.name}_*{postfix}.json')))
+        for taken_file in already_taken:
+            selected_feature_list += read_json(taken_file)
+
+        fl = FeatureLoader(topic, type='train')
+        features = fl.load_features(preselected)
+        iter = fl.load_feature_data_batch(features, batch_size, skip=len(already_taken))
+        for i, temp_data in enumerate(iter):
+            if temp_data is None:
+                continue
+
+            selected_temp = select_features(temp_data)
+            selected_feature_list += selected_temp
+            print(f'using {len(selected_temp)}')
+
+            del temp_data
+            gc.collect()
+            write_json(SELECT_PATH / f'{topic.name}_{i}{postfix}.json', selected_temp)
+        write_json(SELECT_PATH / f'{topic.name}{postfix}.json', selected_feature_list)
+
+        # delete teemp files
+        for i in range(len(features) // batch_size + 1):
+            temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+if __name__ == '__main__':
+    SELECT_PATH = DATA_PATH / 'feature_selection'
+    os.makedirs(SELECT_PATH, exist_ok=True)
+    batch_size = 260
+    postfix_preselected = '_tertiary'
+    postfix = '_quarternary'
+
+    depth1_topics = [
+        topic
+        for topic in TOPICS
+        if topic.depth == 1 and topic.name in ('applprev', 'person')
+    ]
+    for topic in depth1_topics:
+        if not os.path.exists(SELECT_PATH / f'{topic.name}{postfix_preselected}.json'):
+            continue
+        preselected = read_json(SELECT_PATH / f'{topic.name}{postfix_preselected}.json')
+        if len(preselected) < 260:
+            continue
+        if os.path.exists(SELECT_PATH / f'{topic.name}{postfix}.json'):
+            continue
+
+        print(f'[*] Selecting features for {topic.name}')
+        selected_feature_list = []
+
+        # load already taken features
+        already_taken = sorted(list(SELECT_PATH.glob(f'{topic.name}_*{postfix}.json')))
+        for taken_file in already_taken:
+            selected_feature_list += read_json(taken_file)
+
+        fl = FeatureLoader(topic, type='train')
+        features = fl.load_features(preselected)
+        iter = fl.load_feature_data_batch(features, batch_size, skip=len(already_taken))
+        for i, temp_data in enumerate(iter):
+            if temp_data is None:
+                continue
+
+            selected_temp = select_features(temp_data)
+            selected_feature_list += selected_temp
+            print(f'using {len(selected_temp)}')
+
+            del temp_data
+            gc.collect()
+            write_json(SELECT_PATH / f'{topic.name}_{i}{postfix}.json', selected_temp)
+        write_json(SELECT_PATH / f'{topic.name}{postfix}.json', selected_feature_list)
+
+        # delete teemp files
+        for i in range(len(features) // batch_size + 1):
+            temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+
+if __name__ == '__main__':
+    SELECT_PATH = DATA_PATH / 'feature_selection'
+    os.makedirs(SELECT_PATH, exist_ok=True)
+    batch_size = 100
+    postfix_preselected = '_quarternary'
+    postfix = '_last'
+
+    depth1_topics = [
+        topic
+        for topic in TOPICS
+        if topic.depth == 1
+    ]
+    for topic in depth1_topics:
+        if not os.path.exists(SELECT_PATH / f'{topic.name}{postfix_preselected}.json'):
+            continue
+        preselected = read_json(SELECT_PATH / f'{topic.name}{postfix_preselected}.json')
+        if len(preselected) < 100:
+            continue
+        if os.path.exists(SELECT_PATH / f'{topic.name}{postfix}.json'):
+            continue
+
+        print(f'[*] Selecting features for {topic.name}')
+        selected_feature_list = []
+
+        # load already taken features
+        already_taken = sorted(list(SELECT_PATH.glob(f'{topic.name}_*{postfix}.json')))
+        for taken_file in already_taken:
+            selected_feature_list += read_json(taken_file)
+
+        fl = FeatureLoader(topic, type='train')
+        features = fl.load_features(preselected)
+        iter = fl.load_feature_data_batch(features, batch_size, skip=len(already_taken))
+        for i, temp_data in enumerate(iter):
+            if temp_data is None:
+                continue
+
+            selected_temp = select_features(temp_data)
+            selected_feature_list += selected_temp
+            print(f'using {len(selected_temp)}')
+
+            del temp_data
+            gc.collect()
+            write_json(SELECT_PATH / f'{topic.name}_{i}{postfix}.json', selected_temp)
+        write_json(SELECT_PATH / f'{topic.name}{postfix}.json', selected_feature_list)
+
+        # delete teemp files
+        for i in range(len(features) // batch_size + 1):
+            temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+if __name__ == '__main__':
+    SELECT_PATH = DATA_PATH / 'feature_selection'
+    os.makedirs(SELECT_PATH, exist_ok=True)
+    batch_size = 100
+    postfix_preselected = '_last'
+    postfix = '_reallast'
+
+    depth1_topics = [
+        topic
+        for topic in TOPICS
+        if topic.depth == 1
+    ]
+    for topic in depth1_topics:
+        if not os.path.exists(SELECT_PATH / f'{topic.name}{postfix_preselected}.json'):
+            continue
+        preselected = read_json(SELECT_PATH / f'{topic.name}{postfix_preselected}.json')
+        if len(preselected) < 100:
+            continue
+        if os.path.exists(SELECT_PATH / f'{topic.name}{postfix}.json'):
+            continue
+
+        print(f'[*] Selecting features for {topic.name}')
+        selected_feature_list = []
+
+        # load already taken features
+        already_taken = sorted(list(SELECT_PATH.glob(f'{topic.name}_*{postfix}.json')))
+        for taken_file in already_taken:
+            selected_feature_list += read_json(taken_file)
+
+        fl = FeatureLoader(topic, type='train')
+        features = fl.load_features(preselected)
+        iter = fl.load_feature_data_batch(features, batch_size, skip=len(already_taken))
+        for i, temp_data in enumerate(iter):
+            if temp_data is None:
+                continue
+
+            selected_temp = select_features(temp_data)
+            selected_feature_list += selected_temp
+            print(f'using {len(selected_temp)}')
+
+            del temp_data
+            gc.collect()
+            write_json(SELECT_PATH / f'{topic.name}_{i}{postfix}.json', selected_temp)
+        write_json(SELECT_PATH / f'{topic.name}{postfix}.json', selected_feature_list)
+
+        # delete teemp files
+        for i in range(len(features) // batch_size + 1):
+            temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+if __name__ == '__main__':
+    SELECT_PATH = DATA_PATH / 'feature_selection'
+    os.makedirs(SELECT_PATH, exist_ok=True)
+    batch_size = 1000
+    postfix_preselected = '_reallast'
+    postfix = '_final'
+
+    depth1_topics = [topic for topic in TOPICS if topic.depth == 1 and topic.name != 'applprev']
+    for topic in depth1_topics:
+        if not os.path.exists(SELECT_PATH / f'{topic.name}{postfix_preselected}.json'):
+            continue
+        preselected = read_json(SELECT_PATH / f'{topic.name}{postfix_preselected}.json')
+        if os.path.exists(SELECT_PATH / f'{topic.name}{postfix}.json'):
+            continue
+
+        print(f'[*] Selecting features for {topic.name}')
+        selected_feature_list = []
+
+        # load already taken features
+        already_taken = sorted(list(SELECT_PATH.glob(f'{topic.name}_*{postfix}.json')))
+        for taken_file in already_taken:
+            selected_feature_list += read_json(taken_file)
+
+        fl = FeatureLoader(topic, type='train')
+        features = fl.load_features(preselected)
+        iter = fl.load_feature_data_batch(features, batch_size, skip=len(already_taken))
+        for i, temp_data in enumerate(iter):
+            if temp_data is None:
+                continue
+
+            selected_temp = select_features(temp_data)
+            selected_feature_list += selected_temp
+            print(f'using {len(selected_temp)}')
+
+            del temp_data
+            gc.collect()
+            write_json(SELECT_PATH / f'{topic.name}_{i}{postfix}.json', selected_temp)
+        write_json(SELECT_PATH / f'{topic.name}{postfix}.json', selected_feature_list)
+
+        # delete teemp files
+        for i in range(len(features) // batch_size + 1):
+            temp_path = SELECT_PATH / f'{topic.name}_{i}{postfix}.json'
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+
+
+selected_topic = [
+    'applprev_final',
+    'credit_bureau_a_final',
+    'credit_bureau_b_final',
+    'person_final',
+    'debitcard',
+    'deposit',
+    'other',
+    'tax_registry_a',
+    'tax_registry_b',
+    'tax_registry_c',
+]
+selected_features = []
+for topic in selected_topic:
+    selected = read_json(SELECT_PATH / f'{topic}.json')
+    selected_features += selected
+len(selected_features)
+write_json(SELECT_PATH / 'selected_features_final.json', selected_features)

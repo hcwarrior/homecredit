@@ -14,16 +14,16 @@ from dataset.const import TOPICS, Topic, KEY_COL, DATE_COL, TARGET_COL
 
 
 class FeatureLoader:
-    def __init__(self, topic: Topic, type: str):
+    def __init__(self, topic: Topic, type: str, conf: dict = None):
         self.topic = topic
         self.type = type
-        self.data = self._load_data(type_=type, stage='prep')
+        self.data = self._load_data(type_=type, stage='prep', rawinfo=RawInfo(conf))
 
     def _load_data(
         self,
+        rawinfo,
         type_='train',
         stage='prep',
-        rawinfo=RawInfo(),
         reader=RawReader('polars'),
     ) -> pl.DataFrame:
         base_columns = [*KEY_COL, *DATE_COL]
@@ -51,7 +51,12 @@ class FeatureLoader:
 
         if feature_names is None:
             return [Feature.from_dict(feature) for feature in features.values()]
-        return [Feature.from_dict(features[feature_name]) for feature_name in feature_names]
+
+        return [
+            Feature.from_dict(features[feature_name])
+            for feature_name in features.keys()
+            if feature_name in feature_names
+        ]
 
     def load_feature_data(self, features, verbose=False) -> pl.DataFrame:
         query = [
@@ -67,17 +72,18 @@ class FeatureLoader:
                 , {', '.join(query)}
             from frame
             group by frame.case_id, frame.target
-            """.replace(
-                'float32', 'float'
-            )
-            .replace(
-                "min_pmts_year_1139T507T__D",
-                "case when min_pmts_year_1139T507T__D='-01-01' then null else replace(min_pmts_year_1139T507T__D, '.0', '') end",
-            )
-            .replace(
-                "max_pmts_year_1139T507T__D",
-                "case when max_pmts_year_1139T507T__D='-01-01' then null else replace(max_pmts_year_1139T507T__D, '.0', '') end",
-            ),
+            """,
+            # .replace(
+            #     'float32', 'float'
+            # )
+            # .replace(
+            #     "min_pmts_year_1139T507T__D",
+            #     "case when min_pmts_year_1139T507T__D='-01-01' then null else replace(min_pmts_year_1139T507T__D, '.0', '') end",
+            # )
+            # .replace(
+            #     "max_pmts_year_1139T507T__D",
+            #     "case when max_pmts_year_1139T507T__D='-01-01' then null else replace(max_pmts_year_1139T507T__D, '.0', '') end",
+            # ),
             eager=True,
         )
         temp = optimize_dataframe(temp)

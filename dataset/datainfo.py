@@ -10,6 +10,8 @@ from pyarrow.parquet import ParquetFile
 
 BASE_PATH = Path(os.getcwd())
 DATA_PATH = BASE_PATH / "data" / "home-credit-credit-risk-model-stability"
+os.makedirs(DATA_PATH, exist_ok=True)
+
 POSTFIXES = {
     "P": "Transform DPD (Days Past Due)",
     "M": "Masking Categories",
@@ -223,13 +225,38 @@ class RawInfo:
         if reader.return_type == 'pandas' and stage == "raw":
             raw_df = pd.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])
         elif reader.return_type == 'polars' and stage == "raw":
-            raw_df = pl.concat([reader(rf.get_path(self.data_dir_path)) for rf in raw_files])            
+            raw_df = pl.concat(
+                [reader(rf.get_path(self.data_dir_path)) for rf in raw_files], how='vertical_relaxed'
+            )
         elif stage == "prep":
             raw_df = reader(
                 DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
             )
 
         return raw_df
+    
+    def read_raw_iter(
+        self,
+        file_name: str,
+        *,
+        depth: int = None,
+        reader: RawReader = None,
+        type_: str = "train",
+    ):
+        reader = self.reader if reader is None else reader
+
+        raw_files = self.get_files(file_name, depth=depth, type_=type_)
+        if len(raw_files) == 0:
+            raise FileNotFoundError(
+                f"{file_name} (depth: {depth}) does not exist in {type_} files."
+            )
+
+        if reader.return_type == 'pandas':
+            for rf in raw_files:
+                yield reader(rf.get_path(self.data_dir_path))
+        elif reader.return_type == 'polars':
+            for rf in raw_files:
+                yield reader(rf.get_path(self.data_dir_path))
 
     def save_as_prep(self, data: pl.DataFrame, file_name: str, depth: int, type_: str = "train"):
         if type_ not in self.VALID_TYPES:

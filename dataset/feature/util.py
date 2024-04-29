@@ -16,10 +16,12 @@ def optimize_int_datatype(c_min: float, c_max: float):
     raise OverflowError('[-] not supported int-range')
 
 
-def optimize_dataframe_datatype(col_type, c_min: float, c_max: float):
+def optimize_dataframe_datatype(col_type: str, c_min: float, c_max: float):
+    if col_type == 'Null':
+        return pl.Utf8
     c_min = c_min if c_min is not None else 0
     c_max = c_max if c_max is not None else 0
-    if str(col_type)[:3] == 'Int':
+    if col_type[:3] == 'Int':
         return optimize_int_datatype(c_min, c_max)
     try:
         np.array([c_min, c_max]).astype(np.float32)
@@ -32,11 +34,15 @@ def optimize_dataframe(df: pl.DataFrame, verbose=False) -> pl.DataFrame:
     start_memory: float = df.estimated_size('mb')
     data_types: List = Parallel(n_jobs=-1)(
         delayed(optimize_dataframe_datatype)(
-            str(df[col].dtype), df[col].min(), df[col].max()
+            str(df[col].dtype),
+            df[col].min() if str(df[col].dtype) != 'Null' else None,
+            df[col].max() if str(df[col].dtype) != 'Null' else None,
         )
         for col in df.columns
     )
     for col, data_type in zip(df.columns, data_types):
+        if col in ['case_id', 'num_group1', 'num_group2']:
+            data_type = pl.Int32
         df = df.with_columns(
             pl.col(col).cast(data_type),
         )
@@ -44,8 +50,9 @@ def optimize_dataframe(df: pl.DataFrame, verbose=False) -> pl.DataFrame:
     if verbose:
         print(f'[*] Memory usage of dataframe is {start_memory:.4f} MB')
         print(f'[*] Memory usage after optimization is: {end_memory:.4f} MB')
-        print(
-            f'[+] Decreased by {100 * (start_memory - end_memory) / start_memory:.4f}%'
-        )
+        if end_memory != 0:
+            print(
+                f'[+] Decreased by {100 * (start_memory - end_memory) / start_memory:.4f}%'
+            )
 
     return df
