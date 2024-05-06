@@ -7,9 +7,9 @@ import yaml
 class FeatureYAMLGeneratorTree:
     def __init__(self,
                  feature_conf_yaml_path: str,
-                 parquet_data_file_path: str,
+                 parquet_data_root_dir: str,
                  output_yaml_path: str):
-        self.parquet_data_file_path = parquet_data_file_path
+        self.parquet_data_root_dir = parquet_data_root_dir
         self.output_yaml_path = output_yaml_path
         with open(feature_conf_yaml_path) as f:
             self.conf = yaml.load(f, Loader=yaml.FullLoader)
@@ -38,11 +38,8 @@ class FeatureYAMLGeneratorTree:
                        label: str,
                        continuous_features: Set[str],
                        categorical_features: Set[str]) -> Dict[str, object]:
-        if not self.parquet_data_file_path.endswith('parquet'):
-            raise Exception(f'Unsupported file - {self.parquet_data_file_path}')
-
         # read only single column to be memory-efficient
-        df = pd.read_parquet(self.parquet_data_file_path, columns=[column, label], engine='fastparquet')
+        df = pd.read_parquet(self.parquet_data_root_dir, columns=[column, label], engine='pyarrow')
         series_with_label = df.dropna()
         prop = {}
         if column in continuous_features:
@@ -52,7 +49,7 @@ class FeatureYAMLGeneratorTree:
                 prop['type'] = 'binning'
                 prop['properties'] = {'boundaries': boundaries.tolist()}
             else:
-                mean, stddev = series.mean().item(), series.std().item()
+                mean, stddev = float(series.mean()), float(series.std())
                 prop['type'] = 'standardization'
                 prop['properties'] = {'mean': mean, 'stddev': stddev}
         else: # elif column in categorical_features

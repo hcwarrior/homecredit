@@ -1,24 +1,21 @@
-from collections import OrderedDict
 from dataclasses import dataclass
 from typing import List, Tuple
 
 import numpy as np
 import pandas as pd
-import shap
 import sklearn
 import yaml
 
 from matplotlib import pyplot as plt
 from simple_parsing import ArgumentParser
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
 
 @dataclass
 class SelectionOptions:
     feature_conf_yaml_path: str
-    data_parquet_file_path: str
+    data_parquet_root_dir: str
     feature_imps_png_output_path: str
     top_k: int
 
@@ -33,10 +30,10 @@ def _parse_feature_conf(feature_conf_yaml_path: str) -> Tuple[List[str], List[st
 
 def _get_preprocessed_dataframe(
         feature_conf_yaml_path: str,
-        data_parquet_file_path: str):
+        data_parquet_root_dir: str):
     cont_features, cat_features, label = _parse_feature_conf(feature_conf_yaml_path)
     features = cont_features + cat_features + [label]
-    df = pd.read_parquet(data_parquet_file_path, columns=features, engine='fastparquet')
+    df = pd.read_parquet(data_parquet_root_dir, columns=features, engine='pyarrow')
     df.bfill(inplace=True)
 
     # Use label encoding for categorical features
@@ -107,7 +104,7 @@ if __name__ == '__main__':
     options = args.options
 
     df, cont_features, cat_features, label = _get_preprocessed_dataframe(
-        options.feature_conf_yaml_path, options.data_parquet_file_path)
+        options.feature_conf_yaml_path, options.data_parquet_root_dir)
 
     print('Preprocessed DataFrame')
     print(df.head(5))
