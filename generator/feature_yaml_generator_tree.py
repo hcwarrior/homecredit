@@ -31,7 +31,7 @@ class FeatureYAMLGeneratorTree:
             prop = self._generate_prop(feature, features['label'], set(continuous_features), set(categorical_features))
             props[feature] = prop
 
-        return props
+        return {'transformations': props}
 
     def _generate_prop(self,
                        column: str,
@@ -58,7 +58,7 @@ class FeatureYAMLGeneratorTree:
             if len(uniques) >= 10:
                 prop['type'] = 'target_encoding'
 
-                target_encoded = series_with_label.groupby(column)[label].mean()
+                target_encoded = series_with_label.groupby(column, observed=False)[label].mean()
                 target_encoded['NA'] = 0
                 encoded_df = pd.DataFrame({'value': target_encoded.index.values, 'encoded': target_encoded.values})
 

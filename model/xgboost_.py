@@ -73,7 +73,8 @@ class XGBoost:
         update_param = base_param | {'updater': 'refresh', 'process_type': 'update'}
         params = base_param if self.model is None else update_param
 
-        self.model = xgb.train(params, dtrain=train_mat, evals=evals, num_boost_round=400, early_stopping_rounds=100, xgb_model=self.model)
+        boosting_rounds = 400 if self.model is None else self.model.num_boosted_rounds()
+        self.model = xgb.train(params, dtrain=train_mat, evals=evals, num_boost_round=boosting_rounds, early_stopping_rounds=100, xgb_model=self.model)
 
     def _preprocess_predict(self, df: pd.DataFrame):
         for col, transformation in self.transformations_by_feature.items():
@@ -90,13 +91,17 @@ class XGBoost:
                 df = pd.concat([df, onehot], axis=1)
             elif type == 'target_encoding':
                 encoding_dict = dict(zip(prop['value'], prop['encoded']))
-                df.loc[:, col] = df[col].map(encoding_dict.get)
+                encoded = df[col].map(encoding_dict.get)
+                df = df.drop(columns=[col])
+                df.loc[:, col] = encoded
             elif type == 'binning':
                 boundaries = [[float('-inf')] + prop['boundaries'] + [float('inf')]]
                 for i in range(len(boundaries) - 1):
                     df[col][(df[col] >= boundaries[i]) & (df[col] < boundaries[i + 1])] = i
             elif type == 'standardization':
-                df.loc[:, col] = (df[col] - prop['mean']) / prop['stddev']
+                standardized = (df[col] - prop['mean']) / prop['stddev']
+                df = df.drop(columns=[col])
+                df.loc[:, col] = standardized
             else:
                 pass
         return df

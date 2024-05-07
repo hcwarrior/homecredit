@@ -47,7 +47,7 @@ def _get_preprocessed_dataframe(
     for cat_feature in cat_features:
         # target encoding (mean)
         if df[cat_feature].nunique() >= MIN_CATEGORIES_FOR_TARGET_ENCODING:
-            target_means = df[[cat_feature, label]].groupby(cat_feature)[label].mean()
+            target_means = df[[cat_feature, label]].groupby(cat_feature, observed=False)[label].mean()
             df[cat_feature] = df[cat_feature].map(target_means)
             target_encoding_cat_features.append(cat_feature)
         else:
@@ -106,7 +106,7 @@ def _select_features(
         top_k: int) -> Tuple[List[str], List[str]]:
     X, y = df.drop(columns=[label]), df[label]
     print(X.head())
-    rf = RandomForestClassifier(n_estimators=50, max_depth=3, class_weight='balanced')
+    rf = RandomForestClassifier(n_estimators=50, max_depth=3, class_weight='balanced', random_state=42)
     rf.fit(X, y)
 
     print('Fitted Random Forest.')
