@@ -115,6 +115,7 @@ def read_file(path, depth=None):
     df = df.pipe(Pipeline.set_table_dtypes)
     if depth in [1, 2]:
         df = df.group_by("case_id").agg(Aggregator.get_exprs(df))
+    print(list(df.columns))
     return df
 
 
@@ -230,5 +231,6 @@ if __name__ == '__main__':
     df_train = feature_eng(**data_store)
     df_train, _ = to_pandas(df_train)
 
+    print(list(df_train.columns))
     dask_frame = da.from_pandas(df_train, chunksize=options.chunk_size)
     dask_frame.to_parquet(options.output_root_dir)
