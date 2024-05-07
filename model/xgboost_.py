@@ -91,7 +91,7 @@ class XGBoost:
                 df = pd.concat([df, onehot], axis=1)
             elif type == 'target_encoding':
                 encoding_dict = dict(zip(prop['value'], prop['encoded']))
-                encoded = df[col].map(encoding_dict.get)
+                encoded = df[col].map(encoding_dict.get).fillna(0.0)
                 df = df.drop(columns=[col])
                 df.loc[:, col] = encoded
             elif type == 'binning':
@@ -107,7 +107,7 @@ class XGBoost:
         return df
 
     def predict(self, df_without_label: pd.DataFrame, label_array: np.ndarray = None):
-        batch_size = 65536
+        batch_size = 4096
         chunked_dfs = [df_without_label[i:i + batch_size].reset_index(drop=True) for i in range(0, len(df_without_label), batch_size)]
 
         preds = []
