@@ -12,7 +12,9 @@ from simple_parsing import ArgumentParser
 @dataclass
 class Options:
     root_dir: str
-    chunk_size: int
+    output_root_dir: str
+    train_ratio: float
+    val_ratio: float
     output_root_dir: str
 
 
@@ -115,7 +117,6 @@ def read_file(path, depth=None):
     df = df.pipe(Pipeline.set_table_dtypes)
     if depth in [1, 2]:
         df = df.group_by("case_id").agg(Aggregator.get_exprs(df))
-    print(list(df.columns))
     return df
 
 
@@ -228,9 +229,18 @@ if __name__ == '__main__':
         ]
     }
 
-    df_train = feature_eng(**data_store)
-    df_train, _ = to_pandas(df_train)
+    df = feature_eng(**data_store)
+    df, _ = to_pandas(df)
 
-    print(list(df_train.columns))
-    dask_frame = da.from_pandas(df_train, chunksize=options.chunk_size)
-    dask_frame.to_parquet(options.output_root_dir)
+    train_ratio, val_ratio, test_ratio \
+        = options.train_ratio, options.val_ratio, 1 - options.train_ratio - options.val_ratio
+
+    df_train = df.sample(frac=train_ratio, random_state=42)
+    df_val_test = df.drop(df_train.index)
+    df_val = df_val_test.sample(frac=val_ratio / (val_ratio + test_ratio), random_state=42)
+    df_test = df_val_test.drop(df_val.index)
+
+    output_root_dir = Path(options.output_root_dir)
+    df_train.to_parquet(output_root_dir / "train/data.parquet")
+    df_val.to_parquet(output_root_dir / "validation/data.parquet")
+    df_test.to_parquet(output_root_dir / "test/data.parquet")

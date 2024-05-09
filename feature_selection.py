@@ -131,7 +131,8 @@ def _select_features(
     ax.set_title("Feature importances using MDI")
     ax.set_ylabel("Mean decrease in impurity")
     fig.tight_layout()
-    plt.savefig(feature_imps_png_output_path)
+    plt.gcf().set_size_inches(50, 20)
+    plt.savefig(feature_imps_png_output_path, dpi=199)
 
     cont_feature_set = set(cont_features)
     selected_cont_features, selected_cat_features = [], []
