@@ -2,6 +2,8 @@ import json
 import pickle
 from typing import Dict
 
+from lightgbm import LGBMClassifier
+import lightgbm
 import numpy as np
 import pandas as pd
 import xgboost as xgb
@@ -14,11 +16,10 @@ from model.base_model import BaseModel
 pd.set_option('future.no_silent_downcasting', True)
 
 
-class XGBoost(BaseModel):
+class LightGBM(BaseModel):
     def __init__(self,
                  transformations_by_feature: Dict[str, object] = None):
         super().__init__(transformations_by_feature)
-
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
         val_df: pd.DataFrame, val_label_array: np.array):
@@ -26,24 +27,26 @@ class XGBoost(BaseModel):
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
 
-        # print('Grid Searching')
-        # params = {'max_depth': [5, 7], 'min_child_weight': [1, 3], 'colsample_bytree': [0.5, 0.75]}
-        # grid_model = xgb.XGBClassifier(tree_method='hist', enable_categorical=True, n_estimators=100,
-        #                                learning_rate=0.05, reg_alpha=0.05, scale_pos_weight=30)
-        # gridcv = GridSearchCV(grid_model, param_grid=params, cv=3)
+        print('Grid Searching')
+        params = {'max_depth': [5, 7], 'n_estimators': [100, 500, 1000], 'colsample_bytree': [0.5, 0.75]}
+
+        # grid_model = LGBMClassifier(boosting_type='gbdt', random_state=42, early_stopping_rounds=50)
+        # gridcv = GridSearchCV(grid_model, param_grid=params, verbose=2, n_jobs=-1, cv=3)
         # gridcv.fit(df, label_array, eval_set=[(val_df, val_label_array)],
-        #            early_stopping_rounds=30, eval_metric='auc')
+        #            eval_metric='auc',
+        #            callbacks=[lightgbm.log_evaluation(period=5),
+        #                       lightgbm.early_stopping(stopping_rounds=30)])
         # best_params = gridcv.best_params_
 
-        best_params = {'max_depth': 5, 'min_child_weight': 3, 'colsample_bytree': 0.75}
+        best_params = {'max_depth': 5, 'n_estimators': 1000, 'colsample_bytree': 0.75}
 
         print('Fitting...')
-        self.model = xgb.XGBClassifier(tree_method='hist', enable_categorical=True, max_depth=best_params['max_depth'], n_estimators=1000,
-                                       min_child_weight=best_params['min_child_weight'],
-                                       colsample_bytree=best_params['colsample_bytree'], colsample_bylevel=0.8, random_state=42,
-                                       learning_rate=0.05, reg_alpha=0.05, scale_pos_weight=30)
-        self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)],
-                       early_stopping_rounds=50, eval_metric='auc', verbose=5)
+        self.model = LGBMClassifier(boosting_type='gbdt', random_state=42, max_depth=best_params['max_depth'],
+                                    n_estimators=best_params['n_estimators'], colsample_bytree=best_params['colsample_bytree'],
+                                    num_leaves=24)
+        self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
+                       callbacks=[lightgbm.log_evaluation(period=5),
+                                  lightgbm.early_stopping(stopping_rounds=50)])
 
     def predict(self, df_without_label: pd.DataFrame, label_array: np.ndarray = None):
         batch_size = 4096

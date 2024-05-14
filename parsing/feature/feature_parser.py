@@ -29,6 +29,8 @@ class FeatureParser:
             return {'value', 'encoded'}
         elif transformation_type == FeatureTransformation.RAW:
             return set()
+        elif transformation_type == FeatureTransformation.CATEGORICAL:
+            return set()
         else:
             raise Exception(f'Wrong transformation type - {transformation_type}')
 

@@ -9,3 +9,4 @@ class FeatureTransformation(Enum):
     STANDARDIZATION = 'standardization'
     TARGET_ENCODING = 'target_encoding'
     RAW = 'raw'
+    CATEGORICAL = 'categorical'

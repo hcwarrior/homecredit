@@ -1,8 +1,9 @@
+import gc
+import os
 from dataclasses import dataclass
 from glob import glob
 from pathlib import Path
 
-import dask.dataframe as da
 import numpy as np
 import polars as pl
 
@@ -16,6 +17,49 @@ class Options:
     train_ratio: float
     val_ratio: float
     output_root_dir: str
+    train_split: int
+
+
+class Pipeline:
+    def set_table_dtypes(df):
+        for col in df.columns:
+            if col in ["case_id", "WEEK_NUM", "num_group1", "num_group2"]:
+                df = df.with_columns(pl.col(col).cast(pl.Int64))
+            elif col in ["date_decision"]:
+                df = df.with_columns(pl.col(col).cast(pl.Date))
+            elif col[-1] in ("P", "A"):
+                df = df.with_columns(pl.col(col).cast(pl.Float64))
+            elif col[-1] in ("M",):
+                df = df.with_columns(pl.col(col).cast(pl.String))
+            elif col[-1] in ("D",):
+                df = df.with_columns(pl.col(col).cast(pl.Date))
+        return df
+
+    def handle_dates(df):
+        for col in df.columns:
+            if col[-1] in ("D",):
+                df = df.with_columns(pl.col(col) - pl.col("date_decision"))  # !!?
+                df = df.with_columns(pl.col(col).dt.total_days())  # t - t-1
+        df = df.drop("date_decision", "MONTH")
+        return df
+
+    def filter_cols(df):
+        for col in df.columns:
+            if col not in ["target", "case_id", "WEEK_NUM"]:
+                isnull = df[col].is_null().mean()
+                if isnull > 0.7:
+                    df = df.drop(col)
+
+        for col in df.columns:
+            if (col not in ["target", "case_id", "WEEK_NUM"]) & (df[col].dtype == pl.String):
+                freq = df[col].n_unique()
+                if (freq == 1) | (freq > 200):
+                    df = df.drop(col)
+
+        return df
+
+
+import numpy as np
 
 
 class Pipeline:
@@ -59,64 +103,104 @@ class Pipeline:
 
 class Aggregator:
     # Please add or subtract features yourself, be aware that too many features will take up too much space.
-    def num_expr(df):
+    def num_expr(df, columns=None):
         cols = [col for col in df.columns if col[-1] in ("P", "A")]
-        expr_max = [pl.max(col).alias(f"max_{col}") for col in cols]
-        expr_min = [pl.min(col).alias(f"min_{col}") for col in cols]
-        expr_last = [pl.last(col).alias(f"last_{col}") for col in cols]
-        # expr_first = [pl.first(col).alias(f"first_{col}") for col in cols]
-        expr_mean = [pl.mean(col).alias(f"mean_{col}") for col in cols]
-        return expr_max + expr_min + expr_last + expr_mean
+        return (
+            []
+            + Aggregator.get_last_cols(df, cols, columns)
+            + Aggregator.get_max_cols(df, cols, columns)
+            + Aggregator.get_min_cols(df, cols, columns)
+            + Aggregator.get_mean_cols(df, cols, columns)
+            + Aggregator.get_median_cols(df, cols, columns)
+        )
 
-    def date_expr(df):
+
+    def date_expr(df, columns=None):
         cols = [col for col in df.columns if col[-1] in ("D")]
-        expr_max = [pl.max(col).alias(f"max_{col}") for col in cols]
-        expr_min = [pl.min(col).alias(f"min_{col}") for col in cols]
-        expr_last = [pl.last(col).alias(f"last_{col}") for col in cols]
-        # expr_first = [pl.first(col).alias(f"first_{col}") for col in cols]
-        expr_mean = [pl.mean(col).alias(f"mean_{col}") for col in cols]
-        return expr_max + expr_min + expr_last + expr_mean
+        return (
+                []
+                + Aggregator.get_last_cols(df, cols, columns)
+                + Aggregator.get_max_cols(df, cols, columns)
+                + Aggregator.get_min_cols(df, cols, columns)
+                + Aggregator.get_mean_cols(df, cols, columns)
+                + Aggregator.get_median_cols(df, cols, columns)
+        )
 
-    def str_expr(df):
+    def str_expr(df, columns=None):
         cols = [col for col in df.columns if col[-1] in ("M",)]
-        expr_max = [pl.max(col).alias(f"max_{col}") for col in cols]
-        expr_min = [pl.min(col).alias(f"min_{col}") for col in cols]
-        expr_last = [pl.last(col).alias(f"last_{col}") for col in cols]
-        # expr_first = [pl.first(col).alias(f"first_{col}") for col in cols]
-        expr_count = [pl.count(col).alias(f"count_{col}") for col in cols]
-        return expr_max + expr_min + expr_last + expr_count  # +expr_count
+        return (
+                []
+                + Aggregator.get_last_cols(df, cols, columns)
+                + Aggregator.get_max_cols(df, cols, columns)
+                + Aggregator.get_min_cols(df, cols, columns)
+        )
 
-    def other_expr(df):
+    def other_expr(df, columns=None):
         cols = [col for col in df.columns if col[-1] in ("T", "L")]
-        expr_max = [pl.max(col).alias(f"max_{col}") for col in cols]
-        expr_min = [pl.min(col).alias(f"min_{col}") for col in cols]
-        expr_last = [pl.last(col).alias(f"last_{col}") for col in cols]
-        # expr_first = [pl.first(col).alias(f"first_{col}") for col in cols]
-        return expr_max + expr_min + expr_last
+        return (
+                []
+                + Aggregator.get_last_cols(df, cols, columns)
+                + Aggregator.get_max_cols(df, cols, columns)
+                + Aggregator.get_min_cols(df, cols, columns)
+        )
 
-    def count_expr(df):
+    def count_expr(df, columns=None):
         cols = [col for col in df.columns if "num_group" in col]
-        expr_max = [pl.max(col).alias(f"max_{col}") for col in cols]
-        expr_min = [pl.min(col).alias(f"min_{col}") for col in cols]
-        expr_last = [pl.last(col).alias(f"last_{col}") for col in cols]
-        # expr_first = [pl.first(col).alias(f"first_{col}") for col in cols]
-        return expr_max + expr_min + expr_last
+        return (
+                []
+                + Aggregator.get_last_cols(df, cols, columns)
+                + Aggregator.get_max_cols(df, cols, columns)
+                + Aggregator.get_min_cols(df, cols, columns)
+        )
 
-    def get_exprs(df):
-        exprs = Aggregator.num_expr(df) + \
-                Aggregator.date_expr(df) + \
-                Aggregator.str_expr(df) + \
-                Aggregator.other_expr(df) + \
-                Aggregator.count_expr(df)
+    def filter_columns(dfs, columns):
+        if columns is None or len(columns) == 0:
+            return dfs
+        return [df for df in dfs if
+                df.meta.output_name() in columns or any(col.startswith(df.meta.output_name()) for col in columns)]
+
+    def get_exprs(df, columns):
+        exprs = Aggregator.num_expr(df, columns) + \
+                Aggregator.date_expr(df, columns) + \
+                Aggregator.str_expr(df, columns) + \
+                Aggregator.other_expr(df, columns) + \
+                Aggregator.count_expr(df, columns)
 
         return exprs
+
+    def get_max_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.max(col).alias(f"max_{col}") for col in target_cols], cols)
+
+    def get_min_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.min(col).alias(f"min_{col}") for col in target_cols], cols)
+
+    def get_last_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.last(col).alias(f"last_{col}") for col in target_cols], cols)
+
+    def get_sum_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.sum(col).alias(f"sum_{col}") for col in target_cols], cols)
+
+    def get_count_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.count(col).alias(f"count_{col}") for col in target_cols], cols)
+
+    def get_first_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.first(col).alias(f"first_{col}") for col in target_cols], cols)
+
+    def get_mean_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.mean(col).alias(f"mean_{col}") for col in target_cols], cols)
+
+    def get_mode_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.col(col).mode().first().alias(f"mode_{col}") for col in target_cols], cols)
+
+    def get_median_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.median(col).alias(f"median{col}") for col in target_cols], cols)
 
 
 def read_file(path, depth=None):
     df = pl.read_parquet(path)
     df = df.pipe(Pipeline.set_table_dtypes)
     if depth in [1, 2]:
-        df = df.group_by("case_id").agg(Aggregator.get_exprs(df))
+        df = df.group_by("case_id").agg(Aggregator.get_exprs(df, None))
     return df
 
 
@@ -127,7 +211,7 @@ def read_files(regex_path, depth=None):
         df = pl.read_parquet(path)
         df = df.pipe(Pipeline.set_table_dtypes)
         if depth in [1, 2]:
-            df = df.group_by("case_id").agg(Aggregator.get_exprs(df))
+            df = df.group_by("case_id").agg(Aggregator.get_exprs(df, None))
         chunks.append(df)
 
     df = pl.concat(chunks, how="vertical_relaxed")
@@ -240,7 +324,16 @@ if __name__ == '__main__':
     df_val = df_val_test.sample(frac=val_ratio / (val_ratio + test_ratio), random_state=42)
     df_test = df_val_test.drop(df_val.index)
 
+    del df
+    gc.collect()
+
     output_root_dir = Path(options.output_root_dir)
-    df_train.to_parquet(output_root_dir / "train/data.parquet")
+
+    for i, df_train_split in enumerate(np.array_split(df_train, options.train_split)):
+        os.makedirs(output_root_dir / f"train{i}", exist_ok=True)
+        df_train_split.to_parquet(output_root_dir / f"train{i}/data.parquet")
+
+    os.makedirs(output_root_dir / "validation", exist_ok=True)
     df_val.to_parquet(output_root_dir / "validation/data.parquet")
+    os.makedirs(output_root_dir / "test", exist_ok=True)
     df_test.to_parquet(output_root_dir / "test/data.parquet")

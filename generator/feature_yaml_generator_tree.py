@@ -43,32 +43,32 @@ class FeatureYAMLGeneratorTree:
         series_with_label = df.dropna()
         prop = {}
         if column in continuous_features:
-            series = series_with_label[column]
-            boundaries = series.quantile(np.arange(0.1, 1.0, 0.1))
-            if boundaries.nunique() >= 9 and abs(series.skew()) >= 2.0:
-                prop['type'] = 'binning'
-                prop['properties'] = {'boundaries': boundaries.tolist()}
-            else:
-                mean, stddev = float(series.mean()), float(series.std())
-                prop['type'] = 'standardization'
-                prop['properties'] = {'mean': mean, 'stddev': stddev}
+            # series = series_with_label[column]
+            # boundaries = series.quantile(np.arange(0.1, 1.0, 0.1))
+            # if boundaries.nunique() >= 9 and abs(series.skew()) >= 2.0:
+            #     prop['type'] = 'binning'
+            #     prop['properties'] = {'boundaries': boundaries.tolist()}
+            # else:
+            # mean, stddev = float(series.mean()), float(series.std())
+            # prop['type'] = 'standardization'
+            # prop['properties'] = {'mean': mean, 'stddev': stddev}
+            prop['type'] = 'raw'
         else: # elif column in categorical_features
-            series = series_with_label[column]
-            uniques = list(series.unique()) + ['NA']
-            if len(uniques) >= 10:
-                prop['type'] = 'target_encoding'
-
-                target_encoded = series_with_label.groupby(column, observed=False)[label].mean()
-                target_encoded['NA'] = 0
-                encoded_df = pd.DataFrame({'value': target_encoded.index.values, 'encoded': target_encoded.values})
-
-                values, encoded = [], []
-                for _, row in encoded_df.iterrows():
-                    values.append(row['value'])
-                    encoded.append(row['encoded'])
-                prop['properties'] = {'value': values, 'encoded': encoded}
-            else:
-                prop['type'] = 'onehot'
-                prop['properties'] = {'vocab': uniques}
+            prop['type'] = 'categorical'
+            # uniques = list(series.unique()) + ['NA']
+            # using raw
+            # if len(uniques) >= 3:
+                # target_encoded = series_with_label.groupby(column, observed=False)[label].mean()
+                # target_encoded['NA'] = 0
+                # encoded_df = pd.DataFrame({'value': target_encoded.index.values, 'encoded': target_encoded.values})
+                #
+                # values, encoded = [], []
+                # for _, row in encoded_df.iterrows():
+                #     values.append(row['value'])
+                #     encoded.append(row['encoded'])
+                # prop['properties'] = {'value': values, 'encoded': encoded}
+            # else:
+            #     prop['type'] = 'onehot'
+            #     prop['properties'] = {'vocab': uniques}
 
         return prop

@@ -9,18 +9,19 @@ import tensorflow.keras as tf_keras
 from dataclasses import dataclass
 
 from simple_parsing import ArgumentParser
+from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.utils import class_weight
 
 from parsing.data.data_parser import DatasetGenerator
 from parsing.feature.feature_parser import FeatureParser
 from parsing.model.model_parser import ModelParser, ModelConf, Model
 
+pd.set_option('mode.chained_assignment',  None)
 
 @dataclass
 class Options:
     feature_yaml_path: str  # A feature YAML file path
     model_yaml_path: str  # A model YAML file path
-    train_data_root_dir: str  # A root directory that training data files exist
     val_data_root_dir: str  # A root directory that validation data files exist
     test_data_root_dir: str  # A root directory that test data files exist
     submission_csv_file_path: str  # A submission CSV output file path
@@ -35,21 +36,52 @@ def _parse_features(feature_yaml_path: str) -> Dict[str, tf_keras.layers.Layer]:
     return feature_parser.conf
 
 
-def _parse_model(model_yaml_path: str, feature_conf: Dict[str, object]) -> Model:
+def _parse_model(model_yaml_path: str, feature_conf: Dict[str, object]) -> List[Model]:
     model_parser = ModelParser(model_yaml_path, feature_conf)
 
     return model_parser.parse()
 
 
-def _generate_datasets(data_parser: DatasetGenerator, target: str, id: str = None) -> Iterator[Dict[str, np.ndarray]]:
-
+def _generate_datasets(data_parser: DatasetGenerator, target: str, id: str, week_num: str, add_id: bool, add_weeknum: bool) -> Iterator[Dict[str, np.ndarray]]:
     for file_path, array_dict in data_parser.parse():
         print(f'\nParsing {file_path}...')
         # dict, target, id (optional)
-        result = {col: array_dict[col] for col in data_parser.features if col != target}, array_dict[target]
-        if id is not None:
+        result = {col: array_dict[col] for col in data_parser.features if col not in (target, id, week_num)}, array_dict[target]
+        if add_id:
             result = result + (array_dict[id], )
+        if add_weeknum:
+            result = result + (array_dict[week_num],)
         yield result
+
+
+def _stability_metric(week, y_true, y_pred):
+    """
+    Custom metric for model optimization during training
+    """
+    weeks_to_score = week
+    gini_in_time = []
+
+    for week in weeks_to_score.unique():
+        week_idx = weeks_to_score.eq(week)
+        try:
+            gini = np.array(2 * roc_auc_score(y_true[week_idx], y_pred[week_idx]) - 1)
+            gini_in_time.append(gini)
+        except Exception as e:
+            continue
+
+    w_fallingrate = 88.0
+    w_resstd = -0.5
+    x = np.arange(len(gini_in_time))
+    y = np.array(gini_in_time)
+    a, b = np.polyfit(x, y, 1)
+    y_hat = a * x + b
+    residuals = y - y_hat
+    res_std = np.std(residuals)
+    avg_gini = np.mean(y)
+    stability_score = avg_gini + w_fallingrate * min(0, a) + w_resstd * res_std
+    is_higher_better = True
+
+    return 'stability_score', stability_score, is_higher_better
 
 
 if __name__ == '__main__':
@@ -60,47 +92,49 @@ if __name__ == '__main__':
     options = args.options
 
     feature_conf = _parse_features(options.feature_yaml_path)
-    model = _parse_model(options.model_yaml_path, feature_conf)
-    model, model_conf = model.model, model.conf
+    models = _parse_model(options.model_yaml_path, feature_conf)
 
     print('Fitting a model...')
-    train_data_parser = DatasetGenerator(options.train_data_root_dir, model_conf.features, model_conf.target, model_conf.id)
-    train_data_generator = _generate_datasets(train_data_parser, model_conf.target)
+    result_df = None
+    for model in models:
+        model, model_conf = model.model, model.conf
 
-    val_data_parser = DatasetGenerator(options.val_data_root_dir, model_conf.features, model_conf.target,
-                                         model_conf.id)
-    val_data_generator = _generate_datasets(val_data_parser, model_conf.target)
+        train_df = pd.read_parquet(model_conf.train_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target'])
+        val_df = pd.read_parquet(options.val_data_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target'])
 
-    val_df, val_target = None, None
-    for val_data_dict, val_target_arr in val_data_generator:
-        _val_tmp_df = pd.DataFrame.from_dict(val_data_dict)
-        val_df = _val_tmp_df if val_df is None else pd.concat([val_df, _val_tmp_df], axis=0, ignore_index=True)
-        val_target = val_target_arr if val_target is None else np.concatenate([val_target, val_target_arr], axis=0)
+        model.fit(train_df[model_conf.features], train_df['target'],
+                  val_df[model_conf.features], val_df['target'])
 
-    for train_data_dict, target in train_data_generator:
-        model.fit(pd.DataFrame.from_dict(train_data_dict), target, val_df, val_target)
+        test_df = pd.read_parquet(options.test_data_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target']).reset_index(drop=True)
 
-    test_data_parser = DatasetGenerator(options.test_data_root_dir, model_conf.features, model_conf.target,
-                                         model_conf.id)
-    test_data_generator = _generate_datasets(test_data_parser, model_conf.target, model_conf.id)
-    eval_df = pd.DataFrame({'case_id': [], 'target': [], 'score': []})
+        preds, loss, auc = model.predict(test_df[model_conf.features], test_df['target'])
+        print(f'Model {model_conf.model_name} - Test AUC: {auc} / Log Loss: {loss}')
 
-    test_df, test_target, test_case_id = None, None, None
-    for test_data_dict, test_target_arr, case_id in test_data_generator:
-        _test_tmp_df = pd.DataFrame.from_dict(test_data_dict)
-        test_df = _test_tmp_df if test_df is None else pd.concat([test_df, _test_tmp_df], axis=0, ignore_index=True)
-        test_target = test_target_arr if test_target is None else np.concatenate([test_target, test_target_arr], axis=0)
-        test_case_id = case_id if test_case_id is None else np.concatenate([test_case_id, case_id], axis=0)
+        pred_series = pd.Series(preds)
+        _, stability, _ = _stability_metric(test_df['WEEK_NUM'], test_df['target'], pred_series)
 
-    preds, loss, auc = model.predict(test_df, test_target)
-    print(f'Test AUC: {auc} / Log Loss: {loss}')
-    eval_df = pd.concat([eval_df,
-                         pd.DataFrame({'case_id': test_case_id, 'target': test_target, 'score': preds})],
-                        axis=0,
-                        ignore_index=True)
+        print(f'Model {model_conf.model_name} - Test Stability Metric: {stability} ')
+        eval_df = pd.DataFrame({'case_id': test_df['case_id'], 'WEEK_NUM': test_df['WEEK_NUM'], 'target': test_df['target'], 'pred': pred_series})
+
+        if result_df is None:
+            result_df = eval_df
+            result_df['score'] = None
+            result_df['score'] = result_df['pred']
+        else:
+            result_df = pd.merge(result_df, eval_df[['case_id', 'pred']], left_on='case_id', right_on='case_id', how='left')
+            result_df['score'] = result_df['score'] + result_df['pred']
+
+        result_df.drop(columns=['pred'], inplace=True)
+
+        print('Saving model...')
+        model.save(f'{options.best_model_output_path}_{model_conf.model_name}', f'{options.preprocess_json_path}_{model_conf.model_name}')
+
+    result_df['score'] = result_df['score'] / len(models)
+    loss = log_loss(result_df['target'].values, result_df['score'].values)
+    auc = roc_auc_score(result_df['target'].values, result_df['score'].values)
+    print(f'Ensemble Model - Test AUC: {auc} / Log Loss: {loss}')
+    _, stability, _ = _stability_metric(result_df['WEEK_NUM'], result_df['target'], result_df['score'])
+    print(f'Ensemble Model - Test Stability Metric: {stability} ')
 
     print('Saving results to the submission CSV file...')
-    eval_df.drop(columns=['target']).to_csv(options.submission_csv_file_path, index=False)
-
-    print('Saving model...')
-    model.save(options.best_model_output_path, options.preprocess_json_path)
+    result_df[['case_id', 'score']].to_csv(options.submission_csv_file_path, index=False)

@@ -10,12 +10,12 @@ from pandas.core.dtypes.common import is_string_dtype
 class DatasetGenerator:
     _NA_STRING_VAL = 'NA'
     _SUPPORTED_EXTENSIONS = ['parquet', 'csv']
-    def __init__(self, root_dir: str, input_features: List[str], target: str, id: str):
+    def __init__(self, root_dir: str, input_features: List[str], target: str, id: str, week_num: str):
         self.root_dir = root_dir
         self.files = list(itertools.chain.from_iterable(
             [glob.glob(f'{root_dir}/*.{ext}') for ext in DatasetGenerator._SUPPORTED_EXTENSIONS]))
         self.label = target
-        self.features = input_features + [target, id]
+        self.features = input_features + [target, id, week_num]
 
     # returns numpy array dict
     def parse(self) -> Iterator[Tuple[str, Dict[str, np.ndarray]]]:
