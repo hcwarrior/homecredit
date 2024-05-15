@@ -49,6 +49,10 @@ class CatBoost(BaseModel):
             else:
                 pass
 
+        # to ensure WEEK_NUM is the first
+        if 'WEEK_NUM' in df.columns:
+            return df[['WEEK_NUM'] + [col for col in df.columns if col != 'WEEK_NUM']]
+
         return df
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
@@ -70,6 +74,7 @@ class CatBoost(BaseModel):
 
         best_params = {'max_depth': 5, 'iterations': 1000, 'colsample_bylevel': 0.75}
 
+        monotone_constraints = [1] + [0] * (len(df.columns) - 1) if 'WEEK_NUM' in df.columns else None
         cat_cols = [col for col, transformation in self.transformations_by_feature.items() if transformation['type'] == 'categorical']
 
         train_pool = Pool(df, label_array, cat_features=cat_cols)
@@ -81,7 +86,8 @@ class CatBoost(BaseModel):
             learning_rate=0.07,
             iterations=best_params['iterations'],
             colsample_bylevel=best_params['colsample_bylevel'],
-            max_depth=best_params['max_depth'])
+            max_depth=best_params['max_depth'],
+            monotone_constraints=monotone_constraints)
         self.model.fit(train_pool, eval_set=val_pool, verbose=5, early_stopping_rounds=50)
 
 

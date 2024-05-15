@@ -329,8 +329,10 @@ if __name__ == '__main__':
 
     output_root_dir = Path(options.output_root_dir)
 
-    for i, df_train_split in enumerate(np.array_split(df_train, options.train_split)):
+    for i in range(options.train_split):
         os.makedirs(output_root_dir / f"train{i}", exist_ok=True)
+        # bootstrapping
+        df_train_split = df_train.sample(frac=0.5, random_state=42)
         df_train_split.to_parquet(output_root_dir / f"train{i}/data.parquet")
 
     os.makedirs(output_root_dir / "validation", exist_ok=True)

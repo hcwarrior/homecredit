@@ -41,9 +41,11 @@ class LightGBM(BaseModel):
         best_params = {'max_depth': 5, 'n_estimators': 1000, 'colsample_bytree': 0.75}
 
         print('Fitting...')
+        monotone_constraints = [1] + [0] * (len(df.columns) - 1) if 'WEEK_NUM' in df.columns else None
+
         self.model = LGBMClassifier(boosting_type='gbdt', random_state=42, max_depth=best_params['max_depth'],
                                     n_estimators=best_params['n_estimators'], colsample_bytree=best_params['colsample_bytree'],
-                                    num_leaves=24)
+                                    num_leaves=24, monotone_constraints=monotone_constraints)
         self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
                        callbacks=[lightgbm.log_evaluation(period=5),
                                   lightgbm.early_stopping(stopping_rounds=50)])

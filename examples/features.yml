@@ -1,4 +1,5 @@
 transformations:
+  WEEK_NUM: {type: raw}
   annuity_780A: {type: raw}
   applications30d_658L: {type: raw}
   applicationscnt_867L: {type: raw}

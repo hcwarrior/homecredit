@@ -98,14 +98,15 @@ if __name__ == '__main__':
     result_df = None
     for model in models:
         model, model_conf = model.model, model.conf
+        required_features = list(set(model_conf.features) | {'WEEK_NUM', 'case_id', 'target'})
 
-        train_df = pd.read_parquet(model_conf.train_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target'])
-        val_df = pd.read_parquet(options.val_data_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target'])
+        train_df = pd.read_parquet(model_conf.train_root_dir, columns=required_features)
+        val_df = pd.read_parquet(options.val_data_root_dir, columns=required_features)
 
         model.fit(train_df[model_conf.features], train_df['target'],
                   val_df[model_conf.features], val_df['target'])
 
-        test_df = pd.read_parquet(options.test_data_root_dir, columns=model_conf.features + ['WEEK_NUM', 'case_id', 'target']).reset_index(drop=True)
+        test_df = pd.read_parquet(options.test_data_root_dir, columns=required_features).reset_index(drop=True)
 
         preds, loss, auc = model.predict(test_df[model_conf.features], test_df['target'])
         print(f'Model {model_conf.model_name} - Test AUC: {auc} / Log Loss: {loss}')

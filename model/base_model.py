@@ -45,6 +45,10 @@ class BaseModel:
             else:
                 pass
 
+        # to ensure WEEK_NUM is the first
+        if 'WEEK_NUM' in df.columns:
+            return df[['WEEK_NUM'] + [col for col in df.columns if col != 'WEEK_NUM']]
+
         return df
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
