@@ -65,7 +65,9 @@ class FeatureLoader:
             return [Feature.from_dict(feature) for feature in features.values()]
 
         return [
-            Feature.from_dict(features[feature_name]) for feature_name in feature_names
+            Feature.from_dict(features[feature_name])
+            for feature_name in features.keys()
+            if feature_name in feature_names
         ]
 
     def load_feature_data(self, features, verbose=False) -> pl.DataFrame:
@@ -73,15 +75,15 @@ class FeatureLoader:
             f'cast({feat.query} as {feat.agg.data_type}) as {feat.name}'
             for feat in features
         ]
+        target_str = ', frame.target ' if self.type == 'train' else ''
         if verbose:
             for q in query:
                 print(f'[*] Query: {q}')
         temp = pl.SQLContext(frame=self.data).execute(
-            f"""
-            SELECT frame.case_id, frame.target
+            f"""SELECT frame.case_id{target_str}
                 , {', '.join(query)}
             from frame
-            group by frame.case_id, frame.target
+            group by frame.case_id{target_str}
             """,
             eager=True,
         )

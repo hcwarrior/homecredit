@@ -22,7 +22,8 @@ class Preprocessor:
                 print(f'[+] Memory optimization {topic.name}')
                 self._memory_opt(topic.name, depth=topic.depth)
             elif topic.depth <= 1 and topic.name in DEPTH_2_TO_1_QUERY:
-                print(f'[+] skip {topic.name} because it is in DEPTH_2_TO_1_QUERY')
+                # print(f'[+] skip {topic.name} because it is in DEPTH_2_TO_1_QUERY')
+                pass
             elif topic.depth == 2 and topic.name in DEPTH_2_TO_1_QUERY:
                 print(f'[+] Preprocessing {topic.name}, depth={topic.depth}')
                 query = DEPTH_2_TO_1_QUERY[topic.name]
