@@ -1,11 +1,11 @@
+from argparse import Namespace
 import gc
 import json
 import os
 import time
 import polars as pl
 from tqdm import tqdm
-from dataset.feature.feature import *
-from dataset.feature.feature_definer import FEATURE_DEF_PATH
+from dataset.feature.feature_definer import FeatureDefiner
 from dataset.feature.feature import *
 from dataset.feature.util import optimize_dataframe
 
@@ -15,9 +15,21 @@ from dataset.const import Topic, KEY_COL, DATE_COL, TARGET_COL
 
 class FeatureLoader:
     def __init__(self, topic: Topic, type: str, conf: dict = None):
+        if conf is not None:
+            self.config = Namespace(**conf)
+        else:
+            self.config = Namespace(
+                **{
+                    "output_path": FeatureDefiner.OUTPUT_PATH,
+                    "feature_def_path": FeatureDefiner.FEATURE_DEF_PATH,
+                }
+            )
         self.topic = topic
         self.type = type
         self.data = self._load_data(type_=type, stage='prep', rawinfo=RawInfo(conf))
+        self.feature_def_path = getattr(self.config, "feature_def_path", None)
+        if self.feature_def_path is None:
+            self.feature_def_path = self.config.output_path / 'feature_definition'
 
     def _load_data(
         self,
@@ -41,12 +53,12 @@ class FeatureLoader:
         return data.join(base.select(base_columns), on=KEY_COL, how='inner')
 
     def load_features(self, feature_names: List[str] = None) -> List[Feature]:
-        if not os.path.exists(FEATURE_DEF_PATH / f'{self.topic.name}.json'):
+        if not os.path.exists(self.feature_def_path / f'{self.topic.name}.json'):
             raise FileNotFoundError(
                 f'Feature definition for {self.topic.name} not found.'
             )
 
-        with open(FEATURE_DEF_PATH / f'{self.topic.name}.json', 'r') as f:
+        with open(self.feature_def_path / f'{self.topic.name}.json', 'r') as f:
             features = json.load(f)
 
         if feature_names is None:
@@ -71,17 +83,6 @@ class FeatureLoader:
             from frame
             group by frame.case_id, frame.target
             """,
-            # .replace(
-            #     'float32', 'float'
-            # )
-            # .replace(
-            #     "min_pmts_year_1139T507T__D",
-            #     "case when min_pmts_year_1139T507T__D='-01-01' then null else replace(min_pmts_year_1139T507T__D, '.0', '') end",
-            # )
-            # .replace(
-            #     "max_pmts_year_1139T507T__D",
-            #     "case when max_pmts_year_1139T507T__D='-01-01' then null else replace(max_pmts_year_1139T507T__D, '.0', '') end",
-            # ),
             eager=True,
         )
         temp = optimize_dataframe(temp)

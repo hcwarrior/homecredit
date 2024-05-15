@@ -1,13 +1,16 @@
+from argparse import Namespace
+import os
+from pathlib import Path
 import pandas as pd
-from dataset.datainfo import RawInfo, DATA_PATH
+from dataset.datainfo import RawInfo
 from dataset.feature.feature import *
 from typing import Dict, List
 import json
 
-FEATURE_DEF_PATH = DATA_PATH / 'feature_definition'
-
 class FeatureDefiner:
-    RAW_INFO = RawInfo()
+
+    OUTPUT_PATH = Path(os.getcwd()) / 'output'
+    FEATURE_DEF_PATH = OUTPUT_PATH / 'feature_definition'
 
     def __init__(
         self,
@@ -15,9 +18,12 @@ class FeatureDefiner:
         period_cols: List[str] = None,
         depth: int = 1,
         stage: str = 'prep',
+        conf: dict = None,
     ):
         self.topic: str = topic
-        self.rawdata: pd.DataFrame = self.RAW_INFO.read_raw(self.topic, depth=depth, stage=stage)
+        self.rawdata: pd.DataFrame = RawInfo(conf).read_raw(
+            self.topic, depth=depth, stage=stage
+        )
         self.raw_cols: Dict[str, Column] = {
             col: Column(name=col, data_type=str(type))
             for col, type in self.rawdata.dtypes.items()
