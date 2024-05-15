@@ -14,9 +14,9 @@ from dataset.const import Topic, KEY_COL, DATE_COL, TARGET_COL
 
 
 class FeatureLoader:
-    def __init__(self, topic: Topic, type: str, conf: dict = None):
+    def __init__(self, topic: Topic, type: str, conf: Namespace = None):
         if conf is not None:
-            self.config = Namespace(**conf)
+            self.config = conf
         else:
             self.config = Namespace(
                 **{

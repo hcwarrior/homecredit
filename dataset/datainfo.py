@@ -175,7 +175,7 @@ class RawInfo:
     VALID_TYPES = ["", "train", "test"]
     VALID_DEPTHS = ["", "0", "1", "2"]
 
-    def __init__(self, config: dict = None) -> None:
+    def __init__(self, config: Namespace = None) -> None:
         self.config = config
         if self.config is None:
             self.config = Namespace(**{
