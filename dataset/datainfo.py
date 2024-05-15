@@ -180,11 +180,13 @@ class RawInfo:
         if self.config is None:
             self.config = Namespace(**{
                 "data_path": DATA_PATH,
+                "prep_data_path": DATA_PATH / "parquet_preps",
                 "raw_format": "parquet",
             })
 
         self.format = self.config.raw_format
         self.data_dir_path = Path(self.config.data_path)
+        self.prep_data_dir_path = Path(self.config.prep_data_path)
         self.file_dir_path = self.data_dir_path / f"{self.format}_files"
 
         if not self.file_dir_path.exists():
@@ -233,11 +235,11 @@ class RawInfo:
             )
         elif stage == "prep":
             raw_df = reader(
-                DATA_PATH / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
+                self.prep_data_dir_path / type_ / f"{type_}_{file_name}_{depth}.parquet"
             )
 
         return raw_df
-    
+
     def read_raw_iter(
         self,
         file_name: str,
@@ -273,10 +275,9 @@ class RawInfo:
         if str(depth) not in self.VALID_DEPTHS:
             raise ValueError(f"depth should be one of {self.VALID_DEPTHS}. Not {depth}.")
 
-        os.makedirs(self.data_dir_path / 'parquet_preps' / type_, exist_ok=True)
-        data.write_parquet(
-            self.data_dir_path / 'parquet_preps' / type_ / f"{type_}_{file_name}_{depth}.parquet"
-        )
+        write_path = self.prep_data_dir_path / type_
+        os.makedirs(write_path, exist_ok=True)
+        data.write_parquet(write_path / f"{type_}_{file_name}_{depth}.parquet")
 
 if __name__ == "__main__":
     raw_info = RawInfo(
