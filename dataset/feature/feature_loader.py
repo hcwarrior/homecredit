@@ -9,8 +9,8 @@ from dataset.feature.feature_definer import FEATURE_DEF_PATH
 from dataset.feature.feature import *
 from dataset.feature.util import optimize_dataframe
 
-from dataset.datainfo import RawInfo, RawReader, DATA_PATH
-from dataset.const import TOPICS, Topic, KEY_COL, DATE_COL, TARGET_COL
+from dataset.datainfo import RawInfo, RawReader
+from dataset.const import Topic, KEY_COL, DATE_COL, TARGET_COL
 
 
 class FeatureLoader:
@@ -53,9 +53,7 @@ class FeatureLoader:
             return [Feature.from_dict(feature) for feature in features.values()]
 
         return [
-            Feature.from_dict(features[feature_name])
-            for feature_name in features.keys()
-            if feature_name in feature_names
+            Feature.from_dict(features[feature_name]) for feature_name in feature_names
         ]
 
     def load_feature_data(self, features, verbose=False) -> pl.DataFrame:
