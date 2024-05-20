@@ -319,6 +319,9 @@ if __name__ == '__main__':
 
         del X_train, X_test, y_train, y_test, cat_indicis, y_ratio, week_to_score
 
+# 알맞은 앙상블
+# 변수 선택(안정성)
+
 
     ############################################################################################
     # train model with best params
@@ -341,3 +344,4 @@ if __name__ == '__main__':
     train_auroc = roc_auc_score(y_train, model.predict(X_train))
     test_auroc = roc_auc_score(y_test, model.predict(X_test))
     print(f'Train AUC: {train_auroc:.4f}, Test AUC: {test_auroc:.4f}')
+
