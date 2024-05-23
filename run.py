@@ -8,6 +8,7 @@ import sklearn.metrics
 import tensorflow.keras as tf_keras
 from dataclasses import dataclass
 
+from matplotlib import pyplot as plt
 from simple_parsing import ArgumentParser
 from sklearn.metrics import log_loss, roc_auc_score
 from sklearn.utils import class_weight
@@ -22,11 +23,11 @@ pd.set_option('mode.chained_assignment',  None)
 class Options:
     feature_yaml_path: str  # A feature YAML file path
     model_yaml_path: str  # A model YAML file path
-    val_data_root_dir: str  # A root directory that validation data files exist
     test_data_root_dir: str  # A root directory that test data files exist
     submission_csv_file_path: str  # A submission CSV output file path
     best_model_output_path: str  # A path for the best model
     preprocess_json_path: str  # A path for preprocess json
+    output_auc_png_path: str  # output AUC png path (by WEEK_NUM)
 
 
 def _parse_features(feature_yaml_path: str) -> Dict[str, tf_keras.layers.Layer]:
@@ -101,7 +102,7 @@ if __name__ == '__main__':
         required_features = list(set(model_conf.features) | {'WEEK_NUM', 'case_id', 'target'})
 
         train_df = pd.read_parquet(model_conf.train_root_dir, columns=required_features)
-        val_df = pd.read_parquet(options.val_data_root_dir, columns=required_features)
+        val_df = pd.read_parquet(model_conf.val_root_dir, columns=required_features)
 
         model.fit(train_df[model_conf.features], train_df['target'],
                   val_df[model_conf.features], val_df['target'])
@@ -131,6 +132,14 @@ if __name__ == '__main__':
         model.save(f'{options.best_model_output_path}_{model_conf.model_name}', f'{options.preprocess_json_path}_{model_conf.model_name}')
 
     result_df['score'] = result_df['score'] / len(models)
+
+    auc_by_week_num = result_df.groupby('WEEK_NUM').apply(lambda x: roc_auc_score(x['target'].values, x['score'].values))
+    print('Ensemble Model - Test AUC by WEEK_NUM')
+    print(auc_by_week_num)
+
+    plt.plot(auc_by_week_num.index, auc_by_week_num.values, 'b')
+    plt.savefig(options.output_auc_png_path)
+
     loss = log_loss(result_df['target'].values, result_df['score'].values)
     auc = roc_auc_score(result_df['target'].values, result_df['score'].values)
     print(f'Ensemble Model - Test AUC: {auc} / Log Loss: {loss}')
@@ -139,3 +148,5 @@ if __name__ == '__main__':
 
     print('Saving results to the submission CSV file...')
     result_df[['case_id', 'score']].to_csv(options.submission_csv_file_path, index=False)
+
+

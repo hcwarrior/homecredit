@@ -13,3 +13,6 @@ matplotlib==3.8.4
 xgboost==2.0.3
 lightgbm==4.3.0
 catboost==1.2.5
+optuna==3.6.0
+optuna-integration==3.6.0
+scikit-optimize==0.10.1

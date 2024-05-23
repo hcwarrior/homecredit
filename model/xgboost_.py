@@ -38,7 +38,7 @@ class XGBoost(BaseModel):
         best_params = {'max_depth': 5, 'min_child_weight': 3, 'colsample_bytree': 0.75}
 
         print('Fitting...')
-        monotone_constraints = [1] + [0] * (len(df.columns) - 1) if 'WEEK_NUM' in df.columns else None
+        monotone_constraints = None
         self.model = xgb.XGBClassifier(tree_method='hist', enable_categorical=True, max_depth=best_params['max_depth'], n_estimators=1000,
                                        min_child_weight=best_params['min_child_weight'],
                                        colsample_bytree=best_params['colsample_bytree'], colsample_bylevel=0.8, random_state=42,

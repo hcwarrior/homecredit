@@ -1,352 +1,401 @@
 transformations:
-  WEEK_NUM: {type: raw}
+  amtinstpaidbefduel24m_4187115A: {type: raw}
   annuity_780A: {type: raw}
   applications30d_658L: {type: raw}
   applicationscnt_867L: {type: raw}
+  assignmentdate_238D: {type: raw}
   avgdbddpdlast24m_3658932P: {type: raw}
   avgdbddpdlast3m_4187120P: {type: raw}
-  avgdpdtolclosure24_3658938P: {type: raw}
-  clientscnt_100L: {type: raw}
+  avgdbdtollast24m_4525197P: {type: raw}
+  avginstallast24m_3658937A: {type: raw}
+  avglnamtstart24m_4525187A: {type: raw}
+  avgmaxdpdlast9m_3716943P: {type: raw}
+  avgoutstandbalancel6m_4187114A: {type: raw}
+  avgpmtlast12m_4525200A: {type: raw}
+  birthdate_574D: {type: raw}
+  clientscnt12m_3712952L: {type: raw}
+  clientscnt_887L: {type: raw}
   cntincpaycont9m_3716944L: {type: raw}
   cntpmts24_3658933L: {type: raw}
+  contractssum_5085716L: {type: raw}
   credtype_322L: {type: categorical}
   currdebt_22A: {type: raw}
-  currdebtcredtyperange_828A: {type: raw}
   datefirstoffer_1144D: {type: raw}
+  datelastinstal40dpd_247D: {type: raw}
   datelastunpaid_3546854D: {type: raw}
   dateofbirth_337D: {type: raw}
+  dateofbirth_342D: {type: raw}
   days120_123L: {type: raw}
   days30_165L: {type: raw}
-  daysoverduetolerancedd_3976961L: {type: raw}
   description_5085714M: {type: categorical}
   disbursementtype_67L: {type: categorical}
   dtlastpmtallstes_4499206D: {type: raw}
   education_1103M: {type: categorical}
+  eir_270L: {type: raw}
   firstclxcampaign_1125D: {type: raw}
-  firstquarter_103L: {type: raw}
+  firstdatedue_489D: {type: raw}
+  for3years_504L: {type: raw}
+  foryear_850L: {type: raw}
   fourthquarter_440L: {type: raw}
+  homephncnt_628L: {type: raw}
   isbidproduct_1095L: {type: categorical}
   last_amount_1115A: {type: raw}
-  last_amount_416A: {type: raw}
   last_amount_4527230A: {type: raw}
-  last_amtdepositbalance_4809441A: {type: raw}
-  last_amtdepositincoming_4809444A: {type: raw}
-  last_amtdepositoutgoing_4809442A: {type: raw}
+  last_amount_4917619A: {type: raw}
+  last_annualeffectiverate_199L: {type: raw}
+  last_annuity_853A: {type: raw}
+  last_approvaldate_319D: {type: raw}
   last_birth_259D: {type: raw}
+  last_birthdate_87D: {type: raw}
+  last_childnum_21L: {type: raw}
+  last_classificationofcontr_1114M: {type: categorical}
+  last_collater_valueofguarantee_1124L: {type: raw}
   last_contaddr_district_15M: {type: categorical}
   last_contaddr_zipcode_807M: {type: categorical}
+  last_contractdate_551D: {type: raw}
+  last_contractenddate_991D: {type: raw}
+  last_contractmaturitydate_151D: {type: raw}
   last_contractst_516M: {type: categorical}
   last_creationdate_885D: {type: raw}
   last_credacc_actualbalance_314A: {type: raw}
-  last_credacc_credlmt_575A: {type: raw}
+  last_credacc_minhisbal_90A: {type: raw}
+  last_credamount_590A: {type: raw}
   last_credlmt_1052A: {type: raw}
+  last_credlmt_935A: {type: raw}
   last_credor_3940957M: {type: categorical}
-  last_credtype_587L: {type: categorical}
+  last_dateactivated_425D: {type: raw}
+  last_dateofcredend_289D: {type: raw}
   last_dateofcredend_353D: {type: raw}
+  last_dateofcredstart_181D: {type: raw}
+  last_dateofcredstart_739D: {type: raw}
   last_dateofrealrepmt_138D: {type: raw}
   last_deductiondate_4917603D: {type: raw}
   last_district_544M: {type: categorical}
-  last_downpmt_134A: {type: raw}
-  last_dpd_550P: {type: raw}
-  last_dpdmaxdateyear_896T: {type: raw}
+  last_dpdmax_851P: {type: raw}
+  last_dpdmaxdatemonth_442T: {type: raw}
+  last_dtlastpmt_581D: {type: raw}
+  last_dtlastpmtallstes_3545839D: {type: raw}
   last_education_1138M: {type: categorical}
+  last_empl_employedfrom_271D: {type: raw}
+  last_empl_industry_691L: {type: categorical}
   last_employedfrom_700D: {type: raw}
   last_employername_160M: {type: categorical}
   last_familystate_726L: {type: categorical}
-  last_firstnonzeroinstldate_307D: {type: raw}
   last_gender_992L: {type: categorical}
-  last_interesteffectiverate_369L: {type: raw}
-  last_interestrateyearly_538L: {type: raw}
-  last_monthlyinstlamount_674A: {type: raw}
+  last_incometype_1044T: {type: categorical}
+  last_installmentamount_833A: {type: raw}
+  last_instlamount_892A: {type: raw}
+  last_isdebitcard_527L: {type: categorical}
+  last_language1_981M: {type: categorical}
+  last_last180dayturnover_1134A: {type: raw}
+  last_lastupdate_1112D: {type: raw}
+  last_lastupdate_260D: {type: raw}
+  last_lastupdate_388D: {type: raw}
+  last_mainoccupationinc_384A: {type: raw}
+  last_mainoccupationinc_437A: {type: raw}
+  last_maritalst_703L: {type: categorical}
+  last_maxdpdtolerance_577P: {type: raw}
+  last_monthlyinstlamount_332A: {type: raw}
   last_name_4527232M: {type: categorical}
   last_name_4917606M: {type: categorical}
-  last_num_group1_6: {type: raw}
-  last_num_group2: {type: raw}
-  last_num_group2_13: {type: raw}
-  last_openingdate_313D: {type: raw}
+  last_num_group1: {type: raw}
+  last_num_group1_7: {type: raw}
+  last_openingdate_857D: {type: raw}
+  last_overdueamountmax_35A: {type: raw}
   last_overdueamountmaxdatemonth_494T: {type: raw}
-  last_pmts_dpd_1073P: {type: raw}
-  last_pmts_dpd_303P: {type: raw}
-  last_pmts_pmtsoverdue_635A: {type: raw}
-  last_prolongationcount_1120L: {type: raw}
+  last_overdueamountmaxdateyear_432T: {type: raw}
+  last_persontype_1072L: {type: raw}
+  last_pmtmethod_731M: {type: categorical}
+  last_pmtnum_8L: {type: raw}
+  last_postype_4733339M: {type: categorical}
+  last_processingdate_168D: {type: raw}
+  last_relationshiptoclient_415T: {type: categorical}
   last_relationshiptoclient_642T: {type: categorical}
+  last_residualamount_127A: {type: raw}
   last_residualamount_3940956A: {type: raw}
+  last_revolvingaccount_394A: {type: raw}
+  last_status_219L: {type: categorical}
+  last_totalamount_6A: {type: raw}
+  lastactivateddate_801D: {type: raw}
   lastapplicationdate_877D: {type: raw}
-  lastapprdate_640D: {type: raw}
+  lastapprcommoditycat_1041M: {type: categorical}
+  lastapprcredamount_781A: {type: raw}
   lastcancelreason_561M: {type: categorical}
   lastdelinqdate_224D: {type: raw}
+  lastdependentsnum_448L: {type: raw}
+  lastotherlnsexpense_631A: {type: raw}
+  lastrejectcommoditycat_161M: {type: categorical}
   lastrejectcredamount_222A: {type: raw}
-  lastrejectdate_50D: {type: raw}
   lastrejectreason_759M: {type: categorical}
+  lastrejectreasonclient_4145040M: {type: categorical}
   lastst_736L: {type: categorical}
-  max_actualdpd_943P: {type: raw}
+  maininc_215A: {type: raw}
+  maritalst_385M: {type: categorical}
   max_amount_1115A: {type: raw}
   max_amount_416A: {type: raw}
   max_amount_4527230A: {type: raw}
   max_amount_4917619A: {type: raw}
-  max_approvaldate_319D: {type: raw}
-  max_birthdate_87D: {type: raw}
+  max_annualeffectiverate_199L: {type: raw}
+  max_annualeffectiverate_63L: {type: raw}
+  max_annuity_853A: {type: raw}
   max_childnum_21L: {type: raw}
+  max_classificationofcontr_400M: {type: categorical}
   max_collater_valueofguarantee_1124L: {type: raw}
   max_collater_valueofguarantee_876L: {type: raw}
+  max_collaterals_typeofguarante_359M: {type: categorical}
+  max_collaterals_typeofguarante_669M: {type: categorical}
   max_contractdate_551D: {type: raw}
+  max_contractenddate_991D: {type: raw}
+  max_contractmaturitydate_151D: {type: raw}
   max_contractst_516M: {type: categorical}
   max_contractst_964M: {type: categorical}
+  max_contractsum_5085717L: {type: raw}
   max_credacc_actualbalance_314A: {type: raw}
   max_credacc_credlmt_575A: {type: raw}
+  max_credacc_maxhisbal_375A: {type: raw}
+  max_credamount_590A: {type: raw}
   max_credlmt_1052A: {type: raw}
-  max_credlmt_228A: {type: raw}
   max_credlmt_230A: {type: raw}
   max_credlmt_3940954A: {type: raw}
+  max_credlmt_935A: {type: raw}
+  max_credquantity_1099L: {type: raw}
   max_credquantity_984L: {type: raw}
   max_credtype_587L: {type: categorical}
-  max_currdebt_94A: {type: raw}
-  max_dateactivated_425D: {type: raw}
+  max_dateofcredend_289D: {type: raw}
+  max_dateofcredend_353D: {type: raw}
+  max_dateofcredstart_181D: {type: raw}
   max_dateofcredstart_739D: {type: raw}
-  max_dateofrealrepmt_138D: {type: raw}
-  max_debtoutstand_525A: {type: raw}
   max_debtoverdue_47A: {type: raw}
-  max_description_351M: {type: categorical}
+  max_debtvalue_227A: {type: raw}
+  max_deductiondate_4917603D: {type: raw}
   max_district_544M: {type: categorical}
   max_dpdmax_139P: {type: raw}
   max_dpdmax_757P: {type: raw}
+  max_dpdmax_851P: {type: raw}
   max_dpdmaxdatemonth_442T: {type: raw}
+  max_dpdmaxdatemonth_804T: {type: raw}
+  max_dpdmaxdatemonth_89T: {type: raw}
   max_dpdmaxdateyear_596T: {type: raw}
-  max_education_1138M: {type: categorical}
+  max_dtlastpmt_581D: {type: raw}
+  max_dtlastpmtallstes_3545839D: {type: raw}
   max_empl_employedfrom_271D: {type: raw}
-  max_familystate_726L: {type: categorical}
+  max_employedfrom_700D: {type: raw}
+  max_employername_160M: {type: categorical}
+  max_familystate_447L: {type: categorical}
   max_financialinstitution_382M: {type: categorical}
   max_financialinstitution_591M: {type: categorical}
-  max_firstnonzeroinstldate_307D: {type: raw}
-  max_housetype_905L: {type: categorical}
+  max_housingtype_772L: {type: categorical}
   max_incometype_1044T: {type: categorical}
+  max_installmentamount_833A: {type: raw}
+  max_instlamount_768A: {type: raw}
   max_instlamount_852A: {type: raw}
   max_instlamount_892A: {type: raw}
   max_interesteffectiverate_369L: {type: raw}
+  max_interestrateyearly_538L: {type: raw}
   max_lastupdate_1112D: {type: raw}
-  max_mainoccupationinc_384A: {type: raw}
-  max_maritalst_703L: {type: categorical}
+  max_lastupdate_260D: {type: raw}
+  max_mainoccupationinc_437A: {type: raw}
+  max_maxdebtpduevalodued_3940955A: {type: raw}
   max_maxdpdtolerance_577P: {type: raw}
+  max_monthlyinstlamount_332A: {type: raw}
+  max_monthlyinstlamount_674A: {type: raw}
   max_name_4527232M: {type: categorical}
   max_name_4917606M: {type: categorical}
+  max_nominalrate_281L: {type: raw}
   max_nominalrate_498L: {type: raw}
+  max_num_group1_3: {type: raw}
+  max_num_group1_5: {type: raw}
   max_num_group2_13: {type: raw}
+  max_numberofcontrsvalue_258L: {type: raw}
   max_numberofcontrsvalue_358L: {type: raw}
   max_numberofinstls_229L: {type: raw}
   max_numberofinstls_810L: {type: raw}
-  max_numberofoutstandinstls_520L: {type: raw}
   max_numberofoverdueinstlmaxdat_148D: {type: raw}
+  max_numberofoverdueinstlmaxdat_641D: {type: raw}
   max_openingdate_857D: {type: raw}
-  max_outstandingdebt_522A: {type: raw}
   max_overdueamountmax2_398A: {type: raw}
-  max_overdueamountmax2date_1002D: {type: raw}
   max_overdueamountmax2date_1142D: {type: raw}
-  max_overdueamountmax_35A: {type: raw}
-  max_overdueamountmax_950A: {type: raw}
-  max_overdueamountmaxdatemonth_284T: {type: raw}
-  max_overdueamountmaxdatemonth_494T: {type: raw}
-  max_overdueamountmaxdateyear_994T: {type: raw}
+  max_pmtamount_36A: {type: raw}
   max_pmtnum_8L: {type: raw}
+  max_pmtnumpending_403L: {type: raw}
   max_pmts_date_1107D: {type: raw}
-  max_pmts_dpd_303P: {type: raw}
-  max_pmts_pmtsoverdue_635A: {type: raw}
   max_postype_4733339M: {type: categorical}
+  max_prolongationcount_599L: {type: raw}
+  max_purposeofcred_874M: {type: categorical}
+  max_rejectreason_755M: {type: categorical}
   max_relationshiptoclient_415T: {type: categorical}
   max_residualamount_3940956A: {type: raw}
   max_residualamount_856A: {type: raw}
-  max_revolvingaccount_394A: {type: raw}
   max_sex_738L: {type: categorical}
+  max_status_219L: {type: categorical}
+  max_subjectrole_182M: {type: categorical}
+  max_subjectrole_93M: {type: categorical}
   max_totalamount_6A: {type: raw}
+  max_totalamount_881A: {type: raw}
   maxannuity_159A: {type: raw}
-  maxannuity_4075009A: {type: raw}
+  maxdbddpdlast1m_3658939P: {type: raw}
   maxdbddpdtollast12m_3658940P: {type: raw}
-  maxdbddpdtollast6m_4187119P: {type: raw}
   maxdebt4_972A: {type: raw}
+  maxdpdfrom6mto36m_3546853P: {type: raw}
   maxdpdinstldate_3546855D: {type: raw}
+  maxdpdinstlnum_3546846P: {type: raw}
   maxdpdlast12m_727P: {type: raw}
   maxdpdlast3m_392P: {type: raw}
-  maxdpdlast6m_474P: {type: raw}
-  maxdpdlast9m_1059P: {type: raw}
-  maxdpdtolerance_374P: {type: raw}
-  maxoutstandbalancel12m_4187113A: {type: raw}
+  maxinstallast24m_3658928A: {type: raw}
+  maxlnamtstart6m_4525199A: {type: raw}
   mean_amount_416A: {type: raw}
   mean_amount_4527230A: {type: raw}
   mean_amount_4917619A: {type: raw}
-  mean_approvaldate_319D: {type: raw}
-  mean_creationdate_885D: {type: raw}
+  mean_annuity_853A: {type: raw}
   mean_credacc_actualbalance_314A: {type: raw}
   mean_credacc_credlmt_575A: {type: raw}
-  mean_credacc_minhisbal_90A: {type: raw}
+  mean_credacc_maxhisbal_375A: {type: raw}
   mean_credamount_590A: {type: raw}
-  mean_dateofcredstart_181D: {type: raw}
-  mean_dateofrealrepmt_138D: {type: raw}
+  mean_credlmt_230A: {type: raw}
+  mean_credlmt_935A: {type: raw}
+  mean_currdebt_94A: {type: raw}
+  mean_downpmt_134A: {type: raw}
   mean_dpdmax_757P: {type: raw}
-  mean_employedfrom_700D: {type: raw}
-  mean_firstnonzeroinstldate_307D: {type: raw}
-  mean_instlamount_892A: {type: raw}
+  mean_installmentamount_833A: {type: raw}
+  mean_instlamount_768A: {type: raw}
+  mean_instlamount_852A: {type: raw}
   mean_last180dayturnover_1134A: {type: raw}
-  mean_lastupdate_388D: {type: raw}
   mean_mainoccupationinc_437A: {type: raw}
   mean_maxdebtpduevalodued_3940955A: {type: raw}
-  mean_maxdpdtolerance_577P: {type: raw}
-  mean_openingdate_857D: {type: raw}
-  mean_outstandingdebt_522A: {type: raw}
-  mean_overdueamountmax2_398A: {type: raw}
-  mean_overdueamountmax2date_1002D: {type: raw}
-  mean_overdueamountmax_35A: {type: raw}
-  mean_pmts_date_1107D: {type: raw}
+  mean_pmtamount_36A: {type: raw}
   mean_pmts_dpd_303P: {type: raw}
-  mean_pmts_overdue_1152A: {type: raw}
-  mean_pmts_pmtsoverdue_635A: {type: raw}
+  mean_pmts_dpdvalue_108P: {type: raw}
+  mean_residualamount_3940956A: {type: raw}
   mean_residualamount_856A: {type: raw}
+  mean_revolvingaccount_394A: {type: raw}
+  mean_totalamount_503A: {type: raw}
   mean_totalamount_6A: {type: raw}
   mean_totalamount_881A: {type: raw}
   medianamount_1115A: {type: raw}
+  medianamount_416A: {type: raw}
+  medianamount_4527230A: {type: raw}
   medianamount_4917619A: {type: raw}
+  medianapprovaldate_319D: {type: raw}
+  mediancontractdate_551D: {type: raw}
+  mediancontractenddate_991D: {type: raw}
   mediancontractmaturitydate_151D: {type: raw}
   mediancreationdate_885D: {type: raw}
-  mediancredacc_actualbalance_314A: {type: raw}
-  mediancredacc_credlmt_575A: {type: raw}
   mediancredlmt_230A: {type: raw}
   mediancredlmt_3940954A: {type: raw}
   mediancredlmt_935A: {type: raw}
-  mediancurrdebt_94A: {type: raw}
-  mediandateactivated_425D: {type: raw}
+  mediandateofcredend_289D: {type: raw}
   mediandateofcredend_353D: {type: raw}
-  mediandateofrealrepmt_138D: {type: raw}
-  mediandebtvalue_227A: {type: raw}
-  mediandpdmax_757P: {type: raw}
-  mediandtlastpmt_581D: {type: raw}
+  mediandebtpastduevalue_732A: {type: raw}
+  mediandtlastpmtallstes_3545839D: {type: raw}
   medianemployedfrom_700D: {type: raw}
-  medianfirstnonzeroinstldate_307D: {type: raw}
-  medianinstlamount_852A: {type: raw}
+  medianinstlamount_768A: {type: raw}
   medianinstlamount_892A: {type: raw}
-  medianlastupdate_388D: {type: raw}
-  medianmaxdebtpduevalodued_3940955A: {type: raw}
-  medianmaxdpdtolerance_577P: {type: raw}
+  medianlastupdate_260D: {type: raw}
+  mediannumberofoverdueinstlmaxdat_148D: {type: raw}
   mediannumberofoverdueinstlmaxdat_641D: {type: raw}
-  medianopeningdate_313D: {type: raw}
+  medianopeningdate_857D: {type: raw}
   medianoverdueamount_659A: {type: raw}
-  medianoverdueamountmax2_14A: {type: raw}
-  medianoverdueamountmax2_398A: {type: raw}
   medianoverdueamountmax2date_1142D: {type: raw}
-  medianoverdueamountmax_35A: {type: raw}
   medianoverdueamountmax_950A: {type: raw}
+  medianpmts_date_1107D: {type: raw}
   medianpmts_overdue_1152A: {type: raw}
+  medianprocessingdate_168D: {type: raw}
   medianrefreshdate_3813885D: {type: raw}
   medianresidualamount_856A: {type: raw}
   medianrevolvingaccount_394A: {type: raw}
-  mediantotalamount_6A: {type: raw}
-  min_amount_416A: {type: raw}
-  min_annuity_853A: {type: raw}
-  min_birthdate_87D: {type: raw}
-  min_cancelreason_3545846M: {type: categorical}
-  min_classificationofcontr_400M: {type: categorical}
-  min_collater_typofvalofguarant_298M: {type: categorical}
-  min_collater_typofvalofguarant_407M: {type: categorical}
-  min_collaterals_typeofguarante_359M: {type: categorical}
-  min_collaterals_typeofguarante_669M: {type: categorical}
-  min_contaddr_district_15M: {type: categorical}
-  min_contaddr_zipcode_807M: {type: categorical}
-  min_contractst_516M: {type: categorical}
-  min_credacc_actualbalance_314A: {type: raw}
-  min_credacc_minhisbal_90A: {type: raw}
-  min_credacc_status_367L: {type: categorical}
-  min_credamount_590A: {type: raw}
-  min_credlmt_230A: {type: raw}
-  min_credlmt_935A: {type: raw}
-  min_credor_3940957M: {type: categorical}
+  min_annualeffectiverate_199L: {type: raw}
+  min_annualeffectiverate_63L: {type: raw}
+  min_byoccupationinc_3656910L: {type: raw}
   min_credtype_587L: {type: categorical}
-  min_dateactivated_425D: {type: raw}
-  min_dateofcredend_289D: {type: raw}
-  min_dateofcredend_353D: {type: raw}
-  min_dateofcredstart_181D: {type: raw}
-  min_dateofcredstart_739D: {type: raw}
-  min_dateofrealrepmt_138D: {type: raw}
-  min_debtpastduevalue_732A: {type: raw}
-  min_description_351M: {type: categorical}
-  min_district_544M: {type: categorical}
-  min_dpdmax_139P: {type: raw}
-  min_dpdmaxdatemonth_442T: {type: raw}
+  min_dpdmaxdatemonth_804T: {type: raw}
+  min_dpdmaxdatemonth_89T: {type: raw}
   min_dpdmaxdateyear_596T: {type: raw}
-  min_dtlastpmt_581D: {type: raw}
-  min_dtlastpmtallstes_3545839D: {type: raw}
-  min_education_1138M: {type: categorical}
-  min_education_927M: {type: categorical}
-  min_empladdr_district_926M: {type: categorical}
-  min_empladdr_zipcode_114M: {type: categorical}
-  min_employedfrom_700D: {type: raw}
+  min_dpdmaxdateyear_742T: {type: raw}
+  min_dpdmaxdateyear_896T: {type: raw}
   min_familystate_726L: {type: categorical}
-  min_financialinstitution_382M: {type: categorical}
-  min_financialinstitution_591M: {type: categorical}
-  min_instlamount_768A: {type: raw}
-  min_instlamount_892A: {type: raw}
-  min_interestrate_508L: {type: raw}
+  min_interesteffectiverate_369L: {type: raw}
   min_interestrateyearly_538L: {type: raw}
-  min_language1_981M: {type: categorical}
-  min_lastupdate_388D: {type: raw}
-  min_maxdpdtolerance_577P: {type: raw}
-  min_name_4527232M: {type: categorical}
-  min_name_4917606M: {type: categorical}
   min_nominalrate_281L: {type: raw}
-  min_numberofcontrsvalue_358L: {type: raw}
+  min_nominalrate_498L: {type: raw}
+  min_numberofinstls_229L: {type: raw}
   min_numberofinstls_320L: {type: raw}
-  min_numberofoverdueinstlmax_1151L: {type: raw}
-  min_outstandingdebt_522A: {type: raw}
-  min_overdueamountmax2_14A: {type: raw}
-  min_overdueamountmax2_398A: {type: raw}
-  min_overdueamountmax2date_1142D: {type: raw}
-  min_overdueamountmax_155A: {type: raw}
-  min_overdueamountmaxdatemonth_494T: {type: raw}
-  min_overdueamountmaxdateyear_994T: {type: raw}
-  min_pmtmethod_731M: {type: categorical}
-  min_pmts_year_507T: {type: raw}
-  min_purposeofcred_874M: {type: categorical}
-  min_refreshdate_3813885D: {type: raw}
-  min_rejectreason_755M: {type: categorical}
-  min_rejectreasonclient_4145042M: {type: categorical}
+  min_numberofinstls_810L: {type: raw}
+  min_pmtnum_8L: {type: raw}
   min_relationshiptoclient_415T: {type: categorical}
-  min_residualamount_856A: {type: raw}
-  min_revolvingaccount_394A: {type: raw}
-  min_totalamount_6A: {type: raw}
-  min_totaloutstanddebtvalue_39A: {type: raw}
   mobilephncnt_593L: {type: raw}
+  mode_cancelreason_3545846M: {type: categorical}
+  mode_classificationofcontr_400M: {type: categorical}
+  mode_contractst_964M: {type: categorical}
+  mode_contracttype_653M: {type: categorical}
+  mode_credor_3940957M: {type: categorical}
+  mode_district_544M: {type: categorical}
+  mode_education_1138M: {type: categorical}
+  mode_education_927M: {type: categorical}
+  mode_empladdr_district_926M: {type: categorical}
+  mode_employername_160M: {type: categorical}
+  mode_financialinstitution_382M: {type: categorical}
+  mode_name_4527232M: {type: categorical}
+  mode_name_4917606M: {type: categorical}
+  mode_subjectrole_43M: {type: categorical}
   month_decision: {type: raw}
   monthsannuity_845L: {type: raw}
-  numactivecredschannel_414L: {type: raw}
-  numcontrs3months_479L: {type: raw}
-  numinstlallpaidearly3d_817L: {type: raw}
+  numactivecreds_622L: {type: raw}
   numinstls_657L: {type: raw}
-  numinstlsallpaid_934L: {type: raw}
   numinstlswithdpd10_728L: {type: raw}
-  numinstlswithoutdpd_562L: {type: raw}
-  numinstpaid_4499208L: {type: raw}
-  numinstpaidearly3d_3546850L: {type: raw}
-  numinstpaidearly3dest_4493216L: {type: raw}
+  numinstlswithdpd5_4187116L: {type: raw}
+  numinstmatpaidtearly2d_4499204L: {type: raw}
   numinstpaidearly5d_1087L: {type: raw}
-  numinstpaidearly5dobd_4499205L: {type: raw}
-  numinstpaidearly_338L: {type: raw}
-  numinstpaidearlyest_4493214L: {type: raw}
+  numinstpaidearly5dest_4493211L: {type: raw}
   numinstpaidlastcontr_4325080L: {type: raw}
+  numinstpaidlate1d_3546852L: {type: raw}
   numinsttopaygr_769L: {type: raw}
   numinsttopaygrest_4493213L: {type: raw}
-  numinstunpaidmax_3546851L: {type: raw}
   numrejects9m_859L: {type: raw}
   pctinstlsallpaidearl3d_427L: {type: raw}
   pctinstlsallpaidlat10d_839L: {type: raw}
   pctinstlsallpaidlate1d_3546856L: {type: raw}
-  pctinstlsallpaidlate4d_3546849L: {type: raw}
-  pctinstlsallpaidlate6d_3546844L: {type: raw}
   pmtaverage_3A: {type: raw}
+  pmtaverage_4527227A: {type: raw}
   pmtaverage_4955615A: {type: raw}
+  pmtcount_4955617L: {type: raw}
   pmtnum_254L: {type: raw}
+  pmtscount_423L: {type: raw}
   pmtssum_45A: {type: raw}
   previouscontdistrict_112M: {type: categorical}
   price_1097A: {type: raw}
   requesttype_4525192L: {type: categorical}
   riskassesment_302T: {type: categorical}
   secondquarter_766L: {type: raw}
-  sumoutstandtotalest_4493215A: {type: raw}
   totalsettled_863A: {type: raw}
-  totinstallast1m_4525188A: {type: raw}
+  validfrom_1069D: {type: raw}
+  varamount_1115A: {type: raw}
+  varamount_416A: {type: raw}
+  varamount_4527230A: {type: raw}
+  varamount_4917619A: {type: raw}
+  varannuity_853A: {type: raw}
+  varcredamount_590A: {type: raw}
+  varcredlmt_228A: {type: raw}
+  varcredlmt_3940954A: {type: raw}
+  varcurrdebt_94A: {type: raw}
+  vardebtvalue_227A: {type: raw}
+  vardownpmt_134A: {type: raw}
+  vardpd_550P: {type: raw}
+  vardpdmax_139P: {type: raw}
+  varinstallmentamount_833A: {type: raw}
+  varinstlamount_768A: {type: raw}
+  varinstlamount_892A: {type: raw}
+  varlast180dayturnover_1134A: {type: raw}
+  varlast30dayturnover_651A: {type: raw}
+  varmainoccupationinc_437A: {type: raw}
+  varmaxdebtpduevalodued_3940955A: {type: raw}
+  varmaxdpdtolerance_577P: {type: raw}
+  varmonthlyinstlamount_332A: {type: raw}
+  varmonthlyinstlamount_674A: {type: raw}
+  varoutstandingamount_362A: {type: raw}
+  varpmtamount_36A: {type: raw}
+  varpmtdaysoverdue_1135P: {type: raw}
+  varpmts_dpd_1073P: {type: raw}
+  varrevolvingaccount_394A: {type: raw}
+  vartotalamount_881A: {type: raw}
+  vartotaloutstanddebtvalue_39A: {type: raw}
   weekday_decision: {type: raw}

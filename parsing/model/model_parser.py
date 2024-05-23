@@ -17,6 +17,7 @@ class ModelConf:
     model: str
     features: List[str]
     train_root_dir: str
+    val_root_dir: str
 
 
 @dataclass
@@ -64,5 +65,9 @@ class ModelParser:
                 if 'train_root_dir' not in info:
                     raise Exception('Please define "train_root_dir".')
 
-                result.append(ModelConf(model_name, info['type'], features, info['train_root_dir']))
+                if 'val_root_dir' not in info:
+                    raise Exception('Please define "val_root_dir".')
+
+                result.append(ModelConf(model_name, info['type'], features, info['train_root_dir'], info['val_root_dir']))
+
             return result

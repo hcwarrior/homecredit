@@ -2,6 +2,7 @@ import json
 import pickle
 from typing import Dict
 
+import optuna
 from catboost import CatBoostClassifier, Pool
 from lightgbm import LGBMClassifier
 import lightgbm
@@ -55,40 +56,73 @@ class CatBoost(BaseModel):
 
         return df
 
+    def _objective(self, trial,
+                   train_pool, val_pool,
+                   val_df, val_label_array):
+        param = {
+            "eval_metric": "AUC",
+            "task_type": "GPU",
+            "devices": "0",
+            "max_depth": trial.suggest_int("max_depth", 5, 10),
+            "iterations": trial.suggest_int("iterations", 1000, 2000),
+            "min_child_samples": trial.suggest_int("min_child_samples", 5, 100),
+            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.06),
+            "reg_lambda": trial.suggest_float("reg_lambda", 1e-8, 10.0, log=True),
+        }
+        gbm = CatBoostClassifier(**param)
+        gbm.fit(train_pool, eval_set=val_pool, verbose=50, early_stopping_rounds=70)
+        preds = gbm.predict_proba(val_df)[:, 1]
+        auroc = roc_auc_score(val_label_array, preds)
+        return auroc
+
     def fit(self, df: pd.DataFrame, label_array: np.array,
         val_df: pd.DataFrame, val_label_array: np.array):
         print('Preprocessing...')
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
 
-        print('Grid Searching')
-        # params = {'max_depth': [5, 7], 'n_estimators': [100, 500, 1000], 'colsample_bytree': [0.5, 0.75]}
-
-        # grid_model = LGBMClassifier(boosting_type='gbdt', random_state=42, early_stopping_rounds=50)
-        # gridcv = GridSearchCV(grid_model, param_grid=params, verbose=2, n_jobs=-1, cv=3)
-        # gridcv.fit(df, label_array, eval_set=[(val_df, val_label_array)],
-        #            eval_metric='auc',
-        #            callbacks=[lightgbm.log_evaluation(period=5),
-        #                       lightgbm.early_stopping(stopping_rounds=30)])
-        # best_params = gridcv.best_params_
-
-        best_params = {'max_depth': 5, 'iterations': 1000, 'colsample_bylevel': 0.75}
-
-        monotone_constraints = [1] + [0] * (len(df.columns) - 1) if 'WEEK_NUM' in df.columns else None
+        monotone_constraints = None
         cat_cols = [col for col, transformation in self.transformations_by_feature.items() if transformation['type'] == 'categorical']
 
         train_pool = Pool(df, label_array, cat_features=cat_cols)
         val_pool = Pool(val_df, val_label_array, cat_features=cat_cols)
 
+        # hyperparameter tuning
+        print('Optimizing Hyperparameters...')
+        optuna.logging.disable_default_handler()
+        sampler = optuna.integration.SkoptSampler(
+            skopt_kwargs={'n_random_starts': 5,
+                          'acq_func': 'EI',
+                          'acq_func_kwargs': {'xi': 0.02}})
+
+        study = optuna.create_study(direction="maximize", sampler=sampler)
+        _objective_currying = lambda trial: self._objective(trial, train_pool, val_pool, val_df, val_label_array)
+        print('Optimizing...')
+        study.optimize(_objective_currying, n_trials=25)
+
+        print("Number of finished trials: {}".format(len(study.trials)))
+        print("Best trial:")
+        trial = study.best_trial
+
+        print("  Value: {}".format(trial.value))
+        print("  Params: ")
+        best_params = trial.params
+        print(best_params)
+        ###
+
         print('Fitting...')
+
         self.model = CatBoostClassifier(
             eval_metric='AUC',
-            learning_rate=0.07,
-            iterations=best_params['iterations'],
-            colsample_bylevel=best_params['colsample_bylevel'],
+            task_type='GPU',
+            devices='0',
             max_depth=best_params['max_depth'],
+            iterations=best_params['iterations'],
+            min_child_samples=best_params['min_child_samples'],
+            learning_rate=best_params['learning_rate'],
+            reg_lambda=best_params['reg_lambda'],
             monotone_constraints=monotone_constraints)
-        self.model.fit(train_pool, eval_set=val_pool, verbose=5, early_stopping_rounds=50)
+        self.model.fit(train_pool, eval_set=val_pool, verbose=5)
 
 
     def predict(self, df_without_label: pd.DataFrame, label_array: np.ndarray = None):

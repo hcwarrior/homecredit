@@ -8,6 +8,7 @@ import numpy as np
 import polars as pl
 
 from simple_parsing import ArgumentParser
+from sklearn.model_selection import StratifiedGroupKFold
 
 
 @dataclass
@@ -15,7 +16,6 @@ class Options:
     root_dir: str
     output_root_dir: str
     train_ratio: float
-    val_ratio: float
     output_root_dir: str
     train_split: int
 
@@ -109,9 +109,9 @@ class Aggregator:
             []
             + Aggregator.get_last_cols(df, cols, columns)
             + Aggregator.get_max_cols(df, cols, columns)
-            + Aggregator.get_min_cols(df, cols, columns)
             + Aggregator.get_mean_cols(df, cols, columns)
             + Aggregator.get_median_cols(df, cols, columns)
+            + Aggregator.get_variance_cols(df, cols, columns)
         )
 
 
@@ -121,8 +121,6 @@ class Aggregator:
                 []
                 + Aggregator.get_last_cols(df, cols, columns)
                 + Aggregator.get_max_cols(df, cols, columns)
-                + Aggregator.get_min_cols(df, cols, columns)
-                + Aggregator.get_mean_cols(df, cols, columns)
                 + Aggregator.get_median_cols(df, cols, columns)
         )
 
@@ -132,7 +130,7 @@ class Aggregator:
                 []
                 + Aggregator.get_last_cols(df, cols, columns)
                 + Aggregator.get_max_cols(df, cols, columns)
-                + Aggregator.get_min_cols(df, cols, columns)
+                + Aggregator.get_mode_cols(df, cols, columns)
         )
 
     def other_expr(df, columns=None):
@@ -194,6 +192,9 @@ class Aggregator:
 
     def get_median_cols(df, target_cols, cols):
         return Aggregator.filter_columns([pl.median(col).alias(f"median{col}") for col in target_cols], cols)
+
+    def get_variance_cols(df, target_cols, cols):
+        return Aggregator.filter_columns([pl.var(col).alias(f"var{col}") for col in target_cols], cols)
 
 
 def read_file(path, depth=None):
@@ -316,26 +317,31 @@ if __name__ == '__main__':
     df = feature_eng(**data_store)
     df, _ = to_pandas(df)
 
-    train_ratio, val_ratio, test_ratio \
-        = options.train_ratio, options.val_ratio, 1 - options.train_ratio - options.val_ratio
+    train_ratio, test_ratio = options.train_ratio, 1 - options.train_ratio
 
     df_train = df.sample(frac=train_ratio, random_state=42)
-    df_val_test = df.drop(df_train.index)
-    df_val = df_val_test.sample(frac=val_ratio / (val_ratio + test_ratio), random_state=42)
-    df_test = df_val_test.drop(df_val.index)
+    df_test = df.drop(df_train.index)
 
     del df
     gc.collect()
 
     output_root_dir = Path(options.output_root_dir)
 
-    for i in range(options.train_split):
-        os.makedirs(output_root_dir / f"train{i}", exist_ok=True)
-        # bootstrapping
-        df_train_split = df_train.sample(frac=0.5, random_state=42)
-        df_train_split.to_parquet(output_root_dir / f"train{i}/data.parquet")
+    train_split = options.train_split
+    cv = StratifiedGroupKFold(n_splits=train_split, shuffle=False)
 
-    os.makedirs(output_root_dir / "validation", exist_ok=True)
-    df_val.to_parquet(output_root_dir / "validation/data.parquet")
+    i = 0
+    for idx_train, idx_valid in cv.split(df_train, np.zeros(len(df_train)), groups=df_train['WEEK_NUM']):
+        train_kfold = df_train.iloc[idx_train]
+        val_kfold = df_train.iloc[idx_valid]
+
+        os.makedirs(output_root_dir / f"train{i}", exist_ok=True)
+        os.makedirs(output_root_dir / f"val{i}", exist_ok=True)
+
+        train_kfold.to_parquet(output_root_dir / f"train{i}/data.parquet")
+        val_kfold.to_parquet(output_root_dir / f"val{i}/data.parquet")
+
+        i += 1
+
     os.makedirs(output_root_dir / "test", exist_ok=True)
     df_test.to_parquet(output_root_dir / "test/data.parquet")

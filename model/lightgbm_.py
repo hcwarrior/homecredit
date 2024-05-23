@@ -2,6 +2,7 @@ import json
 import pickle
 from typing import Dict
 
+import optuna
 from lightgbm import LGBMClassifier
 import lightgbm
 import numpy as np
@@ -21,34 +22,79 @@ class LightGBM(BaseModel):
                  transformations_by_feature: Dict[str, object] = None):
         super().__init__(transformations_by_feature)
 
+    def _objective(self, trial,
+                   df: pd.DataFrame, label_array: np.array,
+                   val_df: pd.DataFrame, val_label_array: np.array):
+        param = {
+            "objective": "binary",
+            "metric": "auc",
+            "verbosity": -1,
+            "boosting_type": "gbdt",
+            "verbose": 50,
+            "n_estimators": trial.suggest_int("n_estimators", 1000, 2000),
+            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.6, 0.9),
+            "subsample": trial.suggest_float("subsample", 0.6, 0.9),
+            "max_depth": trial.suggest_int("max_depth", 5, 10),
+            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.06),
+            "reg_alpha": trial.suggest_float("reg_alpha", 1e-8, 10.0, log=True),
+            "reg_lambda": trial.suggest_float("reg_lambda", 1e-8, 10.0, log=True),
+            "num_leaves": trial.suggest_int("num_leaves", 2, 24),
+            "min_child_samples": trial.suggest_int("min_child_samples", 10, 100),
+        }
+        gbm = LGBMClassifier(**param)
+        gbm.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
+                       callbacks=[lightgbm.log_evaluation(period=50),
+                                  lightgbm.early_stopping(stopping_rounds=70)])
+        preds = gbm.predict_proba(val_df)[:, 1]
+        auroc = roc_auc_score(val_label_array, preds)
+        return auroc
+
     def fit(self, df: pd.DataFrame, label_array: np.array,
         val_df: pd.DataFrame, val_label_array: np.array):
         print('Preprocessing...')
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
 
-        print('Grid Searching')
-        params = {'max_depth': [5, 7], 'n_estimators': [100, 500, 1000], 'colsample_bytree': [0.5, 0.75]}
+        # hyperparameter tuning
+        print('Optimizing Hyperparameters...')
+        optuna.logging.disable_default_handler()
+        sampler = optuna.integration.SkoptSampler(
+            skopt_kwargs={'n_random_starts': 5,
+                          'acq_func': 'EI',
+                          'acq_func_kwargs': {'xi': 0.02}})
 
-        # grid_model = LGBMClassifier(boosting_type='gbdt', random_state=42, early_stopping_rounds=50)
-        # gridcv = GridSearchCV(grid_model, param_grid=params, verbose=2, n_jobs=-1, cv=3)
-        # gridcv.fit(df, label_array, eval_set=[(val_df, val_label_array)],
-        #            eval_metric='auc',
-        #            callbacks=[lightgbm.log_evaluation(period=5),
-        #                       lightgbm.early_stopping(stopping_rounds=30)])
-        # best_params = gridcv.best_params_
+        study = optuna.create_study(direction="maximize", sampler=sampler)
+        _objective_currying = lambda trial: self._objective(trial, df, label_array, val_df, val_label_array)
+        print('Optimizing...')
+        study.optimize(_objective_currying, n_trials=60)
 
-        best_params = {'max_depth': 5, 'n_estimators': 1000, 'colsample_bytree': 0.75}
+        print("Number of finished trials: {}".format(len(study.trials)))
+        print("Best trial:")
+        trial = study.best_trial
+
+        print("  Value: {}".format(trial.value))
+        print("  Params: ")
+        best_params = trial.params
+        print(best_params)
+        ###
 
         print('Fitting...')
-        monotone_constraints = [1] + [0] * (len(df.columns) - 1) if 'WEEK_NUM' in df.columns else None
-
-        self.model = LGBMClassifier(boosting_type='gbdt', random_state=42, max_depth=best_params['max_depth'],
-                                    n_estimators=best_params['n_estimators'], colsample_bytree=best_params['colsample_bytree'],
-                                    num_leaves=24, monotone_constraints=monotone_constraints)
+        monotone_constraints = None
+        self.model = LGBMClassifier(boosting_type='gbdt', random_state=42,
+                                    learning_rate=best_params['learning_rate'],
+                                    max_depth=best_params['max_depth'],
+                                    n_estimators=best_params['n_estimators'],
+                                    colsample_bytree=best_params['colsample_bytree'],
+                                    min_child_samples=best_params['min_child_samples'],
+                                    num_leaves=best_params['num_leaves'],
+                                    reg_alpha=best_params['reg_alpha'],
+                                    reg_lambda=best_params['reg_lambda'],
+                                    subsample=best_params['subsample'],
+                                    monotone_constraints=monotone_constraints)
         self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
                        callbacks=[lightgbm.log_evaluation(period=5),
-                                  lightgbm.early_stopping(stopping_rounds=50)])
+                                  # lightgbm.early_stopping(stopping_rounds=80)
+                                  ])
 
     def predict(self, df_without_label: pd.DataFrame, label_array: np.ndarray = None):
         batch_size = 4096
