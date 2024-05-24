@@ -17,6 +17,27 @@ from model.base_model import BaseModel
 pd.set_option('future.no_silent_downcasting', True)
 
 
+class CatBoostEvalMetricStability:
+    def __init__(self, week_num, cat_boost):
+        self.week_num = week_num
+        self.cat_boost = cat_boost
+
+    def get_final_error(self, error, weight):
+        return error
+
+    def is_max_optimal(self):
+        # the larger metric value the better
+        return True
+
+    def evaluate(self, approxes, target, weight):
+        assert len(approxes) == 1
+        assert len(target) == len(approxes[0])
+        preds = np.array(approxes[0])
+        target = np.array(target)
+
+        metric = self.cat_boost.stability_metric(self.week_num, target, preds)
+        return metric, 0
+
 class CatBoost(BaseModel):
     def __init__(self,
                  transformations_by_feature: Dict[str, object] = None):
@@ -58,9 +79,10 @@ class CatBoost(BaseModel):
 
     def _objective(self, trial,
                    train_pool, val_pool,
-                   val_df, val_label_array):
+                   val_df, val_label_array, val_week_num):
         param = {
             "eval_metric": "AUC",
+            # "eval_metric": CatBoostEvalMetricStability(val_week_num, self),
             "task_type": "GPU",
             "devices": "0",
             "max_depth": trial.suggest_int("max_depth", 5, 10),
@@ -69,14 +91,16 @@ class CatBoost(BaseModel):
             "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.06),
             "reg_lambda": trial.suggest_float("reg_lambda", 1e-8, 10.0, log=True),
         }
+        print(param)
         gbm = CatBoostClassifier(**param)
         gbm.fit(train_pool, eval_set=val_pool, verbose=50, early_stopping_rounds=70)
         preds = gbm.predict_proba(val_df)[:, 1]
-        auroc = roc_auc_score(val_label_array, preds)
-        return auroc
+        metric = roc_auc_score(val_label_array, preds)
+        # metric = self.stability_metric(val_week_num, val_label_array, preds)
+        return metric
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
-        val_df: pd.DataFrame, val_label_array: np.array):
+        val_df: pd.DataFrame, val_label_array: np.array, val_week_num: np.array):
         print('Preprocessing...')
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
@@ -88,27 +112,28 @@ class CatBoost(BaseModel):
         val_pool = Pool(val_df, val_label_array, cat_features=cat_cols)
 
         # hyperparameter tuning
-        print('Optimizing Hyperparameters...')
-        optuna.logging.disable_default_handler()
-        sampler = optuna.integration.SkoptSampler(
-            skopt_kwargs={'n_random_starts': 5,
-                          'acq_func': 'EI',
-                          'acq_func_kwargs': {'xi': 0.02}})
-
-        study = optuna.create_study(direction="maximize", sampler=sampler)
-        _objective_currying = lambda trial: self._objective(trial, train_pool, val_pool, val_df, val_label_array)
-        print('Optimizing...')
-        study.optimize(_objective_currying, n_trials=25)
-
-        print("Number of finished trials: {}".format(len(study.trials)))
-        print("Best trial:")
-        trial = study.best_trial
-
-        print("  Value: {}".format(trial.value))
-        print("  Params: ")
-        best_params = trial.params
-        print(best_params)
+        # print('Optimizing Hyperparameters...')
+        # optuna.logging.disable_default_handler()
+        # sampler = optuna.integration.SkoptSampler(
+        #     skopt_kwargs={'n_random_starts': 5,
+        #                   'acq_func': 'EI',
+        #                   'acq_func_kwargs': {'xi': 0.02}})
+        #
+        # study = optuna.create_study(direction="maximize", sampler=sampler)
+        # _objective_currying = lambda trial: self._objective(trial, train_pool, val_pool, val_df, val_label_array, val_week_num)
+        # print('Optimizing...')
+        # study.optimize(_objective_currying, n_trials=5)
+        #
+        # print("Number of finished trials: {}".format(len(study.trials)))
+        # print("Best trial:")
+        # trial = study.best_trial
+        #
+        # print("  Value: {}".format(trial.value))
+        # print("  Params: ")
+        # best_params = trial.params
+        # print(best_params)
         ###
+        best_params = {'max_depth': 7, 'iterations': 1997, 'min_child_samples': 90, 'learning_rate': 0.048221020103455366, 'reg_lambda': 6.30114054634975}
 
         print('Fitting...')
 

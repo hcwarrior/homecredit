@@ -24,7 +24,7 @@ class LightGBM(BaseModel):
 
     def _objective(self, trial,
                    df: pd.DataFrame, label_array: np.array,
-                   val_df: pd.DataFrame, val_label_array: np.array):
+                   val_df: pd.DataFrame, val_label_array: np.array, val_week_num: np.array):
         param = {
             "objective": "binary",
             "metric": "auc",
@@ -42,41 +42,47 @@ class LightGBM(BaseModel):
             "min_child_samples": trial.suggest_int("min_child_samples", 10, 100),
         }
         gbm = LGBMClassifier(**param)
-        gbm.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
-                       callbacks=[lightgbm.log_evaluation(period=50),
-                                  lightgbm.early_stopping(stopping_rounds=70)])
+        gbm.fit(df, label_array, eval_set=[(val_df, val_label_array)],
+                # eval_metric=lambda label, pred: self.stability_metric(val_df['WEEK_NUM'], label, pred),
+                eval_metric='auc',
+                callbacks=[lightgbm.log_evaluation(period=50),
+                            lightgbm.early_stopping(stopping_rounds=70)])
         preds = gbm.predict_proba(val_df)[:, 1]
-        auroc = roc_auc_score(val_label_array, preds)
-        return auroc
+        metric = roc_auc_score(val_label_array, preds)
+        # metric = self.stability_metric(val_week_num, val_label_array, preds)
+        return metric
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
-        val_df: pd.DataFrame, val_label_array: np.array):
+        val_df: pd.DataFrame, val_label_array: np.array, val_week_num: np.array):
         print('Preprocessing...')
         df = self._preprocess(df)
         val_df = self._preprocess(val_df)
 
         # hyperparameter tuning
-        print('Optimizing Hyperparameters...')
-        optuna.logging.disable_default_handler()
-        sampler = optuna.integration.SkoptSampler(
-            skopt_kwargs={'n_random_starts': 5,
-                          'acq_func': 'EI',
-                          'acq_func_kwargs': {'xi': 0.02}})
-
-        study = optuna.create_study(direction="maximize", sampler=sampler)
-        _objective_currying = lambda trial: self._objective(trial, df, label_array, val_df, val_label_array)
-        print('Optimizing...')
-        study.optimize(_objective_currying, n_trials=60)
-
-        print("Number of finished trials: {}".format(len(study.trials)))
-        print("Best trial:")
-        trial = study.best_trial
-
-        print("  Value: {}".format(trial.value))
-        print("  Params: ")
-        best_params = trial.params
-        print(best_params)
+        # print('Optimizing Hyperparameters...')
+        # optuna.logging.disable_default_handler()
+        # sampler = optuna.integration.SkoptSampler(
+        #     skopt_kwargs={'n_random_starts': 5,
+        #                   'acq_func': 'EI',
+        #                   'acq_func_kwargs': {'xi': 0.02}})
+        #
+        # study = optuna.create_study(direction="maximize", sampler=sampler)
+        # _objective_currying = lambda trial: self._objective(trial, df, label_array, val_df, val_label_array, val_week_num)
+        # print('Optimizing...')
+        # study.optimize(_objective_currying, n_trials=10)
+        #
+        # print("Number of finished trials: {}".format(len(study.trials)))
+        # print("Best trial:")
+        # trial = study.best_trial
+        #
+        # print("  Value: {}".format(trial.value))
+        # print("  Params: ")
+        # best_params = trial.params
+        # print(best_params)
         ###
+        best_params = {'n_estimators': 1007, 'colsample_bytree': 0.7837922265877326, 'subsample': 0.8363088589516612, 'max_depth': 7,
+         'learning_rate': 0.03146490734457441, 'reg_alpha': 4.329012327172535, 'reg_lambda': 1.2892729309142657e-06,
+         'num_leaves': 24, 'min_child_samples': 98}
 
         print('Fitting...')
         monotone_constraints = None
@@ -91,8 +97,10 @@ class LightGBM(BaseModel):
                                     reg_lambda=best_params['reg_lambda'],
                                     subsample=best_params['subsample'],
                                     monotone_constraints=monotone_constraints)
-        self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)], eval_metric='auc',
-                       callbacks=[lightgbm.log_evaluation(period=5),
+        self.model.fit(df, label_array, eval_set=[(val_df, val_label_array)],
+                       # eval_metric=['auc', lambda label, pred: self.stability_metric(val_df['WEEK_NUM'], label, pred)],
+                       eval_metric='auc',
+                       callbacks=[lightgbm.log_evaluation(period=50),
                                   # lightgbm.early_stopping(stopping_rounds=80)
                                   ])
 

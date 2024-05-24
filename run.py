@@ -105,7 +105,7 @@ if __name__ == '__main__':
         val_df = pd.read_parquet(model_conf.val_root_dir, columns=required_features)
 
         model.fit(train_df[model_conf.features], train_df['target'],
-                  val_df[model_conf.features], val_df['target'])
+                  val_df[model_conf.features], val_df['target'], val_df['WEEK_NUM'])
 
         test_df = pd.read_parquet(options.test_data_root_dir, columns=required_features).reset_index(drop=True)
 

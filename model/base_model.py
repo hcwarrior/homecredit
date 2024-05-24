@@ -17,6 +17,36 @@ class BaseModel:
         self.transformations_by_feature = transformations_by_feature
         self.model = None
 
+    def stability_metric(self, week, y_true, y_pred):
+        """
+        Custom metric for model optimization during training
+        """
+        weeks_to_score = week
+        gini_in_time = []
+        print((week, y_true, y_pred))
+
+        for week in weeks_to_score.unique():
+            week_idx = weeks_to_score.eq(week)
+            try:
+                gini = np.array(2 * roc_auc_score(y_true[week_idx], y_pred[week_idx]) - 1)
+                gini_in_time.append(gini)
+            except Exception as e:
+                continue
+
+        w_fallingrate = 88.0
+        w_resstd = -0.5
+        x = np.arange(len(gini_in_time))
+        y = np.array(gini_in_time)
+        a, b = np.polyfit(x, y, 1)
+        y_hat = a * x + b
+        residuals = y - y_hat
+        res_std = np.std(residuals)
+        avg_gini = np.mean(y)
+        stability_score = avg_gini + w_fallingrate * min(0, a) + w_resstd * res_std
+        is_higher_better = True
+
+        return 'stability_score', stability_score, is_higher_better
+
     def _preprocess(self, df: pd.DataFrame) -> pd.DataFrame:
         for col, transformation in self.transformations_by_feature.items():
             type = transformation['type']
@@ -52,7 +82,7 @@ class BaseModel:
         return df
 
     def fit(self, df: pd.DataFrame, label_array: np.array,
-        val_df: pd.DataFrame, val_label_array: np.array):
+        val_df: pd.DataFrame, val_label_array: np.array, val_week_num: np.array):
         raise NotImplementedError("Please Implement this method")
 
 
